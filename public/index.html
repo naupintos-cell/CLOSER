@@ -16,30 +16,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* ── CLOSER. brand — fucsia/magenta IG-inspired ── */
-  --p:          #9d1a52;
-  --p-dark:     #7a1340;
-  --p-mid:      #b01f5a;
-  --p-soft:     #c2185b;
-  --p-light:    #fdf0f5;
-  --p-lighter:  #fef7fa;
-  --p-border:   rgba(157,26,82,.14);
-  --p-glow:     rgba(157,26,82,.08);
-  --p-shadow:   rgba(157,26,82,.22);
-  /* degradado IG — usado en botones y acentos clave */
-  --ig-grad:    linear-gradient(135deg,#9d1a52 0%,#c2185b 50%,#e53935 100%);
-  --ig-grad-h:  linear-gradient(135deg,#7a1340 0%,#9d1a52 50%,#c62828 100%);
-  --ig-glow:    0 3px 18px rgba(157,26,82,.28);
-  --ig-glow-h:  0 5px 24px rgba(157,26,82,.36);
-
-  /* alias legacy para compatibilidad */
-  --gold:        var(--p);
-  --gold-dark:   var(--p-dark);
-  --gold-mid:    var(--p-mid);
-  --gold-light:  var(--p-light);
-  --gold-border: var(--p-border);
-  --gold-glow:   var(--p-glow);
-
+  --p:#9d1a52;--p-dark:#7a1340;--p-mid:#b01f5a;--p-soft:#c2185b;
+  --p-light:#fdf0f5;--p-lighter:#fef7fa;--p-border:rgba(157,26,82,.14);
+  --p-glow:rgba(157,26,82,.08);--p-shadow:rgba(157,26,82,.22);
+  --ig-grad:linear-gradient(135deg,#9d1a52 0%,#c2185b 50%,#e53935 100%);
+  --ig-grad-h:linear-gradient(135deg,#7a1340 0%,#9d1a52 50%,#c62828 100%);
+  --ig-glow:0 3px 18px rgba(157,26,82,.28);
+  --ig-glow-h:0 5px 24px rgba(157,26,82,.36);
+  --gold:var(--p);--gold-dark:var(--p-dark);--gold-mid:var(--p-mid);
+  --gold-light:var(--p-light);--gold-border:var(--p-border);--gold-glow:var(--p-glow);
   --ink:#0d0d0b;--ink-2:#171714;
   --n70:#3a3a37;--n55:#5e5e5a;--n40:#8a8a86;--n25:#c0c0bc;--n15:#e0e0da;--n08:#f2f2ee;--n04:#f8f8f5;--white:#fff;
   --ok:#256342;--ok-bg:#ebf5ef;--ok-br:rgba(37,99,66,.14);
@@ -100,17 +85,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-
 .fade-in:nth-child(2){animation-delay:.12s}
 .fade-in:nth-child(3){animation-delay:.19s}
 .fade-in:nth-child(4){animation-delay:.26s}
-
-.hero-filter{
-  margin-top:18px;
-  font-size:12.5px;color:var(--n40);font-weight:400;line-height:1.7;
-  padding:11px 20px;
-  background:var(--n04);border:1px solid var(--n15);border-radius:100px;
-  display:inline-block;text-align:center;
-}
+.hero-filter{margin-top:18px;font-size:12.5px;color:var(--n40);font-weight:400;line-height:1.7;padding:11px 20px;background:var(--n04);border:1px solid var(--n15);border-radius:100px;display:inline-block;text-align:center}
 .hero-filter strong{color:var(--ink);font-weight:500}
 
-/* ANTES / DESPUÉS */
 #before-after{padding:80px 0;background:var(--n04);border-top:1px solid var(--n15);border-bottom:1px solid var(--n15)}
 .ba-inner{max-width:720px;margin:0 auto;padding:0 28px}
 .ba-label{text-align:center;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--n25);margin-bottom:10px}
@@ -145,7 +122,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-
 .ba-insight{text-align:center;font-size:13px;color:var(--n55);font-weight:400;line-height:1.7;padding:0 20px}
 .ba-insight strong{color:var(--ink);font-weight:500}
 
-/* MOTOR — transparencia técnica */
 #motor{padding:52px 0;background:var(--ink)}
 .motor-inner{max-width:680px;margin:0 auto;padding:0 28px}
 .motor-label{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:20px;text-align:center}
@@ -154,41 +130,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-
 .motor-num{font-family:var(--serif);font-size:26px;background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em;line-height:1;margin-bottom:7px}
 .motor-title{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.75);margin-bottom:4px;line-height:1.35}
 .motor-desc{font-size:11.5px;color:rgba(255,255,255,.3);font-weight:400;line-height:1.55}
+
 #social-proof{padding:56px 0;border-bottom:1px solid var(--n08)}
 .sp-inner{max-width:720px;margin:0 auto;padding:0 28px}
 .sp-label{text-align:center;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--n25);margin-bottom:32px}
 .testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.testi{
-  background:var(--white);border:1px solid var(--n15);
-  border-radius:var(--r-lg);padding:22px 22px 18px;
-  display:flex;flex-direction:column;
-  position:relative;
-}
-.testi-quote{
-  font-family:var(--serif);font-size:42px;color:var(--gold-border);
-  line-height:1;margin-bottom:8px;display:block;
-}
-.testi-text{
-  font-size:13.5px;color:var(--n70);line-height:1.7;
-  font-weight:400;font-style:normal;
-  margin-bottom:18px;flex:1;
-}
+.testi{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-lg);padding:22px 22px 18px;display:flex;flex-direction:column;position:relative}
+.testi-quote{font-family:var(--serif);font-size:42px;color:var(--gold-border);line-height:1;margin-bottom:8px;display:block}
+.testi-text{font-size:13.5px;color:var(--n70);line-height:1.7;font-weight:400;font-style:normal;margin-bottom:18px;flex:1}
 .testi-divider{height:1px;background:var(--n08);margin-bottom:14px}
 .testi-author{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.testi-av{
-  width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:500;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  border:1.5px solid var(--n15);
-}
+.testi-av{width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--n15)}
 .testi-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.2}
 .testi-role{font-size:11.5px;color:var(--n40);font-weight:400;margin-top:2px}
-.testi-result{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:12px;font-weight:500;color:var(--ok);
-  background:var(--ok-bg);border:1px solid var(--ok-br);
-  padding:6px 11px;border-radius:var(--r-sm);
-  white-space:nowrap;align-self:flex-start;
-}
+.testi-result{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--ok);background:var(--ok-bg);border:1px solid var(--ok-br);padding:6px 11px;border-radius:var(--r-sm);white-space:nowrap;align-self:flex-start}
 
 #contrast{padding:64px 0;background:var(--ink)}
 .contrast-inner{max-width:680px;margin:0 auto;padding:0 28px}
@@ -380,7 +335,6 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 
 .paywall-insight{background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:13px 16px;font-size:13px;color:var(--err);line-height:1.65;margin-bottom:20px;font-weight:400}
 .paywall-insight strong{font-weight:500}
-
 .paywall{background:var(--gold-light);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:26px;margin-bottom:18px}
 .pw-eyebrow{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:9px}
 .pw-h{font-family:var(--serif);font-size:clamp(16px,2.6vw,21px);font-weight:400;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:7px}
@@ -401,19 +355,6 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pw-quote-name{font-size:12.5px;font-weight:500;color:var(--ink)}
 .pw-quote-role{font-size:11px;color:var(--n40);font-weight:400}
 .pw-quote-result{font-size:11px;font-weight:500;color:var(--ok)}
-.price-anchor{font-size:12px;color:var(--n25);text-decoration:line-through;margin-bottom:4px}
-.price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:5px}
-.price-now{font-family:var(--serif);font-size:34px;color:var(--ink);letter-spacing:-.03em;line-height:1}
-.price-per{font-size:13px;color:var(--n55)}
-.price-save{font-size:11px;font-weight:500;color:var(--ok);background:var(--ok-bg);border:1px solid var(--ok-br);padding:3px 8px;border-radius:100px}
-.price-reason{font-size:12px;color:var(--n40);font-weight:400;margin-bottom:12px}
-.price-ctx{font-size:13px;color:var(--n55);font-weight:400;line-height:1.65;margin-bottom:16px}
-.btn-upgrade{width:100%;display:block;background:var(--ig-grad);color:var(--white);border:none;border-radius:var(--r);padding:14px;font-size:14.5px;font-weight:500;letter-spacing:-.01em;text-align:center;transition:all var(--t);box-shadow:var(--ig-glow);cursor:pointer}
-.btn-upgrade:hover{background:var(--ig-grad-h);box-shadow:var(--ig-glow-h)}
-.btn-upgrade:active{transform:scale(.98)}
-.pw-urgency{font-size:12px;color:var(--err);font-weight:500;text-align:center;margin-top:8px}
-
-/* ROI + Pricing block */
 .pw-roi{background:var(--white);border:1px solid var(--p-border);border-radius:var(--r);padding:18px 20px}
 .pw-roi-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--n40);margin-bottom:14px}
 .pw-roi-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:10px}
@@ -424,7 +365,6 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pw-roi-arrow{font-size:16px;color:var(--n25);flex-shrink:0}
 .pw-roi-note{font-size:12.5px;color:var(--n55);font-weight:400;text-align:center;padding-top:10px;border-top:1px solid var(--p-border)}
 .pw-roi-note strong{color:var(--ink);font-weight:500}
-
 .pw-pricing-block{margin-bottom:16px}
 .pw-compare-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-bottom:14px}
 .pw-compare-item{background:var(--n04);border:1px solid var(--n15);border-radius:var(--r-sm);padding:14px 16px;text-align:center}
@@ -436,11 +376,14 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pw-compare-price span{font-family:var(--sans);font-size:12px;color:var(--n55);font-weight:400}
 .pw-compare-sub{font-size:11px;color:var(--n40);font-weight:400}
 .pw-compare-divider{font-size:11px;color:var(--n25);font-weight:500;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
-
 .pw-launch-banner{display:flex;align-items:flex-start;gap:10px;background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--err);line-height:1.55}
 .pw-launch-dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:4px;animation:blink 1.5s ease-in-out infinite}
 .pw-launch-banner strong{font-weight:500}
 .pw-launch-banner span{color:var(--err);opacity:.8}
+.price-ctx{font-size:13px;color:var(--n55);font-weight:400;line-height:1.65;margin-bottom:16px}
+.btn-upgrade{width:100%;display:block;background:var(--ig-grad);color:var(--white);border:none;border-radius:var(--r);padding:14px;font-size:14.5px;font-weight:500;letter-spacing:-.01em;text-align:center;transition:all var(--t);box-shadow:var(--ig-glow);cursor:pointer}
+.btn-upgrade:hover{background:var(--ig-grad-h);box-shadow:var(--ig-glow-h)}
+.btn-upgrade:active{transform:scale(.98)}
 .pw-gtee{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:11.5px;color:var(--n40);font-weight:400}
 .pw-filter{text-align:center;font-size:12px;color:var(--n40);font-weight:400;line-height:1.7;padding:14px 0 0}
 
@@ -489,13 +432,6 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .final-note{font-size:12px;color:var(--n25);margin-top:16px;font-weight:400}
 
 footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
-.foot-in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
-.eco-mark{display:flex;align-items:center;gap:14px}
-.eco-item{font-family:var(--serif);font-size:12.5px;color:var(--n40);transition:opacity var(--t)}
-.eco-item:hover{opacity:.6}
-.foot-links{display:flex;gap:18px}
-.foot-links a{font-size:12px;color:var(--n40);font-weight:400;transition:color var(--t)}
-.foot-links a:hover{color:var(--ink)}
 
 @media(max-width:600px){
   .form-body,.out-body,.load-body,.error-body{padding:26px 22px 30px}
@@ -585,17 +521,12 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
   </div>
 </section>
 
-</section>
-
-<!-- ANTES / DESPUÉS — caso real simulado -->
 <section id="before-after">
   <div class="ba-inner">
     <div class="ba-label">Caso real</div>
     <h2 class="ba-title">Así se ve la diferencia.<br><em>Mismo cliente. Mismo producto.</em></h2>
     <p class="ba-sub">Martina vende coaching de nutrición por Instagram. Antes de CLOSER y después.<br>El producto no cambió. Cambió lo que dice en el momento exacto.</p>
-
     <div class="ba-case">
-      <!-- ANTES -->
       <div>
         <div class="ba-col-label before"><div class="cl-dot"></div>Sin CLOSER</div>
         <div class="chat-thread">
@@ -606,18 +537,12 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
           <div class="chat-msg msg-us bad">¡Claro! Avisame cuando quieras 😊</div>
           <p class="msg-meta-chat right">Martina</p>
         </div>
-        <div class="ba-result bad">
-          <div class="ba-result-ico">✕</div>
-          <p>Silencio. Conversación perdida. Nunca más respondió.</p>
-        </div>
+        <div class="ba-result bad"><div class="ba-result-ico">✕</div><p>Silencio. Conversación perdida. Nunca más respondió.</p></div>
       </div>
-
       <div class="ba-arrow">
         <div class="ba-arrow-icon">→</div>
         <div class="ba-arrow-label">Con<br>CLOSER</div>
       </div>
-
-      <!-- DESPUÉS -->
       <div>
         <div class="ba-col-label after"><div class="cl-dot"></div>Con CLOSER</div>
         <div class="chat-thread">
@@ -628,17 +553,10 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
           <div class="chat-msg msg-us good">Entiendo, eso es exactamente lo que trabajo. El programa sale $85.000 por 3 meses — y lo que obtenés es un plan que se adapta a tu vida real, no una dieta que abandonás en 2 semanas. ¿Eso es lo que estás buscando?</div>
           <p class="msg-meta-chat right">Martina</p>
         </div>
-        <div class="ba-result good">
-          <div class="ba-result-ico">✓</div>
-          <p>Respondió en 4 minutos. Pagó el mismo día.</p>
-        </div>
+        <div class="ba-result good"><div class="ba-result-ico">✓</div><p>Respondió en 4 minutos. Pagó el mismo día.</p></div>
       </div>
     </div>
-
-    <p class="ba-insight">
-      CLOSER detectó que Martina daba el precio directo en el 78% de sus conversaciones.<br>
-      <strong>Le generó el mensaje exacto para esa situación. Ese día recuperó 3 ventas similares.</strong>
-    </p>
+    <p class="ba-insight">CLOSER detectó que Martina daba el precio directo en el 78% de sus conversaciones.<br><strong>Le generó el mensaje exacto para esa situación. Ese día recuperó 3 ventas similares.</strong></p>
   </div>
 </section>
 
@@ -689,38 +607,18 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
   </div>
 </section>
 
-</section>
-
-<!-- EL MOTOR — transparencia técnica sin tecnicismos -->
 <section id="motor">
   <div class="motor-inner">
     <div class="motor-label">Cómo funciona por dentro</div>
     <div class="motor-grid">
-      <div class="motor-cell">
-        <div class="motor-num">1°</div>
-        <div class="motor-title">Búsqueda web en tiempo real</div>
-        <div class="motor-desc">Antes de generar, buscamos qué funciona hoy en tu rubro. Tendencias, objeciones frecuentes, lenguaje que convierte.</div>
-      </div>
-      <div class="motor-cell">
-        <div class="motor-num">2°</div>
-        <div class="motor-title">Análisis de tus conversaciones</div>
-        <div class="motor-desc">Detectamos patrones en tus DMs reales: qué frases cortan la venta, en qué momento exacto y con qué frecuencia.</div>
-      </div>
-      <div class="motor-cell">
-        <div class="motor-num">3°</div>
-        <div class="motor-title">Generación calibrada con Claude</div>
-        <div class="motor-desc">Usamos Claude (Anthropic) con un prompt especializado en ventas latam. No es ChatGPT genérico — es un modelo entrenado en tu contexto.</div>
-      </div>
-      <div class="motor-cell">
-        <div class="motor-num">4°</div>
-        <div class="motor-title">Loop de aprendizaje por venta</div>
-        <div class="motor-desc">Cada vez que marcás si un mensaje cerró o no, el sistema aprende. Con el tiempo sabe exactamente qué funciona en tu negocio específico.</div>
-      </div>
+      <div class="motor-cell"><div class="motor-num">1°</div><div class="motor-title">Búsqueda web en tiempo real</div><div class="motor-desc">Antes de generar, buscamos qué funciona hoy en tu rubro. Tendencias, objeciones frecuentes, lenguaje que convierte.</div></div>
+      <div class="motor-cell"><div class="motor-num">2°</div><div class="motor-title">Análisis de tus conversaciones</div><div class="motor-desc">Detectamos patrones en tus DMs reales: qué frases cortan la venta, en qué momento exacto y con qué frecuencia.</div></div>
+      <div class="motor-cell"><div class="motor-num">3°</div><div class="motor-title">Generación calibrada con Claude</div><div class="motor-desc">Usamos Claude (Anthropic) con un prompt especializado en ventas latam. No es ChatGPT genérico — es un modelo entrenado en tu contexto.</div></div>
+      <div class="motor-cell"><div class="motor-num">4°</div><div class="motor-title">Loop de aprendizaje por venta</div><div class="motor-desc">Cada vez que marcás si un mensaje cerró o no, el sistema aprende. Con el tiempo sabe exactamente qué funciona en tu negocio específico.</div></div>
     </div>
   </div>
 </section>
 
-<!-- DEMO PANEL — antes del form -->
 <section id="demo-panel">
   <div class="w">
     <div class="sec-hd">
@@ -788,7 +686,6 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
   </div>
 </section>
 
-<!-- APP — 2 campos obligatorios + expandir -->
 <section id="app-section">
   <div class="w">
     <div class="sec-hd">
@@ -805,25 +702,25 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
           <div class="prog-wrap"><div class="prog-bar" id="prog"></div></div>
           <div class="field">
             <div class="f-label"><span class="f-num">1</span>¿Qué vendés?</div>
-            <input type="text" id="f1" placeholder="Ej: coaching de ventas para emprendedores…" oninput="updProg()">
+            <input type="text" id="f1" placeholder="Ej: coaching de ventas para emprendedores…" oninput="updProg()" maxlength="300">
             <p class="f-hint">Cuanto más específico, más preciso el sistema</p>
           </div>
           <div class="field">
             <div class="f-label"><span class="f-num">2</span>¿A quién le vendés?</div>
-            <input type="text" id="f2" placeholder="Ej: dueños de negocios que quieren vender más…" oninput="updProg()">
+            <input type="text" id="f2" placeholder="Ej: dueños de negocios que quieren vender más…" oninput="updProg()" maxlength="300">
           </div>
           <div class="field field-optional" id="fo3">
             <div class="f-label"><span class="f-num">3</span>¿Qué problema resolvés?</div>
-            <input type="text" id="f3" placeholder="Ej: pierden clientes por no saber qué responder…" oninput="updProg()">
+            <input type="text" id="f3" placeholder="Ej: pierden clientes por no saber qué responder…" oninput="updProg()" maxlength="300">
           </div>
           <div class="field field-optional" id="fo4">
             <div class="f-label"><span class="f-num">4</span>¿Cuál es la objeción que más recibís?</div>
-            <input type="text" id="f4" placeholder="Ej: 'es caro', 'lo pienso', 'ya te aviso'…" oninput="updProg()">
+            <input type="text" id="f4" placeholder="Ej: 'es caro', 'lo pienso', 'ya te aviso'…" oninput="updProg()" maxlength="200">
             <p class="f-hint">El sistema genera el mensaje exacto para esa objeción</p>
           </div>
           <div class="field field-optional" id="fo5">
             <div class="f-label"><span class="f-num">5</span>¿Cuánto cuesta?</div>
-            <input type="text" id="f5" placeholder="Ej: USD 150/mes, $300.000 sesión única…" oninput="updProg()">
+            <input type="text" id="f5" placeholder="Ej: USD 150/mes, $300.000 sesión única…" oninput="updProg()" maxlength="100">
           </div>
           <div class="form-foot">
             <button class="expand-btn" id="expand-btn" onclick="expandFields()">
@@ -854,7 +751,7 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
         <div class="error-body">
           <div class="error-icon">⚠</div>
           <h2 class="error-h">Algo salió mal</h2>
-          <p class="error-p">No pudimos generar tu sistema en este momento. Podés reintentar o ver mensajes de ejemplo para tener una idea de lo que recibirías.</p>
+          <p class="error-p" id="error-msg">No pudimos generar tu sistema en este momento. Podés reintentar o ver mensajes de ejemplo para tener una idea de lo que recibirías.</p>
           <div class="error-btns">
             <button class="btn btn-gold-sm" id="retry-btn">Reintentar →</button>
             <button class="btn" style="background:var(--n08);color:var(--n55);padding:11px 18px;font-size:14px;border-radius:var(--r)" onclick="showFallback()">Ver ejemplo</button>
@@ -912,56 +809,33 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
               <p class="pw-quote-text">"Lo que más me sorprendió fue el diagnóstico. Me mostró que el 71% de mis conversaciones se cortaban cuando preguntaban el precio. En dos semanas pasé de cerrar 2 de cada 10 a cerrar casi 4."</p>
               <div class="pw-quote-author">
                 <div class="pw-quote-av" style="background:#eaf2fb;color:#1c4d7a">LC</div>
-                <div>
-                  <div class="pw-quote-name">Lucas C.</div>
-                  <div class="pw-quote-role">Consultor de marketing · Rosario</div>
-                  <div class="pw-quote-result">↑ De 21% a 38% de ratio de cierre</div>
-                </div>
+                <div><div class="pw-quote-name">Lucas C.</div><div class="pw-quote-role">Consultor de marketing · Rosario</div><div class="pw-quote-result">↑ De 21% a 38% de ratio de cierre</div></div>
               </div>
             </div>
             <div class="pw-div"></div>
-            <!-- ROI Calculator -->
             <div class="pw-roi">
               <div class="pw-roi-label">¿Cuánto te cuesta no tenerlo?</div>
               <div class="pw-roi-grid">
-                <div class="pw-roi-item">
-                  <div class="pw-roi-val">$1.250.000</div>
-                  <div class="pw-roi-desc">Lo que pierde un coach por mes con 3 ventas de $420k perdidas en objeción</div>
-                </div>
+                <div class="pw-roi-item"><div class="pw-roi-val">$1.250.000</div><div class="pw-roi-desc">Lo que pierde un coach por mes con 3 ventas de $420k perdidas en objeción</div></div>
                 <div class="pw-roi-arrow">→</div>
-                <div class="pw-roi-item highlight">
-                  <div class="pw-roi-val">$54.900</div>
-                  <div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div>
-                </div>
+                <div class="pw-roi-item highlight"><div class="pw-roi-val">$54.900</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
               </div>
               <p class="pw-roi-note">Con recuperar <strong>una sola venta perdida</strong>, el ROI es 20x.</p>
             </div>
             <div class="pw-div"></div>
-            <!-- Pricing -->
             <div class="pw-pricing-block">
               <div class="pw-compare-row">
-                <div class="pw-compare-item">
-                  <div class="pw-compare-label">Coach de ventas 1:1</div>
-                  <div class="pw-compare-price">$1.100.000<span>/mes</span></div>
-                  <div class="pw-compare-sub">Promedio mercado argentino</div>
-                </div>
+                <div class="pw-compare-item"><div class="pw-compare-label">Coach de ventas 1:1</div><div class="pw-compare-price">$1.100.000<span>/mes</span></div><div class="pw-compare-sub">Promedio mercado argentino</div></div>
                 <div class="pw-compare-divider">vs</div>
-                <div class="pw-compare-item featured">
-                  <div class="pw-compare-label">CLOSER. PRO</div>
-                  <div class="pw-compare-price">$54.900<span>/mes</span></div>
-                  <div class="pw-compare-sub">Precio de lanzamiento</div>
-                </div>
+                <div class="pw-compare-item featured"><div class="pw-compare-label">CLOSER. PRO</div><div class="pw-compare-price">$54.900<span>/mes</span></div><div class="pw-compare-sub">Precio de lanzamiento</div></div>
               </div>
               <div class="pw-launch-banner">
                 <div class="pw-launch-dot"></div>
-                <div>
-                  <strong>Precio de lanzamiento — sube a $69.900 el 30 de abril.</strong><br>
-                  <span>Primeros 50 usuarios. Quedan <strong id="spots-left">23</strong> lugares.</span>
-                </div>
+                <div><strong>Precio de lanzamiento — sube a $69.900 el 30 de abril.</strong><br><span>Primeros 50 usuarios. Quedan <strong id="spots-left">23</strong> lugares.</span></div>
               </div>
             </div>
             <p class="price-ctx">Cancelás cuando querés. Sin contrato. Sin permanencia.</p>
-            <button class="btn-upgrade" onclick="alert('Redirigiendo a checkout…')">Empezar a recuperar ventas perdidas →</button>
+            <button class="btn-upgrade" onclick="goCheckout()">Empezar a recuperar ventas perdidas →</button>
             <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Cancelación en 1 clic</span><span>✓ Sin bot — vos cerrás</span></div>
             <p class="pw-filter">Para los que ya están vendiendo por DM y quieren cerrar más — no para los que recién empiezan.</p>
           </div>
@@ -1027,157 +901,330 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
 </footer>
 
 <script>
-let fd={},marketCtx='',fieldsExpanded=false,timerInterval=null;
+'use strict';
 
-function switchTab(btn,tabId){
-  document.querySelectorAll('.demo-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.demo-content').forEach(t=>t.classList.remove('active'));
+// ── Estado global ─────────────────────────────────────────────────────────────
+let fd = {}, marketCtx = '', fieldsExpanded = false, timerInterval = null;
+let retryCount = 0;
+const MAX_RETRIES = 2;
+
+// ── Navegación ────────────────────────────────────────────────────────────────
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.demo-content').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(tabId).classList.add('active');
 }
-function goApp(){document.getElementById('app-section').scrollIntoView({behavior:'smooth'})}
-function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 
-function expandFields(){
-  if(fieldsExpanded)return;
-  fieldsExpanded=true;
-  ['fo3','fo4','fo5'].forEach(id=>document.getElementById(id).classList.add('visible'));
-  document.getElementById('expand-btn').style.display='none';
+function goApp() {
+  document.getElementById('app-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function goCheckout() {
+  // Reemplazar con URL real de checkout cuando esté disponible
+  const checkoutUrl = window.CHECKOUT_URL || '#';
+  if (checkoutUrl !== '#') {
+    window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+  } else {
+    alert('Checkout próximamente. Escribinos a hola@kairoinc.lat');
+  }
+}
+
+function showS(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function expandFields() {
+  if (fieldsExpanded) return;
+  fieldsExpanded = true;
+  ['fo3', 'fo4', 'fo5'].forEach(id => document.getElementById(id).classList.add('visible'));
+  document.getElementById('expand-btn').style.display = 'none';
   updProg();
 }
 
-function updProg(){
-  const req=['f1','f2'].filter(i=>document.getElementById(i).value.trim()).length;
-  const opt=['f3','f4','f5'].map(i=>document.getElementById(i)).filter(el=>el&&el.value.trim()).length;
-  document.getElementById('prog').style.width=Math.min(100,(req/2*70)+(opt/3*30))+'%';
+function updProg() {
+  const req = ['f1', 'f2'].filter(i => document.getElementById(i).value.trim()).length;
+  const opt = ['f3', 'f4', 'f5'].map(i => document.getElementById(i)).filter(el => el && el.value.trim()).length;
+  document.getElementById('prog').style.width = Math.min(100, (req / 2 * 70) + (opt / 3 * 30)) + '%';
 }
 
-function startGen(){
-  const v=['f1','f2','f3','f4','f5'].map(i=>document.getElementById(i)?.value.trim()||'');
-  if(!v[0]){document.getElementById('f1').focus();return}
-  if(!v[1]){document.getElementById('f2').focus();return}
-  fd={negocio:v[0],cliente:v[1],problema:v[2],objecion:v[3],precio:v[4]};
-  if(v[3])document.getElementById('obj-label').textContent=v[3];
+// ── Input sanitization (client-side, server validates too) ────────────────────
+function sanitize(str) {
+  return (str || '').toString().trim().slice(0, 500);
+}
+
+// ── Inicio de generación ──────────────────────────────────────────────────────
+function startGen() {
+  const v = ['f1', 'f2', 'f3', 'f4', 'f5'].map(i => sanitize(document.getElementById(i)?.value || ''));
+  if (!v[0]) { document.getElementById('f1').focus(); return; }
+  if (!v[1]) { document.getElementById('f2').focus(); return; }
+
+  fd = { negocio: v[0], cliente: v[1], problema: v[2], objecion: v[3], precio: v[4] };
+  if (v[3]) document.getElementById('obj-label').textContent = v[3];
+
+  retryCount = 0;
   showS('s-load');
-  document.getElementById('app-card').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   startTimer();
   runPipeline();
 }
 
-function startTimer(){
-  let s=20;
-  const el=document.getElementById('load-timer');
-  el.textContent='~'+s+' segundos';
-  timerInterval=setInterval(()=>{
-    s--;
-    if(s>0)el.textContent='~'+s+' segundo'+(s!==1?'s':'');
-    else{el.textContent='Un momento más…';clearInterval(timerInterval)}
-  },1000);
-}
-
-async function runPipeline(){
-  animStep('ll1');
-  const ctx=await fetchContext();
-  marketCtx=ctx;
-  animStep('ll2');await sleep(500);
-  animStep('ll3');await sleep(400);
-  animStep('ll4');await sleep(300);
-  await generateMessages(ctx);
-}
-
-async function fetchContext(){
-  const{negocio,cliente}=fd;
-  const sys=`Sos analista de mercado para ventas en Latam. Analizá el rubro y extraé contexto de ventas conversacionales.
-JSON sin markdown: {"objeciones_comunes":["..."],"tono_recomendado":"...","friccion_principal":"...","insight_mercado":"...","resumen_contexto":"...","insight_paywall":"..."}
-resumen_contexto: máx 110 chars. insight_paywall: frase sobre la mayor fuga de ventas en ese rubro.`;
-  try{
-    const r=await fetch("/api/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:900,temperature:0.3,
-        tools:[{"type":"web_search_20250305","name":"web_search"}],system:sys,
-        messages:[{role:"user",content:`Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam`}]})});
-    const d=await r.json();
-    let txt='';
-    for(const b of d.content){if(b.type==='text'){txt=b.text;break}}
-    if(!txt)return null;
-    return JSON.parse(txt.trim().replace(/```json|```/g,'').trim());
-  }catch(e){return null}
-}
-
-async function generateMessages(ctx){
+// ── Timer de carga ────────────────────────────────────────────────────────────
+function startTimer() {
   clearInterval(timerInterval);
-  const{negocio,cliente,problema,objecion,precio}=fd;
-  let ctxBlock='';
-  if(ctx)ctxBlock=`\nCONTEXTO:\n- Objeciones: ${(ctx.objeciones_comunes||[]).join(', ')}\n- Tono: ${ctx.tono_recomendado||''}\n- Fricción: ${ctx.friccion_principal||''}\n- Insight: ${ctx.insight_mercado||''}\n`;
-  const sys=`Experto en ventas conversacionales por WhatsApp/Instagram para negocios latinoamericanos.
+  let s = 20;
+  const el = document.getElementById('load-timer');
+  el.textContent = '~' + s + ' segundos';
+  timerInterval = setInterval(() => {
+    s--;
+    if (s > 0) el.textContent = '~' + s + ' segundo' + (s !== 1 ? 's' : '');
+    else { el.textContent = 'Un momento más…'; clearInterval(timerInterval); }
+  }, 1000);
+}
+
+// ── Pipeline principal ────────────────────────────────────────────────────────
+async function runPipeline() {
+  try {
+    animStep('ll1');
+    const ctx = await fetchContext();
+    marketCtx = ctx;
+    animStep('ll2');
+    await sleep(500);
+    animStep('ll3');
+    await sleep(400);
+    animStep('ll4');
+    await sleep(300);
+    await generateMessages(ctx);
+  } catch (err) {
+    console.error('[CLOSER] Pipeline error:', err);
+    showError('Algo salió mal. Podés reintentar.');
+  }
+}
+
+// ── FIX PRINCIPAL: Extracción robusta de texto de respuesta Claude ─────────────
+// Maneja respuestas con web_search (múltiples bloques: tool_use, tool_result, text)
+// y respuestas simples (solo text). Nunca asume que content[0] es texto.
+function extractTextFromResponse(data) {
+  if (!data || !Array.isArray(data.content)) return null;
+
+  // Buscar el último bloque de tipo "text" (el más confiable con web_search)
+  const textBlocks = data.content.filter(b => b.type === 'text' && b.text);
+  if (textBlocks.length === 0) return null;
+
+  // Tomar el último bloque de texto (Claude puede emitir varios)
+  return textBlocks[textBlocks.length - 1].text.trim();
+}
+
+// ── Limpieza de JSON que puede venir con ```json ... ``` ──────────────────────
+function cleanJSON(str) {
+  if (!str) return null;
+  return str.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+}
+
+// ── Fetch de contexto de mercado (usa web_search) ─────────────────────────────
+async function fetchContext() {
+  const { negocio, cliente } = fd;
+  const sys = `Sos analista de mercado para ventas en Latam. Analizá el rubro y extraé contexto de ventas conversacionales.
+Respondé SOLO con JSON válido, sin markdown, sin texto antes ni después:
+{"objeciones_comunes":["..."],"tono_recomendado":"...","friccion_principal":"...","insight_mercado":"...","resumen_contexto":"...","insight_paywall":"..."}
+resumen_contexto: máx 110 chars. insight_paywall: frase sobre la mayor fuga de ventas en ese rubro.`;
+
+  try {
+    const r = await apiCall({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 900,
+      temperature: 0.3,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      system: sys,
+      messages: [{ role: 'user', content: `Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam` }]
+    });
+
+    const txt = extractTextFromResponse(r);
+    if (!txt) return null;
+
+    return JSON.parse(cleanJSON(txt));
+  } catch (e) {
+    console.warn('[CLOSER] fetchContext falló, continuando sin contexto:', e.message);
+    return null; // No es fatal — generamos igual sin contexto
+  }
+}
+
+// ── Generación de mensajes ────────────────────────────────────────────────────
+async function generateMessages(ctx) {
+  clearInterval(timerInterval);
+  const { negocio, cliente, problema, objecion, precio } = fd;
+
+  let ctxBlock = '';
+  if (ctx) {
+    ctxBlock = `\nCONTEXTO DE MERCADO:\n- Objeciones frecuentes: ${(ctx.objeciones_comunes || []).join(', ')}\n- Tono recomendado: ${ctx.tono_recomendado || ''}\n- Fricción principal: ${ctx.friccion_principal || ''}\n- Insight: ${ctx.insight_mercado || ''}\n`;
+  }
+
+  const sys = `Experto en ventas conversacionales por WhatsApp/Instagram para negocios latinoamericanos.
 IDENTIDAD: Aliado del vendedor humano. No lo reemplazás — lo potenciás.
 TONO: Humano argentino con "vos". Frases cortas. Sin emojis. Sin asteriscos. Persona real.
 REGLAS: Máx 3-4 oraciones. Una sola pregunta al final que avance la venta. Precio: primero valor, después número. Objeción: nombrar, empatizar brevemente, reencuadrar al costo de no resolver. Nunca "avisame" ni preguntas débiles.
-JSON sin markdown: {"inicio":"...","precio":"...","duda":"..."}`;
-  const usr=`Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema||'no especificado'}\nObjeción: ${objecion||'es caro / lo pienso'}\nPrecio: ${precio||'no especificado'}\n${ctxBlock}\n3 mensajes que avancen la venta. "duda" responde la objeción indicada específicamente.`;
-  try{
-    const r=await fetch("/api/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:900,temperature:0.56,system:sys,messages:[{role:"user",content:usr}]})});
-    const d=await r.json();
-    const m=JSON.parse(d.content[0].text.trim().replace(/```json|```/g,'').trim());
-    document.getElementById('m1').textContent=m.inicio;
-    document.getElementById('m2').textContent=m.precio;
-    document.getElementById('m3').textContent=m.duda;
-    document.getElementById('out-lbl').textContent='Sistema generado para: '+negocio;
-    if(ctx&&ctx.resumen_contexto){document.getElementById('ctx-summary').textContent=ctx.resumen_contexto;document.getElementById('ctx-strip').style.display='flex'}
-    if(ctx&&ctx.insight_paywall){document.getElementById('insight-text').textContent=ctx.insight_paywall;document.getElementById('paywall-insight').style.display='block'}
+Respondé SOLO con JSON válido, sin markdown, sin texto adicional:
+{"inicio":"...","precio":"...","duda":"..."}`;
+
+  const usr = `Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema || 'no especificado'}\nObjeción más frecuente: ${objecion || 'es caro / lo pienso'}\nPrecio: ${precio || 'no especificado'}\n${ctxBlock}\nGenerá 3 mensajes que avancen la venta. El campo "duda" debe responder específicamente la objeción indicada.`;
+
+  try {
+    const r = await apiCall({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 900,
+      temperature: 0.56,
+      system: sys,
+      messages: [{ role: 'user', content: usr }]
+    });
+
+    const txt = extractTextFromResponse(r);
+    if (!txt) throw new Error('Respuesta vacía del modelo');
+
+    const m = JSON.parse(cleanJSON(txt));
+    if (!m.inicio || !m.precio || !m.duda) throw new Error('JSON incompleto del modelo');
+
+    // Renderizar resultados
+    document.getElementById('m1').textContent = m.inicio;
+    document.getElementById('m2').textContent = m.precio;
+    document.getElementById('m3').textContent = m.duda;
+    document.getElementById('out-lbl').textContent = 'Sistema generado para: ' + negocio;
+
+    if (ctx && ctx.resumen_contexto) {
+      document.getElementById('ctx-summary').textContent = ctx.resumen_contexto;
+      document.getElementById('ctx-strip').style.display = 'flex';
+    }
+    if (ctx && ctx.insight_paywall) {
+      document.getElementById('insight-text').textContent = ctx.insight_paywall;
+      document.getElementById('paywall-insight').style.display = 'block';
+    }
+
     showS('s-out');
-    document.getElementById('app-card').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){
+    document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (e) {
+    console.error('[CLOSER] generateMessages error:', e.message);
     clearInterval(timerInterval);
-    document.getElementById('retry-btn').onclick=()=>{showS('s-load');startTimer();runPipeline()};
-    showS('s-error');
-    document.getElementById('app-card').scrollIntoView({behavior:'smooth',block:'start'});
+    showError(getErrorMessage(e));
   }
 }
 
-function showFallback(){
-  document.getElementById('m1').textContent='Hola, gracias por escribir. Antes de contarte todo, decime: ¿qué resultado concreto estás buscando? Así te cuento si lo que hago tiene sentido para tu situación.';
-  document.getElementById('m2').textContent='El precio varía según lo que necesitás. Antes de hablar de números, contame: ¿qué resultado es el más importante para vos ahora? Según eso hay opciones distintas.';
-  document.getElementById('m3').textContent='Entiendo, tiene sentido que lo pienses. La pregunta es: ¿cuánto te está costando no resolverlo cada mes? Porque ese costo también existe. ¿Qué es lo que más te frena para decidir?';
-  document.getElementById('out-lbl').textContent='Mensajes de ejemplo — generá el tuyo arriba';
-  showS('s-out');
-  document.getElementById('app-card').scrollIntoView({behavior:'smooth',block:'start'});
+// ── Wrapper de fetch con manejo de errores HTTP ───────────────────────────────
+async function apiCall(body) {
+  const response = await fetch('/api/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const msg = data.error || `Error HTTP ${response.status}`;
+    const err = new Error(msg);
+    err.status = response.status;
+    err.isRateLimit = response.status === 429;
+    throw err;
+  }
+
+  // Detectar error devuelto por Anthropic dentro del JSON
+  if (data.type === 'error') {
+    throw new Error(data.error?.message || 'Error de la API');
+  }
+
+  return data;
 }
 
-const steps=['ll1','ll2','ll3','ll4'];
-function animStep(id){
-  const idx=steps.indexOf(id);
-  for(let i=0;i<idx;i++){const el=document.getElementById(steps[i]);el.classList.remove('act');el.classList.add('done')}
+// ── Mensajes de error amigables ───────────────────────────────────────────────
+function getErrorMessage(err) {
+  if (!err) return 'Algo salió mal. Reintentá en un momento.';
+  if (err.isRateLimit) return 'Llegaste al límite de generaciones por ahora. Esperá unos minutos y volvé a intentarlo.';
+  if (err.status === 502 || err.status === 504) return 'Timeout de conexión. La red puede estar lenta — reintentá.';
+  if (err.status === 400) return 'Datos inválidos. Revisá los campos y reintentá.';
+  return 'No pudimos generar tu sistema en este momento. Podés reintentar o ver mensajes de ejemplo.';
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg || 'Algo salió mal. Podés reintentar.';
+  document.getElementById('retry-btn').onclick = () => {
+    if (retryCount < MAX_RETRIES) {
+      retryCount++;
+      showS('s-load');
+      startTimer();
+      runPipeline();
+    } else {
+      document.getElementById('error-msg').textContent = 'Seguimos con problemas. Probá el ejemplo para ver cómo funciona.';
+      document.getElementById('retry-btn').style.display = 'none';
+    }
+  };
+  showS('s-error');
+  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Fallback con mensajes de ejemplo ─────────────────────────────────────────
+function showFallback() {
+  document.getElementById('m1').textContent = 'Hola, gracias por escribir. Antes de contarte todo, decime: ¿qué resultado concreto estás buscando? Así te cuento si lo que hago tiene sentido para tu situación.';
+  document.getElementById('m2').textContent = 'El precio varía según lo que necesitás. Antes de hablar de números, contame: ¿qué resultado es el más importante para vos ahora? Según eso hay opciones distintas.';
+  document.getElementById('m3').textContent = 'Entiendo, tiene sentido que lo pienses. La pregunta es: ¿cuánto te está costando no resolverlo cada mes? Porque ese costo también existe. ¿Qué es lo que más te frena para decidir?';
+  document.getElementById('out-lbl').textContent = 'Mensajes de ejemplo — generá el tuyo arriba';
+  showS('s-out');
+  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Animación de pasos de carga ───────────────────────────────────────────────
+const steps = ['ll1', 'll2', 'll3', 'll4'];
+function animStep(id) {
+  const idx = steps.indexOf(id);
+  for (let i = 0; i < idx; i++) {
+    const el = document.getElementById(steps[i]);
+    el.classList.remove('act');
+    el.classList.add('done');
+  }
   document.getElementById(id).classList.add('act');
 }
-function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
-function cp(btn,id){
-  const t=document.getElementById(id).textContent;
-  if(!t)return;
-  navigator.clipboard.writeText(t).then(()=>{
-    const o=btn.innerHTML;
-    btn.innerHTML=`<svg viewBox="0 0 12 12" fill="none" style="width:10px;height:10px;stroke-width:1.5"><path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Copiado`;
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Copiar al portapapeles ────────────────────────────────────────────────────
+function cp(btn, id) {
+  const t = document.getElementById(id).textContent;
+  if (!t) return;
+  navigator.clipboard.writeText(t).then(() => {
+    const o = btn.innerHTML;
+    btn.innerHTML = `<svg viewBox="0 0 12 12" fill="none" style="width:10px;height:10px;stroke-width:1.5"><path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Copiado`;
     btn.classList.add('copied');
-    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('copied')},2200);
+    setTimeout(() => { btn.innerHTML = o; btn.classList.remove('copied'); }, 2200);
+  }).catch(() => {
+    // Fallback para browsers que no soportan clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   });
 }
 
-function restart(){
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function restart() {
   clearInterval(timerInterval);
-  ['f1','f2','f3','f4','f5'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
-  steps.forEach(i=>{const el=document.getElementById(i);el.classList.remove('act','done')});
-  document.getElementById('prog').style.width='0%';
-  document.getElementById('ctx-strip').style.display='none';
-  document.getElementById('paywall-insight').style.display='none';
-  if(fieldsExpanded){
-    fieldsExpanded=false;
-    ['fo3','fo4','fo5'].forEach(id=>document.getElementById(id).classList.remove('visible'));
-    document.getElementById('expand-btn').style.display='flex';
+  ['f1', 'f2', 'f3', 'f4', 'f5'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  steps.forEach(i => { const el = document.getElementById(i); el.classList.remove('act', 'done'); });
+  document.getElementById('prog').style.width = '0%';
+  document.getElementById('ctx-strip').style.display = 'none';
+  document.getElementById('paywall-insight').style.display = 'none';
+  document.getElementById('retry-btn').style.display = '';
+  if (fieldsExpanded) {
+    fieldsExpanded = false;
+    ['fo3', 'fo4', 'fo5'].forEach(id => document.getElementById(id).classList.remove('visible'));
+    document.getElementById('expand-btn').style.display = 'flex';
   }
-  marketCtx='';
+  marketCtx = '';
+  retryCount = 0;
   showS('s-form');
-  document.getElementById('app-section').scrollIntoView({behavior:'smooth'});
+  document.getElementById('app-section').scrollIntoView({ behavior: 'smooth' });
 }
 </script>
 </body>
