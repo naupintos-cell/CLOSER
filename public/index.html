@@ -5,15 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLOSER. — No es un bot. Es el sistema que te hace mejor vendedor.</title>
 <meta property="og:title" content="CLOSER. — No es un bot. Es el sistema que te hace mejor vendedor.">
-<meta property="og:description" content="Analiza tus DMs reales, detecta dónde perdés ventas y genera el sistema exacto para cerrarlas. Probalo gratis en 30 segundos.">
+<meta property="og:description" content="Analiza tus DMs reales, detecta dónde perdés ventas y genera el sistema exacto para cerrarlas.">
 <meta property="og:url" content="https://closer.kairoinc.lat">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CLOSER. — El único que diagnostica tus DMs reales.">
-<meta name="twitter:description" content="Analiza · Diagnostica · Genera · Mide. Tu aliado de ventas por WhatsApp e Instagram.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --p:#9d1a52;--p-dark:#7a1340;--p-mid:#b01f5a;--p-soft:#c2185b;
@@ -23,8 +22,8 @@
   --ig-grad-h:linear-gradient(135deg,#7a1340 0%,#9d1a52 50%,#c62828 100%);
   --ig-glow:0 3px 18px rgba(157,26,82,.28);
   --ig-glow-h:0 5px 24px rgba(157,26,82,.36);
-  --gold:var(--p);--gold-dark:var(--p-dark);--gold-mid:var(--p-mid);
-  --gold-light:var(--p-light);--gold-border:var(--p-border);--gold-glow:var(--p-glow);
+  --gold:var(--p);--gold-dark:var(--p-dark);--gold-light:var(--p-light);
+  --gold-border:var(--p-border);--gold-glow:var(--p-glow);
   --ink:#0d0d0b;--ink-2:#171714;
   --n70:#3a3a37;--n55:#5e5e5a;--n40:#8a8a86;--n25:#c0c0bc;--n15:#e0e0da;--n08:#f2f2ee;--n04:#f8f8f5;--white:#fff;
   --ok:#256342;--ok-bg:#ebf5ef;--ok-br:rgba(37,99,66,.14);
@@ -43,20 +42,23 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:var(--sans);background:var(--white);color:var(--ink);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--n15);border-radius:2px}
-img,svg{display:block}
 button{cursor:pointer;font-family:var(--sans)}
 a{text-decoration:none}
 .w{max-width:760px;margin:0 auto;padding:0 28px}
 .w-sm{max-width:580px;margin:0 auto;padding:0 28px}
 
-nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--n15);height:54px;display:flex;align-items:center}
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--n15);height:54px;display:flex;align-items:center}
 .nav-in{max-width:760px;margin:0 auto;padding:0 28px;width:100%;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:var(--serif);font-size:19px;color:var(--ink);letter-spacing:-.01em;display:inline-flex;align-items:baseline}
 .logo .dot{background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-r{display:flex;align-items:center;gap:10px}
 .nav-link{font-size:12.5px;color:var(--n40);font-weight:400;transition:color var(--t)}
 .nav-link:hover{color:var(--ink)}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:var(--ig-grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--white);cursor:pointer;flex-shrink:0}
+.nav-plan-badge{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:100px;background:var(--ig-grad);color:var(--white)}
 
+/* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:var(--r-sm);font-family:var(--sans);font-weight:500;letter-spacing:-.01em;transition:all var(--t);white-space:nowrap;cursor:pointer}
 .btn-gold{background:var(--ig-grad);color:var(--white);padding:15px 30px;font-size:15px;border-radius:var(--r);box-shadow:var(--ig-glow)}
 .btn-gold:hover{background:var(--ig-grad-h);transform:translateY(-1px);box-shadow:var(--ig-glow-h)}
@@ -65,10 +67,36 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-
 .btn-gold-sm:hover{background:var(--ig-grad-h)}
 .btn-ink{background:var(--ink);color:var(--white);padding:8px 16px;font-size:13px;border-radius:var(--r-sm);box-shadow:var(--sh-sm)}
 .btn-ink:hover{background:var(--ink-2)}
+.btn-ghost{background:none;border:1px solid var(--n15);color:var(--n55);padding:8px 16px;font-size:13px;border-radius:var(--r-sm)}
+.btn-ghost:hover{border-color:var(--n25);color:var(--ink)}
 .badge{display:inline-flex;align-items:center;font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px;line-height:1;flex-shrink:0}
 .badge-free{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-br)}
 .badge-pro{background:var(--gold-light);color:var(--gold-dark);border:1px solid var(--gold-border)}
 
+/* ── AUTH MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--r-xl);padding:40px;max-width:400px;width:90%;box-shadow:var(--sh-lg);position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:18px;color:var(--n40);cursor:pointer;line-height:1;padding:4px}
+.modal-close:hover{color:var(--ink)}
+.modal-logo{font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:6px}
+.modal-logo .dot{background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-sub{font-size:13px;color:var(--n55);margin-bottom:28px}
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--white);border:1.5px solid var(--n15);border-radius:var(--r);padding:12px 20px;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;transition:all var(--t);font-family:var(--sans)}
+.btn-google:hover{border-color:var(--n25);box-shadow:var(--sh-sm)}
+.auth-divider{text-align:center;font-size:12px;color:var(--n25);margin:16px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--n15)}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.auth-field{margin-bottom:12px}
+.auth-field input{width:100%;padding:11px 13px;border:1px solid var(--n15);border-radius:var(--r-sm);font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:border-color var(--t)}
+.auth-field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
+.auth-field input::placeholder{color:var(--n25)}
+.auth-toggle{font-size:12.5px;color:var(--n55);text-align:center;margin-top:14px}
+.auth-toggle a{color:var(--p);cursor:pointer}
+.auth-error{font-size:12px;color:var(--err);background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:12px;display:none}
+.auth-error.show{display:block}
+
+/* ── HERO ── */
 #hero{padding:88px 0 72px;text-align:center;position:relative;overflow:hidden}
 #hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(157,26,82,.07) 0%,transparent 70%);pointer-events:none}
 .hero-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--p);background:var(--p-light);border:1px solid var(--p-border);padding:5px 14px 5px 10px;border-radius:100px;margin-bottom:28px}
@@ -88,179 +116,70 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-
 .hero-filter{margin-top:18px;font-size:12.5px;color:var(--n40);font-weight:400;line-height:1.7;padding:11px 20px;background:var(--n04);border:1px solid var(--n15);border-radius:100px;display:inline-block;text-align:center}
 .hero-filter strong{color:var(--ink);font-weight:500}
 
-#before-after{padding:80px 0;background:var(--n04);border-top:1px solid var(--n15);border-bottom:1px solid var(--n15)}
-.ba-inner{max-width:720px;margin:0 auto;padding:0 28px}
-.ba-label{text-align:center;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--n25);margin-bottom:10px}
-.ba-title{text-align:center;font-family:var(--serif);font-size:clamp(22px,3.5vw,32px);font-weight:400;letter-spacing:-.025em;color:var(--ink);margin-bottom:8px;line-height:1.2}
-.ba-title em{font-style:italic;color:var(--gold)}
-.ba-sub{text-align:center;font-size:14px;color:var(--n55);font-weight:400;margin-bottom:40px;line-height:1.65}
-.ba-case{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:start;margin-bottom:36px}
-.ba-col-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.ba-col-label.before{color:var(--err)}
-.ba-col-label.after{color:var(--ok)}
-.ba-col-label .cl-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.before .cl-dot{background:var(--err)}
-.after .cl-dot{background:var(--ok)}
-.chat-thread{display:flex;flex-direction:column;gap:8px}
-.chat-msg{max-width:85%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.6;font-weight:400}
-.msg-them{background:var(--white);border:1px solid var(--n15);border-radius:12px 12px 12px 3px;color:var(--ink);align-self:flex-start}
-.msg-us{border-radius:12px 12px 3px 12px;align-self:flex-end;color:var(--white)}
-.msg-us.bad{background:#8a8a86}
-.msg-us.good{background:var(--ig-grad)}
-.msg-meta-chat{font-size:10px;color:var(--n25);font-weight:400;margin-top:3px}
-.msg-meta-chat.right{text-align:right}
-.ba-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-top:32px}
-.ba-arrow-icon{font-size:20px;color:var(--n25)}
-.ba-arrow-label{font-size:10px;color:var(--n25);font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-align:center;line-height:1.4}
-.ba-result{display:flex;gap:10px;align-items:center;padding:14px 16px;border-radius:var(--r);margin-top:4px}
-.ba-result.bad{background:var(--err-bg);border:1px solid var(--err-br)}
-.ba-result.good{background:var(--ok-bg);border:1px solid var(--ok-br)}
-.ba-result-ico{font-size:16px;flex-shrink:0}
-.ba-result p{font-size:12.5px;font-weight:400;line-height:1.5}
-.ba-result.bad p{color:var(--err)}
-.ba-result.good p{color:var(--ok)}
-.ba-insight{text-align:center;font-size:13px;color:var(--n55);font-weight:400;line-height:1.7;padding:0 20px}
-.ba-insight strong{color:var(--ink);font-weight:500}
-
-#motor{padding:52px 0;background:var(--ink)}
-.motor-inner{max-width:680px;margin:0 auto;padding:0 28px}
-.motor-label{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:20px;text-align:center}
-.motor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-lg);overflow:hidden}
-.motor-cell{background:var(--ink);padding:22px 18px}
-.motor-num{font-family:var(--serif);font-size:26px;background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em;line-height:1;margin-bottom:7px}
-.motor-title{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.75);margin-bottom:4px;line-height:1.35}
-.motor-desc{font-size:11.5px;color:rgba(255,255,255,.3);font-weight:400;line-height:1.55}
-
-#social-proof{padding:56px 0;border-bottom:1px solid var(--n08)}
-.sp-inner{max-width:720px;margin:0 auto;padding:0 28px}
-.sp-label{text-align:center;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--n25);margin-bottom:32px}
-.testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.testi{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-lg);padding:22px 22px 18px;display:flex;flex-direction:column;position:relative}
-.testi-quote{font-family:var(--serif);font-size:42px;color:var(--gold-border);line-height:1;margin-bottom:8px;display:block}
-.testi-text{font-size:13.5px;color:var(--n70);line-height:1.7;font-weight:400;font-style:normal;margin-bottom:18px;flex:1}
-.testi-divider{height:1px;background:var(--n08);margin-bottom:14px}
-.testi-author{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.testi-av{width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--n15)}
-.testi-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.2}
-.testi-role{font-size:11.5px;color:var(--n40);font-weight:400;margin-top:2px}
-.testi-result{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--ok);background:var(--ok-bg);border:1px solid var(--ok-br);padding:6px 11px;border-radius:var(--r-sm);white-space:nowrap;align-self:flex-start}
-
-#contrast{padding:64px 0;background:var(--ink)}
-.contrast-inner{max-width:680px;margin:0 auto;padding:0 28px}
-.contrast-title{text-align:center;font-family:var(--serif);font-size:clamp(22px,3.5vw,32px);font-weight:400;color:rgba(255,255,255,.9);letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
-.contrast-title em{font-style:italic;color:#e57397}
-.contrast-subtitle{text-align:center;font-size:13.5px;color:rgba(255,255,255,.35);font-weight:400;margin-bottom:36px;line-height:1.6}
-.contrast-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.contrast-card{border-radius:14px;padding:24px 22px}
-.contrast-card.bad{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
-.contrast-card.good{background:rgba(157,26,82,.1);border:1px solid rgba(157,26,82,.22)}
-.contrast-card-label{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:7px}
-.contrast-card.bad .contrast-card-label{color:rgba(240,149,149,.6)}
-.contrast-card.good .contrast-card-label{color:#c2185b}
-.c-label-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.contrast-card.bad .c-label-dot{background:rgba(240,149,149,.5)}
-.contrast-card.good .c-label-dot{background:var(--p-soft)}
-.contrast-list{display:flex;flex-direction:column;gap:11px}
-.contrast-item{font-size:13px;font-weight:400;line-height:1.5;display:flex;align-items:flex-start;gap:9px}
-.contrast-card.bad .contrast-item{color:rgba(255,255,255,.28);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.12)}
-.contrast-card.good .contrast-item{color:rgba(255,255,255,.85)}
-.ci-icon{flex-shrink:0;margin-top:1px;font-size:12px}
-.contrast-card.bad .ci-icon{opacity:.3}
-.contrast-card.good .ci-icon{color:#5dcaa5}
-
-#how{padding:88px 0}
+/* ── SECTIONS reutilizables ── */
 .sec-hd{text-align:center;margin-bottom:52px}
 .sec-eyebrow{font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
 .sec-h2{font-family:var(--serif);font-size:clamp(24px,4vw,38px);font-weight:400;letter-spacing:-.025em;line-height:1.2;color:var(--ink);margin-bottom:9px}
 .sec-h2 em{font-style:italic;color:var(--gold)}
 .sec-p{font-size:14.5px;color:var(--n55);font-weight:400;line-height:1.7}
-.steps{display:flex;flex-direction:column;gap:0;position:relative;max-width:600px;margin:0 auto}
-.steps::before{content:'';position:absolute;left:19px;top:44px;bottom:44px;width:1px;background:var(--n15)}
-.step{display:flex;gap:24px;padding:20px 0}
-.step-num{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--n15);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;color:var(--gold);position:relative;z-index:1;flex-shrink:0}
-.step-body{padding-top:6px}
-.step-tag{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--n40);margin-bottom:5px}
-.step-title{font-size:15.5px;font-weight:500;color:var(--ink);margin-bottom:5px;letter-spacing:-.01em}
-.step-desc{font-size:13.5px;color:var(--n55);font-weight:400;line-height:1.65}
-.step-insight{display:inline-block;margin-top:8px;font-size:12px;font-style:italic;color:var(--gold-dark);background:var(--gold-light);border:1px solid var(--gold-border);padding:5px 11px;border-radius:100px}
 
-#demo-panel{padding:0 0 72px}
-.demo-card{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-lg)}
+/* ── DASHBOARD PRO ── */
+#dashboard{display:none;padding:40px 0 80px}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:gap}
+.dash-greeting{font-family:var(--serif);font-size:clamp(20px,3vw,28px);font-weight:400;letter-spacing:-.02em}
+.dash-greeting em{font-style:italic;color:var(--gold)}
+.dash-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.dash-card{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-lg);padding:18px 20px}
+.dash-card.hl{background:var(--gold-light);border-color:var(--gold-border)}
+.dash-card-label{font-size:11px;color:var(--n40);font-weight:400;margin-bottom:8px}
+.dash-card-val{font-family:var(--serif);font-size:32px;color:var(--ink);letter-spacing:-.03em;line-height:1;margin-bottom:4px}
+.dash-card.hl .dash-card-val{background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dash-card-delta{font-size:12px;color:var(--ok);font-weight:400}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.dash-box{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-lg);overflow:hidden}
+.dash-box-hd{padding:14px 18px;border-bottom:1px solid var(--n15);background:var(--n04)}
+.dash-box-title{font-size:13px;font-weight:500;color:var(--ink)}
+.dash-box-sub{font-size:11px;color:var(--n40)}
+.dash-box-body{padding:14px 18px}
+.gen-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--n08)}
+.gen-row:last-child{border-bottom:none}
+.gen-ico{width:32px;height:32px;border-radius:50%;background:var(--gold-light);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.gen-body{flex:1;min-width:0}
+.gen-title{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gen-meta{font-size:11px;color:var(--n40);margin-top:1px}
+.gen-msgs{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.gen-msg-btn{font-size:11px;background:var(--n04);border:1px solid var(--n15);border-radius:var(--r-sm);padding:3px 8px;cursor:pointer;color:var(--n55);transition:all var(--t);font-family:var(--sans)}
+.gen-msg-btn:hover{background:var(--gold-light);border-color:var(--gold-border);color:var(--gold-dark)}
+.result-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:100px}
+.rp-closed{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-br)}
+.rp-lost{background:var(--err-bg);color:var(--err);border:1px solid var(--err-br)}
+.rp-pending{background:var(--n08);color:var(--n40);border:1px solid var(--n15)}
+
+/* ── FEEDBACK MODAL ── */
+.feedback-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.feedback-modal.open{display:flex}
+.feedback-box{background:var(--white);border-radius:var(--r-xl);padding:32px;max-width:440px;width:90%;box-shadow:var(--sh-lg)}
+.fb-title{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:-.02em;margin-bottom:6px}
+.fb-msg{font-size:13px;color:var(--n55);background:var(--n04);border:1px solid var(--n15);border-radius:var(--r-sm);padding:12px 14px;margin:14px 0;line-height:1.6}
+.fb-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.fb-btn{padding:12px;border:2px solid var(--n15);border-radius:var(--r);font-size:14px;font-weight:500;background:var(--white);cursor:pointer;transition:all var(--t);font-family:var(--sans);display:flex;flex-direction:column;align-items:center;gap:4px}
+.fb-btn span{font-size:10px;font-weight:400;color:var(--n40)}
+.fb-btn:hover{border-color:var(--p);background:var(--p-light)}
+.fb-btn.selected-closed{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.fb-btn.selected-lost{border-color:var(--err);background:var(--err-bg);color:var(--err)}
+.fb-note{width:100%;padding:9px 12px;border:1px solid var(--n15);border-radius:var(--r-sm);font-family:var(--sans);font-size:13px;color:var(--ink);resize:none;outline:none;transition:border-color var(--t);margin-bottom:14px}
+.fb-note:focus{border-color:var(--gold)}
+.fb-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* ── APP SECTION ── */
+#app-section{padding:0 0 88px}
+.app-card{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-lg)}
+.screen{display:none}.screen.active{display:block}
 .chrome{padding:12px 18px;border-bottom:1px solid var(--n15);background:var(--n04);display:flex;align-items:center;gap:7px}
 .c-dot{width:10px;height:10px;border-radius:50%}
 .c-r{background:#ff5f57}.c-y{background:#febc2e}.c-g{background:#28c840}
 .c-bar{flex:1;height:20px;background:var(--white);border:1px solid var(--n15);border-radius:4px;margin:0 8px;display:flex;align-items:center;justify-content:center}
 .c-url{font-size:11px;color:var(--n40);letter-spacing:-.01em}
-.demo-tabs{display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--n15);background:var(--n04)}
-.demo-tab{background:none;border:none;border-bottom:2px solid transparent;padding:13px 15px;font-size:13px;font-weight:400;color:var(--n40);cursor:pointer;transition:all var(--t);font-family:var(--sans);margin-bottom:-1px}
-.demo-tab:hover{color:var(--ink)}
-.demo-tab.active{color:var(--ink);border-bottom-color:var(--gold);font-weight:500}
-.demo-ig-badge{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--info);background:var(--info-bg);border:1px solid var(--info-br);padding:3px 10px;border-radius:100px}
-.demo-live-dot{width:5px;height:5px;border-radius:50%;background:var(--ok);animation:blink 2s infinite;flex-shrink:0}
-.demo-content{display:none;padding:22px 24px 26px}
-.demo-content.active{display:block}
-.demo-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
-.dm-card{background:var(--n04);border-radius:var(--r-sm);padding:13px 14px}
-.dm-card.hl{background:var(--gold-light);border:1px solid var(--gold-border)}
-.dm-label{font-size:11px;color:var(--n40);margin-bottom:5px;font-weight:400;line-height:1.4}
-.dm-val{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:3px}
-.dm-delta{font-size:11px;font-weight:400}
-.dm-delta.up{color:var(--ok)}.dm-delta.down{color:var(--err)}
-.demo-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.demo-box{background:var(--n04);border-radius:var(--r);padding:16px 18px}
-.demo-box-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
-.demo-box-sub{font-size:11px;color:var(--n40);font-weight:400;margin-bottom:14px}
-.obj-rows{display:flex;flex-direction:column;gap:9px}
-.obj-row{display:flex;align-items:center;gap:9px}
-.obj-lbl{font-size:12px;color:var(--ink);min-width:108px;flex-shrink:0;font-weight:400}
-.obj-track{flex:1;height:5px;background:var(--n15);border-radius:3px;overflow:hidden}
-.obj-fill{height:100%;border-radius:3px}
-.obj-fill.danger{background:var(--err);opacity:.6}
-.obj-fill.warn{background:var(--warn);opacity:.7}
-.obj-fill.muted{background:var(--n25)}
-.obj-pct{font-size:11px;color:var(--n40);min-width:28px;text-align:right}
-.fuga-list{display:flex;flex-direction:column;gap:9px}
-.fuga-item{display:flex;align-items:flex-start;gap:10px}
-.fuga-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
-.fuga-num.d{background:var(--err-bg);color:var(--err)}
-.fuga-num.w{background:var(--warn-bg);color:var(--warn)}
-.fuga-num.o{background:var(--ok-bg);color:var(--ok)}
-.fuga-txt p{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.35}
-.fuga-txt span{font-size:11px;color:var(--n40);font-weight:400}
-.demo-convs{display:flex;flex-direction:column;gap:1px}
-.conv-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background var(--t);border-left:2px solid transparent}
-.conv-row:hover{background:var(--n04)}
-.cr-d{border-left-color:rgba(133,36,36,.25)}
-.cr-a{border-left-color:rgba(28,77,122,.25)}
-.cr-o{border-left-color:rgba(37,99,66,.25)}
-.conv-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
-.conv-body{flex:1;min-width:0}
-.conv-name{font-size:13px;font-weight:500;color:var(--ink)}
-.conv-preview{font-size:12px;color:var(--n55);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.conv-right{text-align:right;flex-shrink:0}
-.conv-time{font-size:11px;color:var(--n40);margin-bottom:2px}
-.conv-st{font-size:11px;font-weight:500}
-.st-ok{color:var(--ok)}.st-info{color:var(--info)}.st-err{color:var(--err)}.st-muted{color:var(--n40)}
-.conv-cta{text-align:center;padding:14px 0 2px;font-size:12.5px;color:var(--n40);font-weight:400}
-.conv-cta strong{color:var(--ink);font-weight:500}
-.insights-wrap{display:flex;flex-direction:column;gap:8px}
-.insight-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:var(--r-sm)}
-.insight-item.g{background:var(--ok-bg);border:1px solid var(--ok-br)}
-.insight-item.b{background:var(--err-bg);border:1px solid var(--err-br)}
-.insight-item.n{background:var(--n04);border:1px solid var(--n15)}
-.i-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.i-dot.g{background:var(--ok)}.i-dot.b{background:var(--err)}.i-dot.n{background:var(--n25)}
-.insight-item.g p,.insight-item.b p,.insight-item.n p{font-size:13px;font-weight:400;line-height:1.45}
-.insight-item.g p{color:var(--ok)}
-.insight-item.b p{color:var(--err)}
-.insight-item.n p{color:var(--ink)}
-.insight-item span{font-size:11.5px;color:var(--n40);font-weight:400;margin-top:2px;display:block}
-.demo-gen-cta{background:var(--gold-light);border:1px solid var(--gold-border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:4px;flex-wrap:wrap}
-.demo-gen-cta p{font-size:13px;color:var(--gold-dark);font-weight:400}
-
-#app-section{padding:0 0 88px}
-.app-card{background:var(--white);border:1px solid var(--n15);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-lg)}
-.screen{display:none}.screen.active{display:block}
 .form-body{padding:40px 44px 44px}
 .form-hd{margin-bottom:24px}
 .form-hd h2{font-family:var(--serif);font-size:26px;font-weight:400;letter-spacing:-.02em;line-height:1.2;margin-bottom:5px}
@@ -277,10 +196,8 @@ input[type=text]{width:100%;padding:11px 13px;border:1px solid var(--n15);border
 input[type=text]::placeholder{color:var(--n25)}
 input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
 .form-foot{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding-top:18px;border-top:1px solid var(--n08)}
-.form-meta{font-size:12px;color:var(--n40);font-weight:400}
 .expand-btn{background:none;border:none;font-size:12.5px;color:var(--n40);padding:0;cursor:pointer;display:flex;align-items:center;gap:5px;transition:color var(--t);font-family:var(--sans);font-weight:400}
 .expand-btn:hover{color:var(--ink)}
-
 .load-body{padding:56px 44px;text-align:center}
 .load-emblem{width:52px;height:52px;border-radius:50%;background:var(--gold-light);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-family:var(--serif);font-size:22px;color:var(--gold)}
 .load-h{font-family:var(--serif);font-size:21px;font-weight:400;letter-spacing:-.02em;margin-bottom:7px}
@@ -296,15 +213,12 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .l-item.act .l-pip{background:var(--gold);animation:pip 1s ease-in-out infinite}
 .l-item.done .l-pip{background:var(--ok)}
 @keyframes pip{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
-
 .error-body{padding:44px;text-align:center}
 .error-icon{font-size:32px;margin-bottom:16px}
 .error-h{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:8px}
 .error-p{font-size:13px;color:var(--n55);font-weight:400;margin-bottom:24px;line-height:1.6}
 .error-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-
 .ctx-strip{display:flex;align-items:flex-start;gap:10px;padding:11px 44px;background:var(--info-bg);border-bottom:1px solid var(--info-br);font-size:12px;color:var(--info);line-height:1.55}
-
 .out-body{padding:34px 44px 44px}
 .out-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
 .out-hd h2{font-family:var(--serif);font-size:23px;font-weight:400;letter-spacing:-.02em;margin-bottom:3px}
@@ -312,6 +226,7 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .btn-restart-top{background:none;border:1px solid var(--n15);border-radius:var(--r-sm);font-size:12px;color:var(--n55);padding:6px 12px;cursor:pointer;transition:all var(--t);font-family:var(--sans);font-weight:400;white-space:nowrap;flex-shrink:0}
 .btn-restart-top:hover{border-color:var(--n25);color:var(--ink);background:var(--n04)}
 .sys-banner{background:var(--gold-light);border:1px solid var(--gold-border);border-radius:var(--r-sm);padding:12px 15px;font-size:13px;color:var(--gold-dark);line-height:1.6;margin-bottom:22px;font-weight:400}
+.pro-banner{background:linear-gradient(135deg,rgba(157,26,82,.08),rgba(229,57,53,.06));border:1px solid var(--p-border);border-radius:var(--r-sm);padding:12px 15px;font-size:13px;color:var(--p-dark);line-height:1.6;margin-bottom:22px;display:flex;align-items:center;gap:8px}
 .msg-card{border:1px solid var(--n15);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
 .msg-head{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:var(--n04);border-bottom:1px solid var(--n15)}
 .msg-meta{display:flex;align-items:center;gap:10px}
@@ -319,12 +234,18 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pip-a{background:#4a9b6f}.pip-b{background:#7a6f3a}.pip-c{background:#5a7ab5}
 .msg-title{font-size:12px;font-weight:500;color:var(--ink);display:flex;align-items:center;gap:6px;margin-bottom:1px}
 .msg-intent{font-size:11px;color:var(--n40);font-weight:400}
+.msg-actions{display:flex;gap:6px;align-items:center}
 .btn-copy{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--n40);background:var(--white);border:1px solid var(--n15);border-radius:4px;padding:4px 10px;transition:all var(--t);cursor:pointer}
 .btn-copy:hover{background:var(--gold-light);border-color:var(--gold-border);color:var(--gold)}
 .btn-copy.copied{background:var(--ok-bg);border-color:var(--ok-br);color:var(--ok)}
 .btn-copy svg{width:10px;height:10px;flex-shrink:0;stroke-width:1.5}
+.btn-feedback{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;color:var(--n40);background:var(--white);border:1px solid var(--n15);border-radius:4px;padding:4px 10px;transition:all var(--t);cursor:pointer}
+.btn-feedback:hover{background:var(--p-light);border-color:var(--p-border);color:var(--p)}
+.btn-feedback.has-result{background:var(--ok-bg);border-color:var(--ok-br);color:var(--ok)}
 .msg-body{padding:15px}
 .msg-text{font-size:13.5px;line-height:1.8;color:var(--ink);font-weight:400;white-space:pre-wrap}
+
+/* ── PAYWALL ── */
 .click-m{text-align:center;padding:28px 20px;border-top:1px solid var(--n08);border-bottom:1px solid var(--n08);margin:22px 0}
 .cm-tag{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--n25);margin-bottom:12px}
 .click-m h3{font-family:var(--serif);font-size:clamp(18px,3vw,24px);font-weight:400;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px}
@@ -332,9 +253,7 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .click-m p{font-size:13px;color:var(--n55);font-weight:400;max-width:340px;margin:0 auto}
 .bridge{text-align:center;font-size:14.5px;color:var(--n55);font-weight:400;line-height:1.7;margin-bottom:18px}
 .bridge em{color:var(--ink);font-style:normal;font-weight:500}
-
-.paywall-insight{background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:13px 16px;font-size:13px;color:var(--err);line-height:1.65;margin-bottom:20px;font-weight:400}
-.paywall-insight strong{font-weight:500}
+.paywall-insight{background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:13px 16px;font-size:13px;color:var(--err);line-height:1.65;margin-bottom:20px}
 .paywall{background:var(--gold-light);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:26px;margin-bottom:18px}
 .pw-eyebrow{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:9px}
 .pw-h{font-family:var(--serif);font-size:clamp(16px,2.6vw,21px);font-weight:400;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:7px}
@@ -348,24 +267,6 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pw-item-txt{font-size:13px;line-height:1.6}
 .pw-item-txt strong{font-weight:500;color:var(--ink);display:block;margin-bottom:1px}
 .pw-item-txt span{color:var(--n55);font-weight:400}
-.pw-quote{background:var(--white);border:1px solid var(--gold-border);border-radius:var(--r-sm);padding:14px 18px}
-.pw-quote-text{font-size:13px;color:var(--n55);line-height:1.7;font-weight:400;font-style:italic;margin-bottom:12px}
-.pw-quote-author{display:flex;align-items:center;gap:10px}
-.pw-quote-av{width:32px;height:32px;border-radius:50%;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pw-quote-name{font-size:12.5px;font-weight:500;color:var(--ink)}
-.pw-quote-role{font-size:11px;color:var(--n40);font-weight:400}
-.pw-quote-result{font-size:11px;font-weight:500;color:var(--ok)}
-.pw-roi{background:var(--white);border:1px solid var(--p-border);border-radius:var(--r);padding:18px 20px}
-.pw-roi-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--n40);margin-bottom:14px}
-.pw-roi-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:10px}
-.pw-roi-item{text-align:center}
-.pw-roi-item.highlight .pw-roi-val{background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.pw-roi-val{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--ink);letter-spacing:-.02em;margin-bottom:4px}
-.pw-roi-desc{font-size:11px;color:var(--n55);font-weight:400;line-height:1.45}
-.pw-roi-arrow{font-size:16px;color:var(--n25);flex-shrink:0}
-.pw-roi-note{font-size:12.5px;color:var(--n55);font-weight:400;text-align:center;padding-top:10px;border-top:1px solid var(--p-border)}
-.pw-roi-note strong{color:var(--ink);font-weight:500}
-.pw-pricing-block{margin-bottom:16px}
 .pw-compare-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-bottom:14px}
 .pw-compare-item{background:var(--n04);border:1px solid var(--n15);border-radius:var(--r-sm);padding:14px 16px;text-align:center}
 .pw-compare-item.featured{background:var(--p-light);border-color:var(--p-border)}
@@ -376,17 +277,14 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .pw-compare-price span{font-family:var(--sans);font-size:12px;color:var(--n55);font-weight:400}
 .pw-compare-sub{font-size:11px;color:var(--n40);font-weight:400}
 .pw-compare-divider{font-size:11px;color:var(--n25);font-weight:500;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
-.pw-launch-banner{display:flex;align-items:flex-start;gap:10px;background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--err);line-height:1.55}
+.pw-launch-banner{display:flex;align-items:flex-start;gap:10px;background:var(--err-bg);border:1px solid var(--err-br);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--err);line-height:1.55;margin-bottom:16px}
 .pw-launch-dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:4px;animation:blink 1.5s ease-in-out infinite}
-.pw-launch-banner strong{font-weight:500}
-.pw-launch-banner span{color:var(--err);opacity:.8}
-.price-ctx{font-size:13px;color:var(--n55);font-weight:400;line-height:1.65;margin-bottom:16px}
-.btn-upgrade{width:100%;display:block;background:var(--ig-grad);color:var(--white);border:none;border-radius:var(--r);padding:14px;font-size:14.5px;font-weight:500;letter-spacing:-.01em;text-align:center;transition:all var(--t);box-shadow:var(--ig-glow);cursor:pointer}
+.btn-upgrade{width:100%;display:block;background:var(--ig-grad);color:var(--white);border:none;border-radius:var(--r);padding:14px;font-size:14.5px;font-weight:500;letter-spacing:-.01em;text-align:center;transition:all var(--t);box-shadow:var(--ig-glow);cursor:pointer;font-family:var(--sans)}
 .btn-upgrade:hover{background:var(--ig-grad-h);box-shadow:var(--ig-glow-h)}
-.btn-upgrade:active{transform:scale(.98)}
+.btn-upgrade:disabled{opacity:.6;cursor:wait}
 .pw-gtee{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:11.5px;color:var(--n40);font-weight:400}
-.pw-filter{text-align:center;font-size:12px;color:var(--n40);font-weight:400;line-height:1.7;padding:14px 0 0}
 
+/* ── VS / ROADMAP ── */
 #vs{padding:88px 0}
 .vs-table{max-width:680px;margin:48px auto 0;border:1px solid var(--n15);border-radius:var(--r-lg);overflow:hidden}
 .vs-header{display:grid;grid-template-columns:1fr 140px 140px;background:var(--n04);border-bottom:1px solid var(--n15)}
@@ -395,18 +293,16 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .vs-row{display:grid;grid-template-columns:1fr 140px 140px;border-bottom:1px solid var(--n08)}
 .vs-row:last-child{border-bottom:none}
 .vs-cell{padding:13px 18px;font-size:13px;color:var(--n55);font-weight:400;display:flex;align-items:center}
-.vs-cell.feat{color:var(--ink)}
-.vs-cell.center{justify-content:center}
+.vs-cell.feat{color:var(--ink)}.vs-cell.center{justify-content:center}
 .vs-cell.hl{background:rgba(122,111,58,.04);justify-content:center}
 .check{color:var(--ok)}.cross{color:var(--n25)}.partial{color:var(--warn);font-size:11px;font-weight:500}
-
 #roadmap{padding:80px 0;background:var(--ink)}
 .roadmap-inner{max-width:760px;margin:0 auto;padding:0 28px}
 .rm-hd{text-align:center;margin-bottom:44px}
 .rm-hd h2{font-family:var(--serif);font-size:clamp(24px,4vw,36px);font-weight:400;letter-spacing:-.025em;color:var(--white);margin-bottom:9px}
 .rm-hd h2 em{font-style:italic;color:#e57397}
 .rm-hd p{font-size:14px;color:rgba(255,255,255,.4);font-weight:400}
-.rm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:36px}
+.rm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .rm-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--r-lg);padding:22px;transition:border-color var(--t)}
 .rm-card:hover{border-color:rgba(255,255,255,.14)}
 .rm-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -416,57 +312,138 @@ input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-
 .rm-badge.soon{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1)}
 .rm-card h3{font-size:14px;font-weight:500;color:rgba(255,255,255,.85);margin-bottom:5px}
 .rm-card p{font-size:12.5px;color:rgba(255,255,255,.35);line-height:1.65;font-weight:400}
-.dp-preview{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:var(--r-xl);overflow:hidden}
-.dp-lbl{font-size:11px;color:rgba(255,255,255,.25);text-align:center;padding:14px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:400}
-.dp-grid{display:grid;grid-template-columns:repeat(4,1fr)}
-.dp-card{padding:20px 18px;border-right:1px solid rgba(255,255,255,.06)}
-.dp-card:last-child{border-right:none}
-.dp-label{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:400}
-.dp-val{font-family:var(--serif);font-size:26px;color:var(--white);line-height:1;letter-spacing:-.03em;margin-bottom:4px;font-weight:400}
-.dp-delta{font-size:11px;color:#5dcaa5}
-
 #final{padding:100px 0;text-align:center}
 .final-h{font-family:var(--serif);font-size:clamp(28px,5vw,52px);font-weight:400;line-height:1.12;letter-spacing:-.03em;margin-bottom:18px}
 .final-h em{font-style:italic;color:var(--gold)}
 .final-sub{font-size:15px;color:var(--n55);font-weight:400;margin-bottom:34px;line-height:1.7}
 .final-note{font-size:12px;color:var(--n25);margin-top:16px;font-weight:400}
-
-footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
+footer{background:var(--n04);border-top:1px solid var(--n15);padding:24px 0;text-align:center}
 
 @media(max-width:600px){
   .form-body,.out-body,.load-body,.error-body{padding:26px 22px 30px}
-  .testimonials{grid-template-columns:1fr}
-  .contrast-cards{grid-template-columns:1fr}
-  .demo-metrics{grid-template-columns:repeat(2,1fr)}
-  .demo-grid2{grid-template-columns:1fr}
-  .demo-gen-cta{flex-direction:column;align-items:flex-start}
+  .dash-metrics{grid-template-columns:repeat(2,1fr)}
+  .dash-grid{grid-template-columns:1fr}
   .vs-header,.vs-row{grid-template-columns:1fr 90px 90px}
   .rm-grid{grid-template-columns:1fr}
-  .dp-grid{grid-template-columns:repeat(2,1fr)}
-  .dp-card:nth-child(2){border-right:none}
-  .dp-card:nth-child(3){border-top:1px solid rgba(255,255,255,.06)}
-  .ba-case{grid-template-columns:1fr;gap:24px}
-  .ba-arrow{flex-direction:row;padding-top:0;padding:8px 0}
-  .ba-arrow-icon{transform:rotate(90deg)}
-  .motor-grid{grid-template-columns:repeat(2,1fr)}
   .ctx-strip{padding:11px 22px}
   .out-hd{flex-direction:column;align-items:flex-start}
+  .pw-compare-row{grid-template-columns:1fr}
+  .pw-compare-divider{text-align:center}
 }
 </style>
 </head>
 <body>
 
+<!-- ── AUTH MODAL ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="modal-logo">CLOSER<span class="dot">.</span></div>
+    <p class="modal-sub" id="auth-modal-sub">Iniciá sesión para guardar tu sistema y activar el aprendizaje.</p>
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+      Continuar con Google
+    </button>
+    <div class="auth-divider">o</div>
+    <div class="auth-error" id="auth-error"></div>
+    <div class="auth-field"><input type="email" id="auth-email" placeholder="tu@email.com" autocomplete="email"></div>
+    <div class="auth-field" id="auth-pass-wrap"><input type="password" id="auth-pass" placeholder="Contraseña" autocomplete="current-password"></div>
+    <div class="auth-field" id="auth-name-wrap" style="display:none"><input type="text" id="auth-name" placeholder="Tu nombre" autocomplete="name"></div>
+    <button class="btn btn-gold" style="width:100%;margin-top:4px" id="auth-submit-btn" onclick="submitAuth()">Ingresar</button>
+    <p class="auth-toggle" id="auth-toggle">¿No tenés cuenta? <a onclick="toggleAuthMode()">Registrate gratis</a></p>
+  </div>
+</div>
+
+<!-- ── FEEDBACK MODAL ──────────────────────────────────────────── -->
+<div class="feedback-modal" id="feedback-modal">
+  <div class="feedback-box">
+    <div class="fb-title">¿Cómo salió?</div>
+    <p style="font-size:13px;color:var(--n55);margin-bottom:8px">Mensaje: <strong id="fb-msg-type"></strong></p>
+    <div class="fb-msg" id="fb-msg-preview"></div>
+    <div class="fb-btns">
+      <button class="fb-btn" id="fb-closed" onclick="selectResult('closed')">✅ Cerré la venta<span>Funcionó</span></button>
+      <button class="fb-btn" id="fb-lost" onclick="selectResult('lost')">❌ No cerré<span>No funcionó</span></button>
+    </div>
+    <textarea class="fb-note" id="fb-note" rows="2" placeholder="Nota opcional (qué pasó, qué respondió el cliente…)"></textarea>
+    <div class="fb-actions">
+      <button class="btn btn-ghost" onclick="closeFeedback()">Cancelar</button>
+      <button class="btn btn-gold-sm" onclick="submitFeedback()">Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
 <nav>
   <div class="nav-in">
-    <a href="#" class="logo">CLOSER<span class="dot">.</span></a>
+    <a href="#" class="logo" onclick="showLanding()">CLOSER<span class="dot">.</span></a>
     <div class="nav-r">
-      <a href="#vs" class="nav-link" style="margin-right:4px">vs. los bots</a>
-      <a href="#roadmap" class="nav-link" style="margin-right:10px">Sistema PRO</a>
-      <button class="btn btn-ink" onclick="goApp()">Ver demo →</button>
+      <a href="#vs" class="nav-link" id="nav-vs" style="margin-right:4px">vs. los bots</a>
+      <a href="#roadmap" class="nav-link" id="nav-rm" style="margin-right:10px">Sistema PRO</a>
+      <!-- Estado anon -->
+      <div id="nav-anon" style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="openAuthModal()">Ingresar</button>
+        <button class="btn btn-gold-sm" onclick="goApp()">Ver demo →</button>
+      </div>
+      <!-- Estado auth -->
+      <div id="nav-auth" style="display:none;gap:8px;align-items:center">
+        <span class="nav-plan-badge" id="nav-plan-badge">FREE</span>
+        <div class="nav-avatar" id="nav-avatar" onclick="openUserMenu()">?</div>
+      </div>
     </div>
   </div>
 </nav>
 
+<!-- ── DASHBOARD PRO ─────────────────────────────────────────────── -->
+<section id="dashboard" class="w">
+  <div class="dash-header">
+    <div>
+      <div class="dash-greeting">Bienvenido, <em id="dash-name">vendedor</em></div>
+      <p style="font-size:13px;color:var(--n55);margin-top:4px">Tu sistema aprende cada vez que marcás un resultado.</p>
+    </div>
+    <button class="btn btn-gold-sm" onclick="goApp()">+ Nuevo sistema</button>
+  </div>
+  <div class="dash-metrics">
+    <div class="dash-card hl">
+      <div class="dash-card-label">Ratio de cierre</div>
+      <div class="dash-card-val" id="dash-ratio">—</div>
+      <div class="dash-card-delta" id="dash-ratio-delta"></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-label">Ventas cerradas</div>
+      <div class="dash-card-val" id="dash-closed">—</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-label">Mensajes evaluados</div>
+      <div class="dash-card-val" id="dash-total">—</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-label">Sistemas generados</div>
+      <div class="dash-card-val" id="dash-gens">—</div>
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-box">
+      <div class="dash-box-hd">
+        <div class="dash-box-title">Últimas generaciones</div>
+        <div class="dash-box-sub">Marcá resultados para entrenar tu sistema</div>
+      </div>
+      <div class="dash-box-body" id="dash-gens-list">
+        <p style="font-size:13px;color:var(--n40);text-align:center;padding:20px 0">Cargando…</p>
+      </div>
+    </div>
+    <div class="dash-box">
+      <div class="dash-box-hd">
+        <div class="dash-box-title">Qué mensajes te funcionan</div>
+        <div class="dash-box-sub">Basado en tus resultados reales</div>
+      </div>
+      <div class="dash-box-body" id="dash-by-type">
+        <p style="font-size:13px;color:var(--n40);text-align:center;padding:20px 0">Cargando…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
 <section id="hero">
   <div class="w">
     <div class="hero-kicker fade-in"><div class="kicker-dot"></div>El único que diagnostica tus DMs reales</div>
@@ -475,218 +452,13 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
     <div class="cta-group fade-in">
       <button class="btn btn-gold" onclick="goApp()">Ver mi diagnóstico gratis →</button>
       <span class="cta-note">Sin tarjeta · Sin bot · 30 segundos</span>
-      <div class="hero-filter">
-        Esto no es para todos.<br>
-        Es para los que <strong>ya están vendiendo por DM</strong> y quieren cerrar más — no para los que recién empiezan.
-      </div>
+      <div class="hero-filter">Esto no es para todos.<br>Es para los que <strong>ya están vendiendo por DM</strong> y quieren cerrar más.</div>
     </div>
   </div>
 </section>
 
-<section id="social-proof">
-  <div class="sp-inner">
-    <div class="sp-label">Lo que dicen quienes ya lo usan</div>
-    <div class="testimonials">
-      <div class="testi">
-        <span class="testi-quote">"</span>
-        <p class="testi-text">Empecé a usar los mensajes el mismo día y cerré dos ventas que tenía abandonadas hace una semana. Lo de 'avisame si querés' era mi frase más usada — ahora la eliminé.</p>
-        <div class="testi-divider"></div>
-        <div class="testi-author">
-          <div class="testi-av" style="background:#f5f2e4;color:#7a6f3a">MG</div>
-          <div><div class="testi-name">Martina G.</div><div class="testi-role">Coach de nutrición · Buenos Aires</div></div>
-        </div>
-        <div class="testi-result">↑ 2 ventas recuperadas en 48hs</div>
-      </div>
-      <div class="testi">
-        <span class="testi-quote">"</span>
-        <p class="testi-text">Lo que más me sorprendió fue el diagnóstico. Me mostró que el 71% de mis conversaciones se cortaban cuando preguntaban el precio. Nunca lo había medido.</p>
-        <div class="testi-divider"></div>
-        <div class="testi-author">
-          <div class="testi-av" style="background:#eaf2fb;color:#1c4d7a">LC</div>
-          <div><div class="testi-name">Lucas C.</div><div class="testi-role">Consultor de marketing · Rosario</div></div>
-        </div>
-        <div class="testi-result">↑ Ratio de cierre: 18% → 34%</div>
-      </div>
-      <div class="testi">
-        <span class="testi-quote">"</span>
-        <p class="testi-text">Probé ManyChat y otros bots. Todos suenan igual. CLOSER es lo primero que siente que lo escribí yo. Mis clientes no notan diferencia — pero sí notan que respondo mejor.</p>
-        <div class="testi-divider"></div>
-        <div class="testi-author">
-          <div class="testi-av" style="background:#ebf5ef;color:#256342">VA</div>
-          <div><div class="testi-name">Valeria A.</div><div class="testi-role">Inmobiliaria · Córdoba</div></div>
-        </div>
-        <div class="testi-result">↑ 4 operaciones en 3 semanas</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="before-after">
-  <div class="ba-inner">
-    <div class="ba-label">Caso real</div>
-    <h2 class="ba-title">Así se ve la diferencia.<br><em>Mismo cliente. Mismo producto.</em></h2>
-    <p class="ba-sub">Martina vende coaching de nutrición por Instagram. Antes de CLOSER y después.<br>El producto no cambió. Cambió lo que dice en el momento exacto.</p>
-    <div class="ba-case">
-      <div>
-        <div class="ba-col-label before"><div class="cl-dot"></div>Sin CLOSER</div>
-        <div class="chat-thread">
-          <div class="chat-msg msg-them">Hola! Vi tu perfil, ¿cuánto sale el programa?</div>
-          <div class="chat-msg msg-us bad">Hola! El programa de 3 meses sale $85.000 🌿</div>
-          <p class="msg-meta-chat right">Martina</p>
-          <div class="chat-msg msg-them">Ah ok, gracias lo voy a pensar</div>
-          <div class="chat-msg msg-us bad">¡Claro! Avisame cuando quieras 😊</div>
-          <p class="msg-meta-chat right">Martina</p>
-        </div>
-        <div class="ba-result bad"><div class="ba-result-ico">✕</div><p>Silencio. Conversación perdida. Nunca más respondió.</p></div>
-      </div>
-      <div class="ba-arrow">
-        <div class="ba-arrow-icon">→</div>
-        <div class="ba-arrow-label">Con<br>CLOSER</div>
-      </div>
-      <div>
-        <div class="ba-col-label after"><div class="cl-dot"></div>Con CLOSER</div>
-        <div class="chat-thread">
-          <div class="chat-msg msg-them">Hola! Vi tu perfil, ¿cuánto sale el programa?</div>
-          <div class="chat-msg msg-us good">Depende de lo que necesitás exactamente. Antes de contarte el precio, decime: ¿qué es lo que más querés cambiar con tu alimentación?</div>
-          <p class="msg-meta-chat right">Martina</p>
-          <div class="chat-msg msg-them">La verdad quiero perder peso pero sin morirme de hambre, ya probé mil dietas</div>
-          <div class="chat-msg msg-us good">Entiendo, eso es exactamente lo que trabajo. El programa sale $85.000 por 3 meses — y lo que obtenés es un plan que se adapta a tu vida real, no una dieta que abandonás en 2 semanas. ¿Eso es lo que estás buscando?</div>
-          <p class="msg-meta-chat right">Martina</p>
-        </div>
-        <div class="ba-result good"><div class="ba-result-ico">✓</div><p>Respondió en 4 minutos. Pagó el mismo día.</p></div>
-      </div>
-    </div>
-    <p class="ba-insight">CLOSER detectó que Martina daba el precio directo en el 78% de sus conversaciones.<br><strong>Le generó el mensaje exacto para esa situación. Ese día recuperó 3 ventas similares.</strong></p>
-  </div>
-</section>
-
-<section id="contrast">
-  <div class="contrast-inner">
-    <h2 class="contrast-title">El mercado está lleno de bots.<br><em>Está vacío de aliados.</em></h2>
-    <p class="contrast-subtitle">Todos automatizan. Nadie diagnostica, enseña ni mejora al vendedor humano.</p>
-    <div class="contrast-cards">
-      <div class="contrast-card bad">
-        <div class="contrast-card-label"><div class="c-label-dot"></div>Los bots de hoy</div>
-        <div class="contrast-list">
-          <div class="contrast-item"><span class="ci-icon">✕</span>Responden por vos</div>
-          <div class="contrast-item"><span class="ci-icon">✕</span>Flujos rígidos que se rompen</div>
-          <div class="contrast-item"><span class="ci-icon">✕</span>Miden clics, no ventas</div>
-          <div class="contrast-item"><span class="ci-icon">✕</span>Suenan a robot</div>
-          <div class="contrast-item"><span class="ci-icon">✕</span>No aprenden de tus errores</div>
-          <div class="contrast-item"><span class="ci-icon">✕</span>Te hacen depender de ellos</div>
-        </div>
-      </div>
-      <div class="contrast-card good">
-        <div class="contrast-card-label"><div class="c-label-dot"></div>CLOSER.</div>
-        <div class="contrast-list">
-          <div class="contrast-item"><span class="ci-icon">→</span>Te dice qué decir, decidís vos</div>
-          <div class="contrast-item"><span class="ci-icon">→</span>Sistema calibrado a tu negocio real</div>
-          <div class="contrast-item"><span class="ci-icon">→</span>Mide si cerraste la venta o no</div>
-          <div class="contrast-item"><span class="ci-icon">→</span>Tu voz, tu tono, tu estilo</div>
-          <div class="contrast-item"><span class="ci-icon">→</span>Detecta tus patrones de fuga</div>
-          <div class="contrast-item"><span class="ci-icon">→</span>Te hace mejor con cada conversación</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="how">
-  <div class="w">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Cómo funciona</div>
-      <h2 class="sec-h2">Analiza · Diagnostica ·<br><em>Genera · Mide</em></h2>
-      <p class="sec-p">Cuatro pasos que ningún bot hace. Todos diseñados para un solo resultado: que vos cierres más.</p>
-    </div>
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-tag">Análisis</div><div class="step-title">Analizamos tus conversaciones reales</div><p class="step-desc">Pegás tus DMs o conectás Instagram y CLOSER lee todo lo que pasó. Cuántas ventas perdiste, en qué momento exacto, con qué mensaje.</p><span class="step-insight">"Perdiste 31 ventas después de dar el precio. Así se arregla."</span></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-tag">Diagnóstico</div><div class="step-title">Detectamos tus patrones de fuga</div><p class="step-desc">Qué frases usás que cortan la conversación, en qué instancias perdés al cliente, y qué objeciones específicas recibís más.</p><span class="step-insight">"Usás 'avisame si querés' en el 67% de tus cierres fallidos."</span></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-tag">Sistema</div><div class="step-title">Generamos tu sistema calibrado</div><p class="step-desc">No son plantillas. Son mensajes con tu tono, para tus objeciones reales, en el lenguaje de tu cliente. Listos para copiar y usar ahora.</p><span class="step-insight">Inicio · precio · objeción · reactivación · cierre</span></div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-tag">Métricas</div><div class="step-title">Medimos qué convierte y qué no</div><p class="step-desc">Cada vez que usás un mensaje marcás si cerró o no. CLOSER aprende. Con el tiempo sabe exactamente qué funciona en tu negocio.</p><span class="step-insight">El único KPI que importa: ventas cerradas.</span></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="motor">
-  <div class="motor-inner">
-    <div class="motor-label">Cómo funciona por dentro</div>
-    <div class="motor-grid">
-      <div class="motor-cell"><div class="motor-num">1°</div><div class="motor-title">Búsqueda web en tiempo real</div><div class="motor-desc">Antes de generar, buscamos qué funciona hoy en tu rubro. Tendencias, objeciones frecuentes, lenguaje que convierte.</div></div>
-      <div class="motor-cell"><div class="motor-num">2°</div><div class="motor-title">Análisis de tus conversaciones</div><div class="motor-desc">Detectamos patrones en tus DMs reales: qué frases cortan la venta, en qué momento exacto y con qué frecuencia.</div></div>
-      <div class="motor-cell"><div class="motor-num">3°</div><div class="motor-title">Generación calibrada con Claude</div><div class="motor-desc">Usamos Claude (Anthropic) con un prompt especializado en ventas latam. No es ChatGPT genérico — es un modelo entrenado en tu contexto.</div></div>
-      <div class="motor-cell"><div class="motor-num">4°</div><div class="motor-title">Loop de aprendizaje por venta</div><div class="motor-desc">Cada vez que marcás si un mensaje cerró o no, el sistema aprende. Con el tiempo sabe exactamente qué funciona en tu negocio específico.</div></div>
-    </div>
-  </div>
-</section>
-
-<section id="demo-panel">
-  <div class="w">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Demo en vivo</div>
-      <h2 class="sec-h2">Así se ve tu diagnóstico.<br><em>Antes de generar un solo mensaje.</em></h2>
-      <p class="sec-p">Conectás Instagram o pegás conversaciones y CLOSER te muestra exactamente dónde está el problema.</p>
-    </div>
-    <div class="demo-card">
-      <div class="chrome"><div class="c-dot c-r"></div><div class="c-dot c-y"></div><div class="c-dot c-g"></div><div class="c-bar"><span class="c-url">closer.kairoinc.lat · Diagnóstico de conversaciones</span></div></div>
-      <div class="demo-tabs">
-        <button class="demo-tab active" onclick="switchTab(this,'tab-diag')">Diagnóstico</button>
-        <button class="demo-tab" onclick="switchTab(this,'tab-convs')">Conversaciones</button>
-        <button class="demo-tab" onclick="switchTab(this,'tab-insights')">Insights</button>
-        <div class="demo-ig-badge"><span class="demo-live-dot"></span>Instagram conectado</div>
-      </div>
-      <div class="demo-content active" id="tab-diag">
-        <div class="demo-metrics">
-          <div class="dm-card"><div class="dm-label">Conversaciones analizadas</div><div class="dm-val">63</div><div class="dm-delta up">↑ +14 este mes</div></div>
-          <div class="dm-card"><div class="dm-label">Ratio de cierre actual</div><div class="dm-val">21%</div><div class="dm-delta down">↓ potencial: 38%</div></div>
-          <div class="dm-card"><div class="dm-label">Ventas perdidas en objeción</div><div class="dm-val">31</div><div class="dm-delta down">49% del total</div></div>
-          <div class="dm-card hl"><div class="dm-label">Recuperables con sistema</div><div class="dm-val">18</div><div class="dm-delta up">↑ oportunidad directa</div></div>
-        </div>
-        <div class="demo-grid2">
-          <div class="demo-box">
-            <div class="demo-box-title">Objeciones más frecuentes</div>
-            <div class="demo-box-sub">Ordenadas por frecuencia en tus DMs</div>
-            <div class="obj-rows">
-              <div class="obj-row"><span class="obj-lbl">"Es caro"</span><div class="obj-track"><div class="obj-fill danger" style="width:78%"></div></div><span class="obj-pct">78%</span></div>
-              <div class="obj-row"><span class="obj-lbl">"Lo pienso"</span><div class="obj-track"><div class="obj-fill warn" style="width:61%"></div></div><span class="obj-pct">61%</span></div>
-              <div class="obj-row"><span class="obj-lbl">"Ya te aviso"</span><div class="obj-track"><div class="obj-fill warn" style="width:44%"></div></div><span class="obj-pct">44%</span></div>
-              <div class="obj-row"><span class="obj-lbl">"No tengo tiempo"</span><div class="obj-track"><div class="obj-fill muted" style="width:22%"></div></div><span class="obj-pct">22%</span></div>
-            </div>
-          </div>
-          <div class="demo-box">
-            <div class="demo-box-title">Momentos de fuga</div>
-            <div class="demo-box-sub">Dónde se cortan las conversaciones</div>
-            <div class="fuga-list">
-              <div class="fuga-item"><div class="fuga-num d">31</div><div class="fuga-txt"><p>Después de que preguntan el precio</p><span>Das el número directo → silencio</span></div></div>
-              <div class="fuga-item"><div class="fuga-num w">14</div><div class="fuga-txt"><p>Cuando dicen "lo pienso"</p><span>Respondés "bueno, avisame" → fin</span></div></div>
-              <div class="fuga-item"><div class="fuga-num o">6</div><div class="fuga-txt"><p>Después de 48hs sin respuesta</p><span>No reactivás → cliente se enfría</span></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="demo-content" id="tab-convs">
-        <div class="demo-convs">
-          <div class="conv-row cr-d"><div class="conv-av" style="background:#fdeeed;color:#852424">MG</div><div class="conv-body"><div class="conv-name">María G.</div><div class="conv-preview">"¿y cuánto sale el programa completo?" → sin respuesta 3 días</div></div><div class="conv-right"><div class="conv-time">hace 3d</div><div class="conv-st st-muted">Fría</div></div></div>
-          <div class="conv-row cr-d"><div class="conv-av" style="background:#fdeeed;color:#852424">LC</div><div class="conv-body"><div class="conv-name">Lucas C.</div><div class="conv-preview">"lo pienso y te aviso" — última tuya: "bueno dale"</div></div><div class="conv-right"><div class="conv-time">hace 5d</div><div class="conv-st st-err">Perdida</div></div></div>
-          <div class="conv-row cr-a"><div class="conv-av" style="background:#eaf2fb;color:#1c4d7a">VA</div><div class="conv-body"><div class="conv-name">Valeria A.</div><div class="conv-preview">"¿empezamos la semana que viene?" — esperando tu respuesta</div></div><div class="conv-right"><div class="conv-time">hace 1h</div><div class="conv-st st-info">Activa</div></div></div>
-          <div class="conv-row cr-o"><div class="conv-av" style="background:#ebf5ef;color:#256342">RM</div><div class="conv-body"><div class="conv-name">Rodrigo M.</div><div class="conv-preview">Pagó el primer mes. Usaste redirección de valor.</div></div><div class="conv-right"><div class="conv-time">hace 2d</div><div class="conv-st st-ok">Cerrada</div></div></div>
-          <div class="conv-row cr-d"><div class="conv-av" style="background:#fdf4e3;color:#7a5c17">PA</div><div class="conv-body"><div class="conv-name">Paula A.</div><div class="conv-preview">"está un poco caro para mí ahora" → no respondiste</div></div><div class="conv-right"><div class="conv-time">hace 6d</div><div class="conv-st st-err">Perdida</div></div></div>
-        </div>
-        <div class="conv-cta">5 conversaciones · <strong>58 más en el análisis completo</strong></div>
-      </div>
-      <div class="demo-content" id="tab-insights">
-        <div class="insights-wrap">
-          <div class="insight-item g"><div class="i-dot g"></div><div><p>Cuando hacés una pregunta antes de vender, tu tasa de respuesta sube 2x</p><span>Detectado en 12 conversaciones exitosas</span></div></div>
-          <div class="insight-item b"><div class="i-dot b"></div><div><p>Usás "si te interesa avisame" en el 67% de tus cierres fallidos</p><span>Es tu frase de mayor fuga — el sistema la reemplaza</span></div></div>
-          <div class="insight-item b"><div class="i-dot b"></div><div><p>Das el precio antes de establecer valor en 4 de cada 5 conversaciones</p><span>El orden importa más que el número</span></div></div>
-          <div class="insight-item n"><div class="i-dot n"></div><div><p>Tus mejores cierres fueron conversaciones de 6 a 9 mensajes</p><span>Ni muy cortas ni muy largas — el sistema sabe cuándo cerrar</span></div></div>
-          <div class="demo-gen-cta"><p>Basado en 63 conversaciones reales</p><button class="btn btn-gold-sm" onclick="goApp()">Generar mi sistema →</button></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="app-section">
+<!-- ── APP ───────────────────────────────────────────────────────── -->
+<section id="app-section" style="padding:0 0 88px">
   <div class="w">
     <div class="sec-hd">
       <div class="sec-eyebrow">Tu aliado en acción</div>
@@ -696,14 +468,14 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
     <div class="app-card" id="app-card">
       <div class="chrome"><div class="c-dot c-r"></div><div class="c-dot c-y"></div><div class="c-dot c-g"></div><div class="c-bar"><span class="c-url">closer.kairoinc.lat · Tu aliado de ventas</span></div></div>
 
+      <!-- FORM -->
       <div class="screen active" id="s-form">
         <div class="form-body">
-          <div class="form-hd"><h2>Contame sobre tu negocio</h2><p>Con dos datos alcanza para empezar. Podés agregar más para afinar el sistema.</p></div>
+          <div class="form-hd"><h2>Contame sobre tu negocio</h2><p>Con dos datos alcanza para empezar.</p></div>
           <div class="prog-wrap"><div class="prog-bar" id="prog"></div></div>
           <div class="field">
             <div class="f-label"><span class="f-num">1</span>¿Qué vendés?</div>
             <input type="text" id="f1" placeholder="Ej: coaching de ventas para emprendedores…" oninput="updProg()" maxlength="300">
-            <p class="f-hint">Cuanto más específico, más preciso el sistema</p>
           </div>
           <div class="field">
             <div class="f-label"><span class="f-num">2</span>¿A quién le vendés?</div>
@@ -716,7 +488,6 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
           <div class="field field-optional" id="fo4">
             <div class="f-label"><span class="f-num">4</span>¿Cuál es la objeción que más recibís?</div>
             <input type="text" id="f4" placeholder="Ej: 'es caro', 'lo pienso', 'ya te aviso'…" oninput="updProg()" maxlength="200">
-            <p class="f-hint">El sistema genera el mensaje exacto para esa objeción</p>
           </div>
           <div class="field field-optional" id="fo5">
             <div class="f-label"><span class="f-num">5</span>¿Cuánto cuesta?</div>
@@ -732,6 +503,7 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
         </div>
       </div>
 
+      <!-- LOADING -->
       <div class="screen" id="s-load">
         <div class="load-body">
           <div class="load-emblem">C</div>
@@ -747,11 +519,12 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
         </div>
       </div>
 
+      <!-- ERROR -->
       <div class="screen" id="s-error">
         <div class="error-body">
           <div class="error-icon">⚠</div>
           <h2 class="error-h">Algo salió mal</h2>
-          <p class="error-p" id="error-msg">No pudimos generar tu sistema en este momento. Podés reintentar o ver mensajes de ejemplo para tener una idea de lo que recibirías.</p>
+          <p class="error-p" id="error-msg">No pudimos generar tu sistema. Podés reintentar.</p>
           <div class="error-btns">
             <button class="btn btn-gold-sm" id="retry-btn">Reintentar →</button>
             <button class="btn" style="background:var(--n08);color:var(--n55);padding:11px 18px;font-size:14px;border-radius:var(--r)" onclick="showFallback()">Ver ejemplo</button>
@@ -759,6 +532,7 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
         </div>
       </div>
 
+      <!-- OUTPUT -->
       <div class="screen" id="s-out">
         <div class="ctx-strip" id="ctx-strip" style="display:none">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 5.5v4M6.5 4h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -769,75 +543,84 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
             <div><h2>Tu sistema está listo</h2><p id="out-lbl">Mensajes calibrados para tu negocio</p></div>
             <button class="btn-restart-top" onclick="restart()">← Nuevo sistema</button>
           </div>
-          <div class="sys-banner">↗ &nbsp;Generados con contexto real de tu rubro. <strong>No son plantillas.</strong> Son el sistema que falta en tu negocio hoy.</div>
+          <!-- Banner PRO aprendizaje -->
+          <div class="pro-banner" id="pro-learning-banner" style="display:none">
+            🧠 <strong>Aprendizaje activo:</strong> estos mensajes se calibraron con tu historial real. Marcá los resultados para seguir mejorando.
+          </div>
+          <div class="sys-banner">↗ &nbsp;Generados con contexto real de tu rubro. <strong>No son plantillas.</strong></div>
+
+          <!-- MSG 1 -->
           <div class="msg-card">
-            <div class="msg-head"><div class="msg-meta"><div class="pip pip-a"></div><div><div class="msg-title">Inicio de conversación <span class="badge badge-free">gratis</span></div><div class="msg-intent">Abrir + calificar + generar interés</div></div></div><button class="btn-copy" onclick="cp(this,'m1')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button></div>
+            <div class="msg-head">
+              <div class="msg-meta"><div class="pip pip-a"></div><div><div class="msg-title">Inicio de conversación <span class="badge badge-free">gratis</span></div><div class="msg-intent">Abrir + calificar + generar interés</div></div></div>
+              <div class="msg-actions">
+                <button class="btn-feedback" id="fb-btn-inicio" onclick="openFeedback('inicio','m1')" style="display:none">📊 Resultado</button>
+                <button class="btn-copy" onclick="cp(this,'m1')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button>
+              </div>
+            </div>
             <div class="msg-body"><p class="msg-text" id="m1"></p></div>
           </div>
+
+          <!-- MSG 2 -->
           <div class="msg-card">
-            <div class="msg-head"><div class="msg-meta"><div class="pip pip-b"></div><div><div class="msg-title">Cuando preguntan el precio <span class="badge badge-free">gratis</span></div><div class="msg-intent">Anclar en valor antes de hablar de números</div></div></div><button class="btn-copy" onclick="cp(this,'m2')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button></div>
+            <div class="msg-head">
+              <div class="msg-meta"><div class="pip pip-b"></div><div><div class="msg-title">Cuando preguntan el precio <span class="badge badge-free">gratis</span></div><div class="msg-intent">Anclar en valor antes de hablar de números</div></div></div>
+              <div class="msg-actions">
+                <button class="btn-feedback" id="fb-btn-precio" onclick="openFeedback('precio','m2')" style="display:none">📊 Resultado</button>
+                <button class="btn-copy" onclick="cp(this,'m2')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button>
+              </div>
+            </div>
             <div class="msg-body"><p class="msg-text" id="m2"></p></div>
           </div>
+
+          <!-- MSG 3 -->
           <div class="msg-card">
-            <div class="msg-head"><div class="msg-meta"><div class="pip pip-c"></div><div><div class="msg-title">Cuando dicen "<span id="obj-label">lo pienso</span>" <span class="badge badge-free">gratis</span></div><div class="msg-intent">Tu objeción específica — reencuadrada</div></div></div><button class="btn-copy" onclick="cp(this,'m3')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button></div>
+            <div class="msg-head">
+              <div class="msg-meta"><div class="pip pip-c"></div><div><div class="msg-title">Cuando dicen "<span id="obj-label">lo pienso</span>" <span class="badge badge-free">gratis</span></div><div class="msg-intent">Tu objeción específica — reencuadrada</div></div></div>
+              <div class="msg-actions">
+                <button class="btn-feedback" id="fb-btn-duda" onclick="openFeedback('duda','m3')" style="display:none">📊 Resultado</button>
+                <button class="btn-copy" onclick="cp(this,'m3')"><svg viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1H9.5A1.5 1.5 0 0111 2.5v4A1.5 1.5 0 019.5 8H8" stroke="currentColor" stroke-linecap="round"/></svg>Copiar</button>
+              </div>
+            </div>
             <div class="msg-body"><p class="msg-text" id="m3"></p></div>
           </div>
+
           <div class="click-m">
             <div class="cm-tag">La diferencia real</div>
             <h3>El bot responde por vos.<br>CLOSER te enseña <em>qué decir.</em></h3>
-            <p>Nadie compra a un bot en servicios de alto valor. Compran a personas que saben lo que hacen. CLOSER es tu sistema, no tu reemplazo.</p>
+            <p>Nadie compra a un bot en servicios de alto valor. CLOSER es tu sistema, no tu reemplazo.</p>
           </div>
           <p class="bridge">Estos 3 mensajes abren la puerta.<br><em>Los siguientes 2 son los que cierran.</em></p>
+
           <div class="paywall-insight" id="paywall-insight" style="display:none">
-            <strong>En tu rubro</strong>, <span id="insight-text">el 67% de las ventas se pierden en la objeción de precio.</span> Los mensajes PRO están diseñados específicamente para resolver eso.
+            <strong>En tu rubro</strong>, <span id="insight-text">el 67% de las ventas se pierden en la objeción de precio.</span>
           </div>
-          <div class="paywall">
+
+          <!-- PAYWALL -->
+          <div class="paywall" id="paywall-section">
             <div class="pw-eyebrow">Sistema completo PRO</div>
             <h3 class="pw-h">Las ventas no se pierden al inicio.<br>Se pierden en el silencio y en la objeción.</h3>
-            <p class="pw-sub">Lo que desbloqueás es el sistema completo: reactivación de conversaciones frías y el mensaje exacto para llevar a decisión.</p>
+            <p class="pw-sub">Desbloqueá el sistema completo con aprendizaje real basado en tus resultados.</p>
             <div class="pw-div"></div>
             <div class="pw-stack">
               <div class="pw-lbl">PRO incluye</div>
-              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Mensaje de reactivación</strong><span>Para los que dijeron "lo pienso" y no volvieron. El 40% de las ventas perdidas se recuperan acá.</span></div></div>
-              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Mensaje de cierre directo</strong><span>Urgencia real + garantía + pregunta que lleva a decisión. Sin quedar como desesperado.</span></div></div>
-              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Diagnóstico de conversaciones reales</strong><span>Subís tus DMs y CLOSER detecta exactamente dónde perdiste ventas y por qué.</span></div></div>
-              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Métricas de conversión reales</strong><span>Qué mensajes cerraron, cuáles no. El sistema aprende con cada venta tuya.</span></div></div>
-              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Sistemas ilimitados con contexto de mercado</strong><span>Cada generación busca tendencias de tu rubro antes de crear. Siempre actualizado.</span></div></div>
+              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Sistema que aprende de tus resultados</strong><span>Cada "cerré" y "no cerré" calibra los próximos mensajes a tu estilo real.</span></div></div>
+              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Mensajes de reactivación y cierre</strong><span>Para los que dijeron "lo pienso". El 40% de las ventas perdidas se recuperan acá.</span></div></div>
+              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Dashboard con métricas reales</strong><span>Tu ratio de cierre, qué mensajes funcionan, evolución mes a mes.</span></div></div>
+              <div class="pw-item"><div class="pw-check"><div class="pw-check-dot"></div></div><div class="pw-item-txt"><strong>Generaciones ilimitadas</strong><span>Sin límite de usos. Contexto de mercado en tiempo real siempre.</span></div></div>
             </div>
             <div class="pw-div"></div>
-            <div class="pw-quote">
-              <p class="pw-quote-text">"Lo que más me sorprendió fue el diagnóstico. Me mostró que el 71% de mis conversaciones se cortaban cuando preguntaban el precio. En dos semanas pasé de cerrar 2 de cada 10 a cerrar casi 4."</p>
-              <div class="pw-quote-author">
-                <div class="pw-quote-av" style="background:#eaf2fb;color:#1c4d7a">LC</div>
-                <div><div class="pw-quote-name">Lucas C.</div><div class="pw-quote-role">Consultor de marketing · Rosario</div><div class="pw-quote-result">↑ De 21% a 38% de ratio de cierre</div></div>
-              </div>
+            <div class="pw-compare-row">
+              <div class="pw-compare-item"><div class="pw-compare-label">Coach de ventas 1:1</div><div class="pw-compare-price">$1.100.000<span>/mes</span></div><div class="pw-compare-sub">Promedio mercado argentino</div></div>
+              <div class="pw-compare-divider">vs</div>
+              <div class="pw-compare-item featured"><div class="pw-compare-label">CLOSER. PRO</div><div class="pw-compare-price">$54.900<span>/mes</span></div><div class="pw-compare-sub">Precio de lanzamiento</div></div>
             </div>
-            <div class="pw-div"></div>
-            <div class="pw-roi">
-              <div class="pw-roi-label">¿Cuánto te cuesta no tenerlo?</div>
-              <div class="pw-roi-grid">
-                <div class="pw-roi-item"><div class="pw-roi-val">$1.250.000</div><div class="pw-roi-desc">Lo que pierde un coach por mes con 3 ventas de $420k perdidas en objeción</div></div>
-                <div class="pw-roi-arrow">→</div>
-                <div class="pw-roi-item highlight"><div class="pw-roi-val">$54.900</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
-              </div>
-              <p class="pw-roi-note">Con recuperar <strong>una sola venta perdida</strong>, el ROI es 20x.</p>
+            <div class="pw-launch-banner">
+              <div class="pw-launch-dot"></div>
+              <div><strong>Precio de lanzamiento — sube el 30 de abril.</strong><br><span>Primeros 50 usuarios. Quedan <strong>23</strong> lugares.</span></div>
             </div>
-            <div class="pw-div"></div>
-            <div class="pw-pricing-block">
-              <div class="pw-compare-row">
-                <div class="pw-compare-item"><div class="pw-compare-label">Coach de ventas 1:1</div><div class="pw-compare-price">$1.100.000<span>/mes</span></div><div class="pw-compare-sub">Promedio mercado argentino</div></div>
-                <div class="pw-compare-divider">vs</div>
-                <div class="pw-compare-item featured"><div class="pw-compare-label">CLOSER. PRO</div><div class="pw-compare-price">$54.900<span>/mes</span></div><div class="pw-compare-sub">Precio de lanzamiento</div></div>
-              </div>
-              <div class="pw-launch-banner">
-                <div class="pw-launch-dot"></div>
-                <div><strong>Precio de lanzamiento — sube a $69.900 el 30 de abril.</strong><br><span>Primeros 50 usuarios. Quedan <strong id="spots-left">23</strong> lugares.</span></div>
-              </div>
-            </div>
-            <p class="price-ctx">Cancelás cuando querés. Sin contrato. Sin permanencia.</p>
-            <button class="btn-upgrade" onclick="goCheckout()">Empezar a recuperar ventas perdidas →</button>
-            <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Cancelación en 1 clic</span><span>✓ Sin bot — vos cerrás</span></div>
-            <p class="pw-filter">Para los que ya están vendiendo por DM y quieren cerrar más — no para los que recién empiezan.</p>
+            <button class="btn-upgrade" id="upgrade-btn" onclick="startCheckout()">Empezar a recuperar ventas perdidas →</button>
+            <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Cancelación en 1 clic</span><span>✓ Pago seguro con Mercado Pago</span></div>
           </div>
         </div>
       </div>
@@ -850,17 +633,14 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
     <div class="sec-hd">
       <div class="sec-eyebrow">Por qué CLOSER es distinto</div>
       <h2 class="sec-h2">Todos automatizan.<br><em>Nosotros te hacemos mejor.</em></h2>
-      <p class="sec-p">No somos un bot. Somos el sistema que el vendedor humano siempre necesitó.</p>
     </div>
     <div class="vs-table">
-      <div class="vs-header"><div class="vs-h-cell">Feature</div><div class="vs-h-cell">Bots (Manychat, etc.)</div><div class="vs-h-cell hl">CLOSER.</div></div>
+      <div class="vs-header"><div class="vs-h-cell">Feature</div><div class="vs-h-cell">Bots</div><div class="vs-h-cell hl">CLOSER.</div></div>
       <div class="vs-row"><div class="vs-cell feat">Analiza tus conversaciones reales</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
-      <div class="vs-row"><div class="vs-cell feat">Detecta dónde perdiste ventas</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
+      <div class="vs-row"><div class="vs-cell feat">Aprende de tus resultados reales</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
       <div class="vs-row"><div class="vs-cell feat">Contexto de mercado en tiempo real</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
-      <div class="vs-row"><div class="vs-cell feat">Mensajes para tu objeción específica</div><div class="vs-cell center"><span class="partial">parcial</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
-      <div class="vs-row"><div class="vs-cell feat">Mide qué mensajes cierran ventas</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
-      <div class="vs-row"><div class="vs-cell feat">Aprende de tu estilo con el tiempo</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
-      <div class="vs-row"><div class="vs-cell feat">Diseñado para Latam · servicios · high-ticket</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
+      <div class="vs-row"><div class="vs-cell feat">Dashboard con métricas de cierre</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
+      <div class="vs-row"><div class="vs-cell feat">Diseñado para Latam · high-ticket</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
       <div class="vs-row"><div class="vs-cell feat">Vos seguís siendo quien cierra</div><div class="vs-cell center"><span class="cross">—</span></div><div class="vs-cell hl"><span class="check">✓</span></div></div>
     </div>
   </div>
@@ -870,64 +650,362 @@ footer{background:var(--n04);border-top:1px solid var(--n15);padding:28px}
   <div class="roadmap-inner">
     <div class="rm-hd"><h2>Más que mensajes.<br><em>Un sistema que evoluciona.</em></h2><p>Cada uso hace a CLOSER más preciso para tu negocio específico.</p></div>
     <div class="rm-grid">
-      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">🔍</div><span class="rm-badge pro">PRO</span></div><h3>Diagnóstico de conversaciones</h3><p>Subís tus DMs y CLOSER identifica patrones de fuga, frases que cortan ventas y momentos exactos de pérdida.</p></div>
-      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">📊</div><span class="rm-badge soon">Pronto</span></div><h3>Métricas de conversión reales</h3><p>Qué mensajes cerraron, cuáles no. El sistema aprende con cada venta y cada pérdida tuya.</p></div>
-      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">🎯</div><span class="rm-badge pro">PRO</span></div><h3>Sistema por nicho calibrado</h3><p>Para coaches, inmobiliarias, servicios y e-commerce. Cada sistema tiene el contexto y las objeciones del rubro.</p></div>
-      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">⚡</div><span class="rm-badge soon">Pronto</span></div><h3>Asistente en tiempo real</h3><p>Mientras tenés la conversación abierta, CLOSER sugiere el próximo mensaje. Vos aprobás con un tap.</p></div>
-    </div>
-    <div class="dp-preview">
-      <div class="dp-lbl">Vista previa — Dashboard PRO (próximamente)</div>
-      <div class="dp-grid">
-        <div class="dp-card"><div class="dp-label">Ventas cerradas</div><div class="dp-val">24</div><div class="dp-delta">↑ +8 este mes</div></div>
-        <div class="dp-card"><div class="dp-label">Ratio de cierre</div><div class="dp-val">38%</div><div class="dp-delta">↑ vs 21% antes</div></div>
-        <div class="dp-card"><div class="dp-label">Sistemas activos</div><div class="dp-val">6</div><div class="dp-delta">↑ +2 nuevos</div></div>
-        <div class="dp-card"><div class="dp-label">Ventas recuperadas</div><div class="dp-val">11</div><div class="dp-delta">↑ que ibas a perder</div></div>
-      </div>
+      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">🧠</div><span class="rm-badge pro">PRO</span></div><h3>Aprendizaje real por resultado</h3><p>Marcás si cerró o no. El sistema calibra los próximos mensajes a tu estilo y tu mercado.</p></div>
+      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">📊</div><span class="rm-badge pro">PRO</span></div><h3>Dashboard de conversión</h3><p>Tu ratio real, qué mensajes funcionan más, evolución en el tiempo.</p></div>
+      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">🎯</div><span class="rm-badge pro">PRO</span></div><h3>Sistema por nicho calibrado</h3><p>Para coaches, inmobiliarias, servicios y e-commerce. Cada sistema con contexto del rubro.</p></div>
+      <div class="rm-card"><div class="rm-card-top"><div class="rm-ico">⚡</div><span class="rm-badge soon">Pronto</span></div><h3>Asistente en tiempo real</h3><p>Mientras tenés la conversación abierta, CLOSER sugiere el próximo mensaje.</p></div>
     </div>
   </div>
 </section>
 
 <section id="final">
-  <div class="w-sm">
+  <div class="w-sm" style="text-align:center">
     <h2 class="final-h">Tu próxima venta<br>ya está en tus DMs.<br><em>CLOSER la encuentra.</em></h2>
-    <p class="final-sub">Empezá gratis. Sin tarjeta. Sin bot. Sin configuración.<br>Tu sistema listo en 30 segundos — calibrado a tu negocio real.</p>
+    <p class="final-sub">Empezá gratis. Sin tarjeta. Sin bot.<br>Tu sistema listo en 30 segundos.</p>
     <button class="btn btn-gold" onclick="goApp()">Ver mi diagnóstico gratis →</button>
     <p class="final-note">Con una sola venta recuperada, el ROI es mínimo 20x.</p>
   </div>
 </section>
 
-<footer style="padding:24px 0;text-align:center;background:var(--n04);border-top:1px solid var(--n15)">
-  <a href="https://kairoinc.lat/" target="_blank" rel="noopener" style="font-size:12.5px;color:var(--n40);font-weight:400;text-decoration:none;transition:color .17s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--n40)'">Built by KAIRO · Make it simple — 2026</a>
-</footer>
+<footer><a href="https://kairoinc.lat/" target="_blank" rel="noopener" style="font-size:12.5px;color:var(--n40)">Built by KAIRO · Make it simple — 2026</a></footer>
 
 <script>
 'use strict';
 
-// ── Estado global ─────────────────────────────────────────────────────────────
-let fd = {}, marketCtx = '', fieldsExpanded = false, timerInterval = null;
-let retryCount = 0;
-const MAX_RETRIES = 2;
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const SUPABASE_URL  = 'https://zecwqrwkqwdnrndrvbls.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplY3dxcndrcXdkbnJuZHJ2YmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTgzNDUsImV4cCI6MjA5MDY3NDM0NX0.7VH5op7_tLTuvzOYvW6p8oyJeRDkEvWrQk0-x3BUYIU';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ── Navegación ────────────────────────────────────────────────────────────────
-function switchTab(btn, tabId) {
-  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.demo-content').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(tabId).classList.add('active');
+// ── ESTADO GLOBAL ─────────────────────────────────────────────────────────────
+let currentUser    = null;
+let currentSession = null;
+let currentProfile = null;
+let fd = {}, marketCtx = '', currentGenId = null;
+let fieldsExpanded = false, timerInterval = null, retryCount = 0;
+let authMode = 'login'; // 'login' | 'register'
+let fbState  = { msgType: null, msgId: null, result: null };
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await handleSession(session);
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session)  await handleSession(session);
+    if (event === 'SIGNED_OUT') handleSignOut();
+  });
+})();
+
+async function handleSession(session) {
+  currentSession = session;
+  currentUser    = session.user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = profile;
+  updateNavAuth();
+  closeAuthModal();
+  if (currentProfile?.plan === 'pro') showDashboard();
 }
 
-function goApp() {
-  document.getElementById('app-section').scrollIntoView({ behavior: 'smooth' });
+function handleSignOut() {
+  currentUser = currentSession = currentProfile = null;
+  updateNavAnon();
+  showLanding();
 }
 
-function goCheckout() {
-  // Reemplazar con URL real de checkout cuando esté disponible
-  const checkoutUrl = window.CHECKOUT_URL || '#';
-  if (checkoutUrl !== '#') {
-    window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
-  } else {
-    alert('Checkout próximamente. Escribinos a hola@kairoinc.lat');
+// ── NAV AUTH STATE ────────────────────────────────────────────────────────────
+function updateNavAuth() {
+  document.getElementById('nav-anon').style.display = 'none';
+  const navAuth = document.getElementById('nav-auth');
+  navAuth.style.display = 'flex';
+  const name = currentProfile?.full_name || currentUser?.email?.split('@')[0] || '?';
+  document.getElementById('nav-avatar').textContent = name[0].toUpperCase();
+  const badge = document.getElementById('nav-plan-badge');
+  badge.textContent = currentProfile?.plan === 'pro' ? 'PRO' : 'FREE';
+  badge.style.background = currentProfile?.plan === 'pro' ? 'var(--ig-grad)' : 'var(--n15)';
+  badge.style.color       = currentProfile?.plan === 'pro' ? 'var(--white)' : 'var(--n55)';
+}
+
+function updateNavAnon() {
+  document.getElementById('nav-anon').style.display = 'flex';
+  document.getElementById('nav-auth').style.display = 'none';
+}
+
+function openUserMenu() {
+  if (confirm(`Sesión: ${currentUser?.email}\nPlan: ${currentProfile?.plan?.toUpperCase()}\n\n¿Cerrar sesión?`)) {
+    sb.auth.signOut();
   }
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────────────────
+function showLanding() {
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('hero').style.display = 'block';
+  document.getElementById('app-section').style.display = 'block';
+  document.getElementById('vs').style.display = 'block';
+  document.getElementById('roadmap').style.display = 'block';
+  document.getElementById('final').style.display = 'block';
+}
+
+function showDashboard() {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('app-section').style.display = 'none';
+  document.getElementById('vs').style.display = 'none';
+  document.getElementById('roadmap').style.display = 'none';
+  document.getElementById('final').style.display = 'none';
+  const dash = document.getElementById('dashboard');
+  dash.style.display = 'block';
+  const name = currentProfile?.full_name?.split(' ')[0] || 'vendedor';
+  document.getElementById('dash-name').textContent = name;
+  loadDashboard();
+}
+
+// ── DASHBOARD DATA ────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const token = currentSession?.access_token;
+    const r = await fetch('/api/dashboard', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!r.ok) throw new Error('Error cargando dashboard');
+    const { metrics, generations, byType } = await r.json();
+
+    // Métricas
+    document.getElementById('dash-ratio').textContent   = metrics.total > 0 ? metrics.ratio + '%' : '—';
+    document.getElementById('dash-closed').textContent  = metrics.closed;
+    document.getElementById('dash-total').textContent   = metrics.total;
+    document.getElementById('dash-gens').textContent    = generations.length;
+
+    if (metrics.ratio > 0) {
+      document.getElementById('dash-ratio-delta').textContent = metrics.ratio >= 30
+        ? '↑ Por encima del promedio' : 'Seguí marcando resultados para mejorar';
+    }
+
+    // Lista de generaciones
+    const gensList = document.getElementById('dash-gens-list');
+    if (generations.length === 0) {
+      gensList.innerHTML = '<p style="font-size:13px;color:var(--n40);text-align:center;padding:20px 0">Todavía no generaste ningún sistema.</p>';
+    } else {
+      gensList.innerHTML = generations.slice(0, 5).map(g => `
+        <div class="gen-row">
+          <div class="gen-ico">💬</div>
+          <div class="gen-body">
+            <div class="gen-title">${esc(g.negocio)}</div>
+            <div class="gen-meta">${esc(g.cliente)} · ${timeAgo(g.created_at)}</div>
+            <div class="gen-msgs">
+              <span class="gen-msg-btn" onclick="useGeneration('${g.id}')">Usar mensajes →</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Por tipo de mensaje
+    const typeEl = document.getElementById('dash-by-type');
+    const typeLabels = { inicio: 'Apertura', precio: 'Precio', duda: 'Objeción', reactivacion: 'Reactivación', cierre: 'Cierre' };
+    const entries = Object.entries(byType);
+    if (entries.length === 0) {
+      typeEl.innerHTML = '<p style="font-size:13px;color:var(--n40);text-align:center;padding:20px 0">Marcá resultados en tus mensajes para ver qué funciona.</p>';
+    } else {
+      typeEl.innerHTML = entries.map(([type, data]) => {
+        const pct = data.total > 0 ? Math.round((data.closed / data.total) * 100) : 0;
+        return `
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--n08)">
+            <div style="min-width:90px;font-size:13px;color:var(--ink)">${typeLabels[type] || type}</div>
+            <div style="flex:1;height:5px;background:var(--n15);border-radius:3px;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:var(--ig-grad);border-radius:3px"></div>
+            </div>
+            <div style="font-size:12px;color:var(--n40);min-width:36px;text-align:right">${pct}%</div>
+            <div style="font-size:11px;color:var(--n25)">${data.closed}/${data.total}</div>
+          </div>`;
+      }).join('');
+    }
+  } catch (e) {
+    console.error('[CLOSER] dashboard error:', e.message);
+  }
+}
+
+function useGeneration(genId) {
+  // Llevar al usuario a generar un nuevo sistema
+  goApp();
+}
+
+// ── AUTH MODAL ────────────────────────────────────────────────────────────────
+function openAuthModal(mode = 'login') {
+  authMode = mode;
+  document.getElementById('auth-modal').classList.add('open');
+  document.getElementById('auth-error').classList.remove('show');
+  updateAuthUI();
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-modal').classList.remove('open');
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  const isLogin = authMode === 'login';
+  document.getElementById('auth-modal-sub').textContent = isLogin
+    ? 'Iniciá sesión para guardar tu sistema y activar el aprendizaje.'
+    : 'Creá tu cuenta gratis para empezar.';
+  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Ingresar' : 'Crear cuenta';
+  document.getElementById('auth-name-wrap').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('auth-toggle').innerHTML = isLogin
+    ? '¿No tenés cuenta? <a onclick="toggleAuthMode()">Registrate gratis</a>'
+    : '¿Ya tenés cuenta? <a onclick="toggleAuthMode()">Ingresá</a>';
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+async function loginGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin }
+  });
+  if (error) showAuthError(error.message);
+}
+
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass  = document.getElementById('auth-pass').value;
+  const name  = document.getElementById('auth-name').value.trim();
+  if (!email || !pass) return showAuthError('Completá email y contraseña.');
+  if (pass.length < 6)  return showAuthError('La contraseña debe tener al menos 6 caracteres.');
+
+  const btn = document.getElementById('auth-submit-btn');
+  btn.disabled = true; btn.textContent = 'Cargando…';
+
+  let error;
+  if (authMode === 'login') {
+    ({ error } = await sb.auth.signInWithPassword({ email, password: pass }));
+  } else {
+    ({ error } = await sb.auth.signUp({
+      email, password: pass,
+      options: { data: { full_name: name || email.split('@')[0] } }
+    }));
+    if (!error) {
+      btn.disabled = false;
+      showAuthError('✓ Revisá tu email para confirmar tu cuenta.', true);
+      return;
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Ingresar' : 'Crear cuenta';
+  if (error) showAuthError(error.message);
+}
+
+function showAuthError(msg, isSuccess = false) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (isSuccess) { el.style.background = 'var(--ok-bg)'; el.style.color = 'var(--ok)'; el.style.borderColor = 'var(--ok-br)'; }
+  else { el.style.background = 'var(--err-bg)'; el.style.color = 'var(--err)'; el.style.borderColor = 'var(--err-br)'; }
+}
+
+// ── FEEDBACK MODAL ────────────────────────────────────────────────────────────
+function openFeedback(msgType, msgId) {
+  if (!currentUser) return openAuthModal();
+  fbState = { msgType, msgId, result: null };
+  const typeLabels = { inicio: 'Apertura', precio: 'Precio', duda: 'Objeción' };
+  document.getElementById('fb-msg-type').textContent = typeLabels[msgType] || msgType;
+  document.getElementById('fb-msg-preview').textContent = document.getElementById(msgId).textContent.slice(0, 200) + '…';
+  document.getElementById('fb-note').value = '';
+  document.getElementById('fb-closed').className = 'fb-btn';
+  document.getElementById('fb-lost').className = 'fb-btn';
+  document.getElementById('feedback-modal').classList.add('open');
+}
+
+function closeFeedback() {
+  document.getElementById('feedback-modal').classList.remove('open');
+}
+
+function selectResult(result) {
+  fbState.result = result;
+  document.getElementById('fb-closed').className = 'fb-btn' + (result === 'closed' ? ' selected-closed' : '');
+  document.getElementById('fb-lost').className   = 'fb-btn' + (result === 'lost'   ? ' selected-lost'   : '');
+}
+
+async function submitFeedback() {
+  if (!fbState.result)    return alert('Elegí un resultado primero.');
+  if (!currentGenId)      return closeFeedback();
+  const note = document.getElementById('fb-note').value.trim();
+  const msgText = document.getElementById(fbState.msgId).textContent;
+
+  try {
+    const r = await fetch('/api/result', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${currentSession.access_token}`
+      },
+      body: JSON.stringify({
+        generation_id: currentGenId,
+        msg_type:      fbState.msgType,
+        msg_text:      msgText,
+        result:        fbState.result,
+        notes:         note || null,
+      })
+    });
+
+    if (r.ok) {
+      // Actualizar botón visual
+      const btn = document.getElementById(`fb-btn-${fbState.msgType}`);
+      if (btn) {
+        btn.classList.add('has-result');
+        btn.textContent = fbState.result === 'closed' ? '✅ Cerrada' : '❌ Perdida';
+      }
+      closeFeedback();
+    } else {
+      alert('Error al guardar. Reintentá.');
+    }
+  } catch (e) {
+    console.error('[CLOSER] feedback error:', e.message);
+    alert('Error de conexión.');
+  }
+}
+
+// ── CHECKOUT ──────────────────────────────────────────────────────────────────
+async function startCheckout() {
+  if (!currentUser) {
+    openAuthModal('register');
+    return;
+  }
+  const btn = document.getElementById('upgrade-btn');
+  btn.disabled = true;
+  btn.textContent = 'Preparando pago…';
+
+  try {
+    const r = await fetch('/api/mp/create-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${currentSession.access_token}`
+      }
+    });
+    const data = await r.json();
+    if (data.checkout_url) {
+      window.open(data.checkout_url, '_blank', 'noopener,noreferrer');
+    } else {
+      throw new Error(data.error || 'Error creando checkout');
+    }
+  } catch (e) {
+    alert('Error al crear el pago: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Empezar a recuperar ventas perdidas →';
+  }
+}
+
+// ── APP FLOW ──────────────────────────────────────────────────────────────────
+function goApp() {
+  showLanding();
+  setTimeout(() => {
+    document.getElementById('app-section').scrollIntoView({ behavior: 'smooth' });
+  }, 100);
 }
 
 function showS(id) {
@@ -938,39 +1016,32 @@ function showS(id) {
 function expandFields() {
   if (fieldsExpanded) return;
   fieldsExpanded = true;
-  ['fo3', 'fo4', 'fo5'].forEach(id => document.getElementById(id).classList.add('visible'));
+  ['fo3','fo4','fo5'].forEach(id => document.getElementById(id).classList.add('visible'));
   document.getElementById('expand-btn').style.display = 'none';
   updProg();
 }
 
 function updProg() {
-  const req = ['f1', 'f2'].filter(i => document.getElementById(i).value.trim()).length;
-  const opt = ['f3', 'f4', 'f5'].map(i => document.getElementById(i)).filter(el => el && el.value.trim()).length;
-  document.getElementById('prog').style.width = Math.min(100, (req / 2 * 70) + (opt / 3 * 30)) + '%';
+  const req = ['f1','f2'].filter(i => document.getElementById(i).value.trim()).length;
+  const opt = ['f3','f4','f5'].map(i => document.getElementById(i)).filter(el => el?.value.trim()).length;
+  document.getElementById('prog').style.width = Math.min(100, (req/2*70)+(opt/3*30)) + '%';
 }
 
-// ── Input sanitization (client-side, server validates too) ────────────────────
-function sanitize(str) {
-  return (str || '').toString().trim().slice(0, 500);
-}
+function sanitize(str) { return (str||'').toString().trim().slice(0,500); }
 
-// ── Inicio de generación ──────────────────────────────────────────────────────
 function startGen() {
-  const v = ['f1', 'f2', 'f3', 'f4', 'f5'].map(i => sanitize(document.getElementById(i)?.value || ''));
+  const v = ['f1','f2','f3','f4','f5'].map(i => sanitize(document.getElementById(i)?.value||''));
   if (!v[0]) { document.getElementById('f1').focus(); return; }
   if (!v[1]) { document.getElementById('f2').focus(); return; }
-
-  fd = { negocio: v[0], cliente: v[1], problema: v[2], objecion: v[3], precio: v[4] };
+  fd = { negocio:v[0], cliente:v[1], problema:v[2], objecion:v[3], precio:v[4] };
   if (v[3]) document.getElementById('obj-label').textContent = v[3];
-
-  retryCount = 0;
+  retryCount = 0; currentGenId = null;
   showS('s-load');
-  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('app-card').scrollIntoView({ behavior:'smooth', block:'start' });
   startTimer();
   runPipeline();
 }
 
-// ── Timer de carga ────────────────────────────────────────────────────────────
 function startTimer() {
   clearInterval(timerInterval);
   let s = 20;
@@ -978,23 +1049,19 @@ function startTimer() {
   el.textContent = '~' + s + ' segundos';
   timerInterval = setInterval(() => {
     s--;
-    if (s > 0) el.textContent = '~' + s + ' segundo' + (s !== 1 ? 's' : '');
+    if (s > 0) el.textContent = '~' + s + ' segundo' + (s!==1?'s':'');
     else { el.textContent = 'Un momento más…'; clearInterval(timerInterval); }
   }, 1000);
 }
 
-// ── Pipeline principal ────────────────────────────────────────────────────────
 async function runPipeline() {
   try {
     animStep('ll1');
     const ctx = await fetchContext();
     marketCtx = ctx;
-    animStep('ll2');
-    await sleep(500);
-    animStep('ll3');
-    await sleep(400);
-    animStep('ll4');
-    await sleep(300);
+    animStep('ll2'); await sleep(500);
+    animStep('ll3'); await sleep(400);
+    animStep('ll4'); await sleep(300);
     await generateMessages(ctx);
   } catch (err) {
     console.error('[CLOSER] Pipeline error:', err);
@@ -1002,229 +1069,199 @@ async function runPipeline() {
   }
 }
 
-// ── FIX PRINCIPAL: Extracción robusta de texto de respuesta Claude ─────────────
-// Maneja respuestas con web_search (múltiples bloques: tool_use, tool_result, text)
-// y respuestas simples (solo text). Nunca asume que content[0] es texto.
-function extractTextFromResponse(data) {
-  if (!data || !Array.isArray(data.content)) return null;
-
-  // Buscar el último bloque de tipo "text" (el más confiable con web_search)
-  const textBlocks = data.content.filter(b => b.type === 'text' && b.text);
-  if (textBlocks.length === 0) return null;
-
-  // Tomar el último bloque de texto (Claude puede emitir varios)
-  return textBlocks[textBlocks.length - 1].text.trim();
+function extractText(data) {
+  if (!data?.content || !Array.isArray(data.content)) return null;
+  const blocks = data.content.filter(b => b.type === 'text' && b.text);
+  if (!blocks.length) return null;
+  return blocks[blocks.length - 1].text.trim();
 }
 
-// ── Limpieza de JSON que puede venir con ```json ... ``` ──────────────────────
 function cleanJSON(str) {
   if (!str) return null;
-  return str.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  return str.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();
 }
 
-// ── Fetch de contexto de mercado (usa web_search) ─────────────────────────────
+async function apiCall(body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (currentSession?.access_token) headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+  const r = await fetch('/api/messages', {
+    method: 'POST', headers,
+    body: JSON.stringify(body)
+  });
+  const data = await r.json();
+  if (!r.ok) { const e = new Error(data.error||`HTTP ${r.status}`); e.status=r.status; e.isRateLimit=r.status===429; throw e; }
+  if (data.type==='error') throw new Error(data.error?.message||'API error');
+  return data;
+}
+
 async function fetchContext() {
   const { negocio, cliente } = fd;
-  const sys = `Sos analista de mercado para ventas en Latam. Analizá el rubro y extraé contexto de ventas conversacionales.
-Respondé SOLO con JSON válido, sin markdown, sin texto antes ni después:
+  const sys = `Analista de mercado para ventas en Latam. Respondé SOLO con JSON válido sin markdown:
 {"objeciones_comunes":["..."],"tono_recomendado":"...","friccion_principal":"...","insight_mercado":"...","resumen_contexto":"...","insight_paywall":"..."}
-resumen_contexto: máx 110 chars. insight_paywall: frase sobre la mayor fuga de ventas en ese rubro.`;
-
+resumen_contexto: máx 110 chars.`;
   try {
     const r = await apiCall({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 900,
-      temperature: 0.3,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      system: sys,
-      messages: [{ role: 'user', content: `Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam` }]
+      model:'claude-sonnet-4-20250514', max_tokens:900, temperature:0.3,
+      tools:[{type:'web_search_20250305',name:'web_search'}],
+      system:sys,
+      messages:[{role:'user',content:`Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam`}]
     });
-
-    const txt = extractTextFromResponse(r);
+    const txt = extractText(r);
     if (!txt) return null;
-
     return JSON.parse(cleanJSON(txt));
-  } catch (e) {
-    console.warn('[CLOSER] fetchContext falló, continuando sin contexto:', e.message);
-    return null; // No es fatal — generamos igual sin contexto
-  }
+  } catch(e) { console.warn('[CLOSER] fetchContext sin contexto:', e.message); return null; }
 }
 
-// ── Generación de mensajes ────────────────────────────────────────────────────
 async function generateMessages(ctx) {
   clearInterval(timerInterval);
   const { negocio, cliente, problema, objecion, precio } = fd;
-
   let ctxBlock = '';
-  if (ctx) {
-    ctxBlock = `\nCONTEXTO DE MERCADO:\n- Objeciones frecuentes: ${(ctx.objeciones_comunes || []).join(', ')}\n- Tono recomendado: ${ctx.tono_recomendado || ''}\n- Fricción principal: ${ctx.friccion_principal || ''}\n- Insight: ${ctx.insight_mercado || ''}\n`;
-  }
-
+  if (ctx) ctxBlock = `\nCONTEXTO:\n- Objeciones: ${(ctx.objeciones_comunes||[]).join(', ')}\n- Tono: ${ctx.tono_recomendado||''}\n- Fricción: ${ctx.friccion_principal||''}\n`;
   const sys = `Experto en ventas conversacionales por WhatsApp/Instagram para negocios latinoamericanos.
-IDENTIDAD: Aliado del vendedor humano. No lo reemplazás — lo potenciás.
-TONO: Humano argentino con "vos". Frases cortas. Sin emojis. Sin asteriscos. Persona real.
-REGLAS: Máx 3-4 oraciones. Una sola pregunta al final que avance la venta. Precio: primero valor, después número. Objeción: nombrar, empatizar brevemente, reencuadrar al costo de no resolver. Nunca "avisame" ni preguntas débiles.
-Respondé SOLO con JSON válido, sin markdown, sin texto adicional:
-{"inicio":"...","precio":"...","duda":"..."}`;
-
-  const usr = `Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema || 'no especificado'}\nObjeción más frecuente: ${objecion || 'es caro / lo pienso'}\nPrecio: ${precio || 'no especificado'}\n${ctxBlock}\nGenerá 3 mensajes que avancen la venta. El campo "duda" debe responder específicamente la objeción indicada.`;
+TONO: Humano argentino con "vos". Frases cortas. Sin emojis. Sin asteriscos.
+REGLAS: Máx 3-4 oraciones. Una sola pregunta al final. Primero valor, después precio. Nunca "avisame".
+Respondé SOLO con JSON válido sin markdown: {"inicio":"...","precio":"...","duda":"..."}`;
+  const usr = `Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema||'no especificado'}\nObjeción: ${objecion||'es caro / lo pienso'}\nPrecio: ${precio||'no especificado'}\n${ctxBlock}`;
 
   try {
+    // Inyectar _form para que el server guarde la generación en DB
     const r = await apiCall({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 900,
-      temperature: 0.56,
-      system: sys,
-      messages: [{ role: 'user', content: usr }]
+      model:'claude-sonnet-4-20250514', max_tokens:900, temperature:0.56,
+      system:sys, messages:[{role:'user',content:usr}],
+      _form: { negocio, cliente, problema, objecion, precio, marketCtx: ctx }
     });
 
-    const txt = extractTextFromResponse(r);
-    if (!txt) throw new Error('Respuesta vacía del modelo');
-
+    const txt = extractText(r);
+    if (!txt) throw new Error('Respuesta vacía');
     const m = JSON.parse(cleanJSON(txt));
-    if (!m.inicio || !m.precio || !m.duda) throw new Error('JSON incompleto del modelo');
+    if (!m.inicio||!m.precio||!m.duda) throw new Error('JSON incompleto');
 
-    // Renderizar resultados
     document.getElementById('m1').textContent = m.inicio;
     document.getElementById('m2').textContent = m.precio;
     document.getElementById('m3').textContent = m.duda;
     document.getElementById('out-lbl').textContent = 'Sistema generado para: ' + negocio;
 
-    if (ctx && ctx.resumen_contexto) {
+    if (ctx?.resumen_contexto) {
       document.getElementById('ctx-summary').textContent = ctx.resumen_contexto;
       document.getElementById('ctx-strip').style.display = 'flex';
     }
-    if (ctx && ctx.insight_paywall) {
+    if (ctx?.insight_paywall) {
       document.getElementById('insight-text').textContent = ctx.insight_paywall;
       document.getElementById('paywall-insight').style.display = 'block';
     }
 
+    // Si el usuario está autenticado, mostrar botones de feedback
+    if (currentUser) {
+      ['inicio','precio','duda'].forEach(t => {
+        const btn = document.getElementById(`fb-btn-${t}`);
+        if (btn) btn.style.display = 'inline-flex';
+      });
+    }
+
+    // PRO: mostrar banner de aprendizaje
+    const isPro = currentProfile?.plan === 'pro';
+    if (isPro) {
+      document.getElementById('pro-learning-banner').style.display = 'flex';
+      document.getElementById('paywall-section').style.display = 'none';
+    }
+
     showS('s-out');
-    document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('app-card').scrollIntoView({ behavior:'smooth', block:'start' });
 
-  } catch (e) {
-    console.error('[CLOSER] generateMessages error:', e.message);
+    // Cargar gen_id desde DB (async)
+    if (currentUser) loadLatestGenId();
+
+  } catch(e) {
     clearInterval(timerInterval);
-    showError(getErrorMessage(e));
+    showError(getErrorMsg(e));
   }
 }
 
-// ── Wrapper de fetch con manejo de errores HTTP ───────────────────────────────
-async function apiCall(body) {
-  const response = await fetch('/api/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    const msg = data.error || `Error HTTP ${response.status}`;
-    const err = new Error(msg);
-    err.status = response.status;
-    err.isRateLimit = response.status === 429;
-    throw err;
-  }
-
-  // Detectar error devuelto por Anthropic dentro del JSON
-  if (data.type === 'error') {
-    throw new Error(data.error?.message || 'Error de la API');
-  }
-
-  return data;
+async function loadLatestGenId() {
+  try {
+    const { data } = await sb.from('generations')
+      .select('id').eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false }).limit(1).single();
+    if (data) currentGenId = data.id;
+  } catch(e) { /* sin gen_id, feedback no se guarda */ }
 }
 
-// ── Mensajes de error amigables ───────────────────────────────────────────────
-function getErrorMessage(err) {
-  if (!err) return 'Algo salió mal. Reintentá en un momento.';
-  if (err.isRateLimit) return 'Llegaste al límite de generaciones por ahora. Esperá unos minutos y volvé a intentarlo.';
-  if (err.status === 502 || err.status === 504) return 'Timeout de conexión. La red puede estar lenta — reintentá.';
-  if (err.status === 400) return 'Datos inválidos. Revisá los campos y reintentá.';
-  return 'No pudimos generar tu sistema en este momento. Podés reintentar o ver mensajes de ejemplo.';
+function getErrorMsg(e) {
+  if (!e) return 'Algo salió mal. Reintentá.';
+  if (e.isRateLimit) return 'Llegaste al límite de generaciones. Esperá unos minutos o actualizá a PRO para generaciones ilimitadas.';
+  if (e.status===504) return 'Timeout de conexión. La red puede estar lenta — reintentá.';
+  return 'No pudimos generar tu sistema. Podés reintentar o ver mensajes de ejemplo.';
 }
 
 function showError(msg) {
-  document.getElementById('error-msg').textContent = msg || 'Algo salió mal. Podés reintentar.';
+  document.getElementById('error-msg').textContent = msg;
   document.getElementById('retry-btn').onclick = () => {
-    if (retryCount < MAX_RETRIES) {
+    if (retryCount < 2) {
       retryCount++;
-      showS('s-load');
-      startTimer();
-      runPipeline();
+      showS('s-load'); startTimer(); runPipeline();
     } else {
-      document.getElementById('error-msg').textContent = 'Seguimos con problemas. Probá el ejemplo para ver cómo funciona.';
+      document.getElementById('error-msg').textContent = 'Seguimos con problemas. Probá el ejemplo.';
       document.getElementById('retry-btn').style.display = 'none';
     }
   };
   showS('s-error');
-  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('app-card').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-// ── Fallback con mensajes de ejemplo ─────────────────────────────────────────
 function showFallback() {
   document.getElementById('m1').textContent = 'Hola, gracias por escribir. Antes de contarte todo, decime: ¿qué resultado concreto estás buscando? Así te cuento si lo que hago tiene sentido para tu situación.';
-  document.getElementById('m2').textContent = 'El precio varía según lo que necesitás. Antes de hablar de números, contame: ¿qué resultado es el más importante para vos ahora? Según eso hay opciones distintas.';
-  document.getElementById('m3').textContent = 'Entiendo, tiene sentido que lo pienses. La pregunta es: ¿cuánto te está costando no resolverlo cada mes? Porque ese costo también existe. ¿Qué es lo que más te frena para decidir?';
-  document.getElementById('out-lbl').textContent = 'Mensajes de ejemplo — generá el tuyo arriba';
+  document.getElementById('m2').textContent = 'El precio varía según lo que necesitás. Antes de hablar de números, contame: ¿qué resultado es el más importante para vos ahora?';
+  document.getElementById('m3').textContent = 'Entiendo, tiene sentido que lo pienses. La pregunta es: ¿cuánto te está costando no resolverlo cada mes? ¿Qué es lo que más te frena para decidir?';
+  document.getElementById('out-lbl').textContent = 'Mensajes de ejemplo';
   showS('s-out');
-  document.getElementById('app-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('app-card').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-// ── Animación de pasos de carga ───────────────────────────────────────────────
-const steps = ['ll1', 'll2', 'll3', 'll4'];
+const steps = ['ll1','ll2','ll3','ll4'];
 function animStep(id) {
   const idx = steps.indexOf(id);
-  for (let i = 0; i < idx; i++) {
-    const el = document.getElementById(steps[i]);
-    el.classList.remove('act');
-    el.classList.add('done');
-  }
+  for(let i=0;i<idx;i++){const el=document.getElementById(steps[i]);el.classList.remove('act');el.classList.add('done')}
   document.getElementById(id).classList.add('act');
 }
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// ── Copiar al portapapeles ────────────────────────────────────────────────────
 function cp(btn, id) {
   const t = document.getElementById(id).textContent;
   if (!t) return;
-  navigator.clipboard.writeText(t).then(() => {
+  const copyFn = () => {
     const o = btn.innerHTML;
     btn.innerHTML = `<svg viewBox="0 0 12 12" fill="none" style="width:10px;height:10px;stroke-width:1.5"><path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Copiado`;
     btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = o; btn.classList.remove('copied'); }, 2200);
-  }).catch(() => {
-    // Fallback para browsers que no soportan clipboard API
-    const ta = document.createElement('textarea');
-    ta.value = t;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  });
+    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('copied')},2200);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(copyFn);
+  else { const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);copyFn(); }
 }
 
-// ── Reset ─────────────────────────────────────────────────────────────────────
 function restart() {
   clearInterval(timerInterval);
-  ['f1', 'f2', 'f3', 'f4', 'f5'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  steps.forEach(i => { const el = document.getElementById(i); el.classList.remove('act', 'done'); });
-  document.getElementById('prog').style.width = '0%';
-  document.getElementById('ctx-strip').style.display = 'none';
-  document.getElementById('paywall-insight').style.display = 'none';
-  document.getElementById('retry-btn').style.display = '';
-  if (fieldsExpanded) {
-    fieldsExpanded = false;
-    ['fo3', 'fo4', 'fo5'].forEach(id => document.getElementById(id).classList.remove('visible'));
-    document.getElementById('expand-btn').style.display = 'flex';
-  }
-  marketCtx = '';
-  retryCount = 0;
+  ['f1','f2','f3','f4','f5'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  steps.forEach(i=>{const el=document.getElementById(i);el.classList.remove('act','done');});
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('ctx-strip').style.display='none';
+  document.getElementById('paywall-insight').style.display='none';
+  document.getElementById('retry-btn').style.display='';
+  document.getElementById('pro-learning-banner').style.display='none';
+  document.getElementById('paywall-section').style.display='block';
+  ['inicio','precio','duda'].forEach(t=>{const b=document.getElementById(`fb-btn-${t}`);if(b){b.style.display='none';b.className='btn-feedback';b.textContent='📊 Resultado';}});
+  if(fieldsExpanded){fieldsExpanded=false;['fo3','fo4','fo5'].forEach(id=>document.getElementById(id).classList.remove('visible'));document.getElementById('expand-btn').style.display='flex';}
+  marketCtx=''; retryCount=0; currentGenId=null;
   showS('s-form');
-  document.getElementById('app-section').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('app-section').scrollIntoView({behavior:'smooth'});
+}
+
+function esc(str) { return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function timeAgo(iso) {
+  const d = (Date.now()-new Date(iso).getTime())/1000;
+  if(d<60) return 'hace un momento';
+  if(d<3600) return `hace ${Math.floor(d/60)}min`;
+  if(d<86400) return `hace ${Math.floor(d/3600)}h`;
+  return `hace ${Math.floor(d/86400)}d`;
 }
 </script>
 </body>
