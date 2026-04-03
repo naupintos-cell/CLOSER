@@ -1,7 +1,7 @@
 {
-  "name": "closer-app",
-  "version": "1.0.0",
-  "description": "CLOSER. — Landing con proxy seguro para Anthropic API",
+  "name": "closer",
+  "version": "2.0.0",
+  "description": "CLOSER. — Sistema PRO de ventas por DM",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,7 +11,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.4.1"
+    "@supabase/supabase-js": "^2.49.4",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0"
   }
 }
