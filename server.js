@@ -78,8 +78,8 @@ const globalLimiter = rateLimit({
   message: { error: 'Demasiadas solicitudes. Esperá un momento.' }
 });
 const genLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: process.env.NODE_ENV === 'development' ? 1000 : 10,
+  windowMs: 60 * 1000, // 1 minuto para testing
+  max: 100,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Límite de generaciones gratis alcanzado. Actualizá a PRO para generaciones ilimitadas.' },
 });
