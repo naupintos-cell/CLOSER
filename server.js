@@ -69,15 +69,10 @@ const globalLimiter = rateLimit({
   message: { error: 'Demasiadas solicitudes. Esperá un momento.' }
 });
 const genLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,  // 1 hora
-  max: 3,                      // 3 generaciones gratis por hora por IP
+  windowMs: 60 * 60 * 1000,
+  max: 10,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Límite de generaciones gratis alcanzado. Actualizá a PRO para generaciones ilimitadas.' },
-  skip: async (req) => {
-    // Usuarios PRO no tienen límite
-    const user = await getUserFromRequest(req);
-    return user && user.plan === 'pro';
-  }
 });
 
 app.use('/api/', globalLimiter);
