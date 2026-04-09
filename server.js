@@ -49,17 +49,26 @@ const allowedOrigins = (ALLOWED_ORIGINS || '')
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  // Sin origin = same-origin o server-to-server → OK
   if (!origin) return next();
+  // Si no hay lista configurada, o el origin está en la lista → OK
   if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Vary', 'Origin');
-  } else {
-    return res.status(403).json({ error: 'Origin no permitido' });
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    return next();
   }
-  if (req.method === 'OPTIONS') return res.sendStatus(204);
-  next();
+  // Railway internal URLs también permitidas
+  if (origin.includes('railway.app') || origin.includes('up.railway.app')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    return next();
+  }
+  return res.status(403).json({ error: 'Origin no permitido' });
 });
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
