@@ -570,6 +570,21 @@ app.post('/api/mp/create-subscription', async (req, res) => {
   }
 });
 
+// ── POST /api/generate — proxy a Anthropic ───────────────────────────────────
+app.post('/api/generate', genLimiter, async (req, res) => {
+  const validationError = validateBody(req.body);
+  if (validationError) return res.status(400).json({ error: validationError });
+
+  try {
+    const { response, data } = await callAnthropic(req.body);
+    return res.status(response.status).json(data);
+  } catch (err) {
+    if (err.name === 'AbortError') return res.status(504).json({ error: 'Timeout' });
+    console.error('[CLOSER] /api/generate error:', err.message);
+    return res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', ts: Date.now() });
