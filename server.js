@@ -79,7 +79,7 @@ const globalLimiter = rateLimit({
 });
 const genLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 10,
+  max: process.env.NODE_ENV === 'development' ? 1000 : 10,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Límite de generaciones gratis alcanzado. Actualizá a PRO para generaciones ilimitadas.' },
 });
