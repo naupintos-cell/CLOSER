@@ -73,13 +73,13 @@ app.use((req, res, next) => {
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
-  windowMs: 60 * 1000, max: 60,
+  windowMs: 60 * 1000, max: 200,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Demasiadas solicitudes. Esperá un momento.' }
 });
 const genLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minuto para testing
-  max: 100,
+  windowMs: 60 * 1000,
+  max: 200,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Límite de generaciones gratis alcanzado. Actualizá a PRO para generaciones ilimitadas.' },
 });
