@@ -1213,8 +1213,8 @@ async function startCheckout(btn) {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
 
     // Estas vars son públicas (anon key) — está bien tenerlas en el frontend
-    const SUPABASE_URL = 'https://getcloserapp.lat'; // se reemplaza con tu URL real de Supabase
-    const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__'; // reemplazá con tu anon key real
+    const SUPABASE_URL = https://zecwqrwkqwdnrndrvbls.supabase.co; 
+    const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplY3dxcndrcXdkbnJuZHJ2YmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTgzNDUsImV4cCI6MjA5MDY3NDM0NX0.7VH5op7_tLTuvzOYvW6p8oyJeRDkEvWrQk0-x3BUYIU 
 
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: { session } } = await sb.auth.getSession();
