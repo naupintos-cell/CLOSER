@@ -1048,7 +1048,7 @@ function startGen() {
 }
 
 function startTimer() {
-  let s = 20;
+  let s = 40; // ~15s delay + ~25s de generación
   const el = document.getElementById('load-timer');
   el.textContent = '~' + s + ' segundos';
   timerInt = setInterval(() => {
@@ -1075,8 +1075,34 @@ async function runPipeline() {
   marketCtx = ctx;
   animStep('ll2'); await sleep(500);
   animStep('ll3'); await sleep(400);
-  animStep('ll4'); await sleep(300);
+  animStep('ll4');
+  // Esperamos 15s entre las dos llamadas para no chocar con el rate limit de Anthropic (Tier 1 ~5 RPM)
+  await sleep(15000);
   await generateMessages(ctx);
+}
+
+// Wrapper con retry para fetch a /api/generate
+async function fetchWithRetry(body, maxRetries = 2) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const r = await fetch("/api/generate", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (r.status === 429 && attempt < maxRetries) {
+        // Rate limited: esperar antes de reintentar
+        const retryAfter = r.headers.get('retry-after');
+        const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1);
+        console.warn(`Rate limit (429) — reintentando en ${delay/1000}s (intento ${attempt+1}/${maxRetries})`);
+        await sleep(delay);
+        continue;
+      }
+      return r;
+    } catch(e) {
+      if (attempt < maxRetries) { await sleep(8000); continue; }
+      throw e;
+    }
+  }
 }
 
 async function fetchContext() {
@@ -1085,14 +1111,11 @@ async function fetchContext() {
 JSON sin markdown: {"objeciones_comunes":["..."],"tono_recomendado":"...","friccion_principal":"...","insight_mercado":"...","resumen_contexto":"...","insight_paywall":"..."}
 resumen_contexto: máx 110 chars. insight_paywall: frase sobre la mayor fuga de ventas en ese rubro.`;
   try {
-    const r = await fetch("/api/generate", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514", max_tokens: 900, temperature: 0.3,
-        tools: [{ "type": "web_search_20250305", "name": "web_search" }],
-        system: sys,
-        messages: [{ role: "user", content: `Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam` }]
-      })
+    const r = await fetchWithRetry({
+      model: "claude-sonnet-4-20250514", max_tokens: 900, temperature: 0.3,
+      tools: [{ "type": "web_search_20250305", "name": "web_search" }],
+      system: sys,
+      messages: [{ role: "user", content: `Rubro: ${negocio}\nCliente: ${cliente}\nPaís: Argentina/Latam` }]
     });
     const d = await r.json();
     let txt = '';
@@ -1114,12 +1137,9 @@ REGLAS: Máx 3-4 oraciones. Una sola pregunta al final que avance la venta. Prec
 JSON sin markdown: {"inicio":"...","precio":"...","duda":"..."}`;
   const usr = `Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema||'no especificado'}\nObjeción: ${objecion||'es caro / lo pienso'}\nPrecio: ${precio||'no especificado'}\n${ctxBlock}\n3 mensajes que avancen la venta. "duda" responde la objeción indicada específicamente.`;
   try {
-    const r = await fetch("/api/generate", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514", max_tokens: 900, temperature: 0.56,
-        system: sys, messages: [{ role: "user", content: usr }]
-      })
+    const r = await fetchWithRetry({
+      model: "claude-sonnet-4-20250514", max_tokens: 900, temperature: 0.56,
+      system: sys, messages: [{ role: "user", content: usr }]
     });
     const d = await r.json();
     const m = JSON.parse(d.content[0].text.trim().replace(/```json|```/g, '').trim());
