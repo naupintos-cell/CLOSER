@@ -1449,12 +1449,22 @@ async function doRegister() {
   const btn = document.getElementById('btn-register');
   btn.disabled = true; btn.textContent = 'Creando cuenta…';
 
-  const { error } = await getSB().auth.signUp({ email, password: pass });
+  const { data, error } = await getSB().auth.signUp({ email, password: pass });
   btn.disabled = false; btn.textContent = 'Crear cuenta →';
 
   if (error) return setAuthMsg(translateAuthError(error.message), 'err');
 
-  setAuthMsg('¡Cuenta creada! Revisá tu email para confirmar y después volvé acá.', 'ok');
+  // Sin confirmación de email — sesión activa de inmediato → ir al checkout
+  if (data?.session) {
+    setAuthMsg('¡Cuenta creada! Iniciando pago…', 'ok');
+    setTimeout(() => {
+      document.getElementById('auth').classList.remove('visible');
+      startCheckout(document.getElementById('btn-upgrade'));
+    }, 800);
+  } else {
+    setAuthMsg('¡Cuenta creada! Iniciá sesión para continuar.', 'ok');
+    setTimeout(() => switchTab('login'), 1500);
+  }
   document.getElementById('reg-email').value = '';
   document.getElementById('reg-pass').value  = '';
 }
