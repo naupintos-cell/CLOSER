@@ -79,9 +79,9 @@ const globalLimiter = rateLimit({
 });
 const genLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 200,
+  max: 4, // Tier 1 de Anthropic = ~5 RPM; dejamos margen para no llegar al límite
   standardHeaders: true, legacyHeaders: false,
-  message: { error: 'Límite de generaciones gratis alcanzado. Actualizá a PRO para generaciones ilimitadas.' },
+  message: { error: 'Demasiadas generaciones por minuto. Esperá unos segundos y reintentá.' },
 });
 
 app.use('/api/', globalLimiter);
@@ -135,27 +135,49 @@ function validateBody(body) {
   return null;
 }
 
-// ── Anthropic fetch helper ────────────────────────────────────────────────────
-async function callAnthropic(payload) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 35000);
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type':      'application/json',
-        'x-api-key':         ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta':    'web-search-2025-03-05',
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    return { response, data: await response.json() };
-  } catch (err) {
-    clearTimeout(timeout);
-    throw err;
+// ── Anthropic fetch helper con retry en 429 ───────────────────────────────────
+async function callAnthropic(payload, { maxRetries = 3, baseDelay = 8000 } = {}) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 40000);
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type':      'application/json',
+          'x-api-key':         ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta':    'web-search-2025-03-05',
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      // Si es 429, reintentamos con backoff exponencial
+      if (response.status === 429 && attempt < maxRetries) {
+        // Respetar el header Retry-After si viene en la respuesta
+        const retryAfter = response.headers.get('retry-after');
+        const delay = retryAfter
+          ? parseInt(retryAfter, 10) * 1000
+          : baseDelay * Math.pow(2, attempt); // 8s, 16s, 32s
+        console.warn(`[CLOSER] 429 rate limit — reintento ${attempt + 1}/${maxRetries} en ${delay / 1000}s`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      return { response, data: await response.json() };
+    } catch (err) {
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') throw err; // timeout — no reintentar
+      if (attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.warn(`[CLOSER] Error de red — reintento ${attempt + 1}/${maxRetries} en ${delay / 1000}s:`, err.message);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
   }
 }
 
