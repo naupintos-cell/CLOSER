@@ -970,7 +970,7 @@ footer {
                 <div><strong>Precio de lanzamiento — sube a $69.900 el 30 de abril.</strong><br><span>Quedan <strong id="spots-left">23</strong> lugares.</span></div>
               </div>
               <p style="font-size:12px;color:var(--n55);margin-bottom:14px">Cancelás cuando querés. Sin contrato.</p>
-              <button class="btn-upgrade" onclick="alert('Redirigiendo a checkout…')">Empezar a recuperar ventas perdidas →</button>
+              <button class="btn-upgrade"  id="btn-upgrade" onclick="startCheckout(this)">Empezar a recuperar ventas perdidas →</button>
               <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Cancelación en 1 clic</span><span>✓ Sin bot — vos cerrás</span></div>
               <p class="pw-filter">Para los que ya están vendiendo por DM — no para los que recién empiezan.</p>
             </div>
@@ -1200,6 +1200,97 @@ function restart() {
   marketCtx = '';
   showS('s-form');
   document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Checkout con Mercado Pago ─────────────────────────────────────────────────
+async function startCheckout(btn) {
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Iniciando pago…';
+
+  try {
+    // Obtener sesión de Supabase (usuario logueado)
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+
+    // Estas vars son públicas (anon key) — está bien tenerlas en el frontend
+    const SUPABASE_URL = 'https://getcloserapp.lat'; // se reemplaza con tu URL real de Supabase
+    const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__'; // reemplazá con tu anon key real
+
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data: { session } } = await sb.auth.getSession();
+
+    if (!session) {
+      // Usuario no logueado — redirigir a login/registro
+      btn.disabled = false;
+      btn.textContent = original;
+      showAuthPrompt();
+      return;
+    }
+
+    // Llamar al backend para crear la suscripción
+    const res = await fetch('/api/mp/create-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.checkout_url) {
+      throw new Error(data.error || 'No se pudo generar el link de pago');
+    }
+
+    // Redirigir a Mercado Pago
+    window.location.href = data.checkout_url;
+
+  } catch (err) {
+    console.error('[CLOSER] checkout error:', err);
+    btn.disabled = false;
+    btn.textContent = original;
+    showToast('Hubo un problema al iniciar el pago. Reintentá en unos segundos.', 'error');
+  }
+}
+
+function showAuthPrompt() {
+  // Mostrar mensaje inline debajo del botón de upgrade
+  const btn = document.getElementById('btn-upgrade');
+  let msg = document.getElementById('auth-prompt');
+  if (!msg) {
+    msg = document.createElement('p');
+    msg.id = 'auth-prompt';
+    msg.style.cssText = 'font-size:13px;color:var(--p);margin-top:10px;text-align:center;font-weight:500;';
+    btn.parentNode.insertBefore(msg, btn.nextSibling);
+  }
+  msg.textContent = 'Necesitás crear una cuenta primero. ';
+  const link = document.createElement('a');
+  link.href = '/registro'; // ajustá si tu ruta es distinta
+  link.textContent = 'Registrate gratis →';
+  link.style.cssText = 'color:var(--p);text-decoration:underline;';
+  msg.appendChild(link);
+}
+
+function showToast(msg, type = 'info') {
+  let t = document.getElementById('toast-msg');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast-msg';
+    t.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;
+      z-index:9999;max-width:90vw;text-align:center;
+      box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .3s;
+    `;
+    document.body.appendChild(t);
+  }
+  t.style.background = type === 'error' ? 'var(--err-bg)' : 'var(--ok-bg)';
+  t.style.color      = type === 'error' ? 'var(--err)'    : 'var(--ok)';
+  t.style.border     = `1px solid ${type === 'error' ? 'var(--err-br)' : 'var(--ok-br)'}`;
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => { t.style.opacity = '0'; }, 4000);
 }
 </script>
 </body>
