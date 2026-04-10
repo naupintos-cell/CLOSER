@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --p:         #9d1a52;
@@ -581,7 +582,7 @@ footer {
   .nums-grid { grid-template-columns: 1fr 1fr; }
   .nums-grid .num-cell:last-child { grid-column: span 2; border-top: 1px solid rgba(255,255,255,.07); }
   .vs-cards { grid-template-columns: 1fr; }
-  .vs-card.bad { display: none; } /* en mobile solo mostramos CLOSER */
+  .vs-card.bad { display: none; }
   .form-body { padding: 22px 18px 26px; }
   .out-body { padding: 18px 18px 26px; }
   .load-body { padding: 36px 18px; }
@@ -589,6 +590,91 @@ footer {
   .pw-compare { grid-template-columns: 1fr auto 1fr; }
   .out-hd { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── auth section ── */
+#auth {
+  padding: 72px 0; background: var(--n04);
+  border-top: 1px solid var(--n15); border-bottom: 1px solid var(--n15);
+  display: none; /* se muestra via JS cuando el usuario hace click en PRO */
+}
+#auth.visible { display: block; }
+.auth-card {
+  max-width: 400px; margin: 0 auto; padding: 0 20px;
+}
+.auth-eyebrow {
+  font-size: 11px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--p); margin-bottom: 10px; text-align: center;
+}
+.auth-title {
+  font-family: var(--serif); font-size: 28px; font-weight: 400;
+  letter-spacing: -.02em; text-align: center; margin-bottom: 6px; color: var(--ink);
+}
+.auth-sub {
+  font-size: 14px; color: var(--n55); text-align: center; margin-bottom: 28px; line-height: 1.6;
+}
+.auth-tabs {
+  display: flex; gap: 4px; background: var(--n08);
+  border: 1px solid var(--n15); border-radius: 10px; padding: 4px; margin-bottom: 22px;
+}
+.auth-tab {
+  flex: 1; padding: 9px; font-size: 13px; font-weight: 500; border: none;
+  border-radius: 7px; background: transparent; color: var(--n55);
+  cursor: pointer; transition: all var(--t);
+}
+.auth-tab.active {
+  background: var(--w); color: var(--ink);
+  box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.auth-field { display: flex; flex-direction: column; gap: 5px; }
+.auth-field label { font-size: 12.5px; font-weight: 500; color: var(--n70); }
+.auth-field input {
+  padding: 11px 14px; border: 1px solid var(--n15); border-radius: var(--r);
+  font-size: 15px; font-family: var(--sans); background: var(--w); color: var(--ink);
+  transition: border-color var(--t), box-shadow var(--t); outline: none;
+}
+.auth-field input:focus {
+  border-color: var(--p); box-shadow: 0 0 0 3px var(--p-glow);
+}
+.auth-field input::placeholder { color: var(--n25); }
+.auth-submit {
+  width: 100%; padding: 14px; margin-top: 4px;
+  background: var(--ig); color: var(--w); border: none;
+  border-radius: var(--r); font-size: 15px; font-weight: 500;
+  font-family: var(--sans); cursor: pointer; transition: all var(--t);
+  box-shadow: var(--ig-glow);
+}
+.auth-submit:hover { background: var(--ig-h); transform: translateY(-1px); }
+.auth-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.auth-divider {
+  text-align: center; font-size: 12px; color: var(--n40); margin: 4px 0;
+}
+.auth-link {
+  background: none; border: none; font-size: 13px; color: var(--p);
+  cursor: pointer; font-family: var(--sans); text-decoration: underline; padding: 0;
+}
+.auth-msg {
+  padding: 11px 14px; border-radius: var(--r); font-size: 13px;
+  font-weight: 500; display: none;
+}
+.auth-msg.ok  { background: var(--ok-bg);  color: var(--ok);  border: 1px solid var(--ok-br);  display: block; }
+.auth-msg.err { background: var(--err-bg); color: var(--err); border: 1px solid var(--err-br); display: block; }
+.auth-msg.info{ background: var(--info-bg);color: var(--info);border: 1px solid var(--info-br);display: block; }
+
+/* nav auth state */
+.btn-nav-user {
+  display: none; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--n55); font-weight: 400;
+}
+.btn-nav-user .user-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex-shrink: 0;
+}
+.btn-nav-signout {
+  background: none; border: 1px solid var(--n15); color: var(--n55);
+  padding: 6px 12px; font-size: 11.5px; border-radius: 7px; cursor: pointer;
+  font-family: var(--sans); transition: all var(--t);
+}
+.btn-nav-signout:hover { border-color: var(--n40); color: var(--ink); }
 </style>
 </head>
 <body>
@@ -599,7 +685,15 @@ footer {
     <a href="#" class="logo">CLOSER<span class="dot">.</span></a>
     <div class="nav-r">
       <a href="#vs" class="nav-link" style="display:none">vs bots</a>
+      <!-- Estado no logueado -->
+      <button id="nav-login-btn" class="btn-nav" onclick="showAuth('login')" style="display:none">Iniciar sesión</button>
       <button class="btn-nav" onclick="goApp()">Probarlo gratis →</button>
+      <!-- Estado logueado -->
+      <div class="btn-nav-user" id="nav-user-state">
+        <span class="user-dot"></span>
+        <span id="nav-user-email"></span>
+        <button class="btn-nav-signout" onclick="signOut()">Salir</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -991,6 +1085,65 @@ footer {
   </div>
 </section>
 
+<!-- AUTH SECTION -->
+<section id="auth">
+  <div class="auth-card">
+    <p class="auth-eyebrow">Acceso CLOSER PRO</p>
+    <h2 class="auth-title" id="auth-title">Creá tu cuenta</h2>
+    <p class="auth-sub" id="auth-sub">Registrate para activar tu suscripción PRO y acceder al sistema completo.</p>
+
+    <!-- Tabs -->
+    <div class="auth-tabs" id="auth-tabs">
+      <button class="auth-tab active" id="tab-register" onclick="switchTab('register')">Registrarse</button>
+      <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Iniciar sesión</button>
+    </div>
+
+    <!-- Mensaje de estado -->
+    <div class="auth-msg" id="auth-msg"></div>
+
+    <!-- Form registro -->
+    <div id="form-register" class="auth-form">
+      <div class="auth-field">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="reg-pass">Contraseña</label>
+        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      </div>
+      <button class="auth-submit" id="btn-register" onclick="doRegister()">Crear cuenta →</button>
+    </div>
+
+    <!-- Form login -->
+    <div id="form-login" class="auth-form" style="display:none">
+      <div class="auth-field">
+        <label for="log-email">Email</label>
+        <input type="email" id="log-email" placeholder="tu@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="log-pass">Contraseña</label>
+        <input type="password" id="log-pass" placeholder="Tu contraseña" autocomplete="current-password">
+      </div>
+      <button class="auth-submit" id="btn-login" onclick="doLogin()">Ingresar →</button>
+      <div class="auth-divider">
+        <button class="auth-link" onclick="switchTab('recover')">¿Olvidaste tu contraseña?</button>
+      </div>
+    </div>
+
+    <!-- Form recuperar contraseña -->
+    <div id="form-recover" class="auth-form" style="display:none">
+      <div class="auth-field">
+        <label for="rec-email">Email de tu cuenta</label>
+        <input type="email" id="rec-email" placeholder="tu@email.com" autocomplete="email">
+      </div>
+      <button class="auth-submit" id="btn-recover" onclick="doRecover()">Enviar link de recuperación →</button>
+      <div class="auth-divider">
+        <button class="auth-link" onclick="switchTab('login')">← Volver al login</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="foot-in">
@@ -1202,49 +1355,190 @@ function restart() {
   document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
 }
 
+// ── Supabase config — reemplazá con tus valores reales ───────────────────────
+const SUPABASE_URL      = 'https://zecwqrwkqwdnrndrvbls.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplY3dxcndrcXdkbnJuZHJ2YmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTgzNDUsImV4cCI6MjA5MDY3NDM0NX0.7VH5op7_tLTuvzOYvW6p8oyJeRDkEvWrQk0-x3BUYIU';
+
+let sb = null;
+let currentSession = null;
+
+function getSB() {
+  if (!sb) sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return sb;
+}
+
+// ── Init auth al cargar la página ─────────────────────────────────────────────
+(async () => {
+  const client = getSB();
+  const { data: { session } } = await client.auth.getSession();
+  updateNavAuth(session);
+
+  client.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    updateNavAuth(session);
+  });
+})();
+
+function updateNavAuth(session) {
+  currentSession = session;
+  const navUser   = document.getElementById('nav-user-state');
+  const navLogin  = document.getElementById('nav-login-btn');
+  const navEmail  = document.getElementById('nav-user-email');
+
+  if (session?.user) {
+    navUser.style.display  = 'flex';
+    navLogin.style.display = 'none';
+    navEmail.textContent   = session.user.email;
+  } else {
+    navUser.style.display  = 'none';
+    navLogin.style.display = 'inline-block';
+  }
+}
+
+// ── Mostrar sección auth ──────────────────────────────────────────────────────
+function showAuth(tab = 'register') {
+  const section = document.getElementById('auth');
+  section.classList.add('visible');
+  switchTab(tab);
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function switchTab(tab) {
+  const tabs    = { register: 'form-register', login: 'form-login', recover: 'form-recover' };
+  const titles  = { register: 'Creá tu cuenta', login: 'Bienvenido de nuevo', recover: 'Recuperar contraseña' };
+  const subs    = {
+    register: 'Registrate para activar tu suscripción PRO.',
+    login:    'Ingresá con tu email y contraseña.',
+    recover:  'Te mandamos un link para restablecer tu contraseña.',
+  };
+
+  Object.entries(tabs).forEach(([key, id]) => {
+    document.getElementById(id).style.display = key === tab ? 'flex' : 'none';
+  });
+
+  // Actualizar tabs activos (solo register y login tienen tab visual)
+  ['register','login'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+
+  document.getElementById('auth-title').textContent = titles[tab] || '';
+  document.getElementById('auth-sub').textContent   = subs[tab]   || '';
+  document.getElementById('auth-tabs').style.display = tab === 'recover' ? 'none' : 'flex';
+  clearAuthMsg();
+}
+
+function setAuthMsg(text, type = 'info') {
+  const el = document.getElementById('auth-msg');
+  el.className = 'auth-msg ' + type;
+  el.textContent = text;
+}
+function clearAuthMsg() {
+  const el = document.getElementById('auth-msg');
+  el.className = 'auth-msg';
+  el.textContent = '';
+}
+
+// ── Registro ──────────────────────────────────────────────────────────────────
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  if (!email || !pass) return setAuthMsg('Completá email y contraseña.', 'err');
+  if (pass.length < 6)  return setAuthMsg('La contraseña debe tener al menos 6 caracteres.', 'err');
+
+  const btn = document.getElementById('btn-register');
+  btn.disabled = true; btn.textContent = 'Creando cuenta…';
+
+  const { error } = await getSB().auth.signUp({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Crear cuenta →';
+
+  if (error) return setAuthMsg(translateAuthError(error.message), 'err');
+
+  setAuthMsg('¡Cuenta creada! Revisá tu email para confirmar y después volvé acá.', 'ok');
+  document.getElementById('reg-email').value = '';
+  document.getElementById('reg-pass').value  = '';
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('log-email').value.trim();
+  const pass  = document.getElementById('log-pass').value;
+  if (!email || !pass) return setAuthMsg('Completá email y contraseña.', 'err');
+
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.textContent = 'Ingresando…';
+
+  const { data, error } = await getSB().auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Ingresar →';
+
+  if (error) return setAuthMsg(translateAuthError(error.message), 'err');
+
+  setAuthMsg('¡Bienvenido! Redirigiendo al checkout…', 'ok');
+  setTimeout(() => {
+    document.getElementById('auth').classList.remove('visible');
+    startCheckout(document.getElementById('btn-upgrade'));
+  }, 1200);
+}
+
+// ── Recuperar contraseña ──────────────────────────────────────────────────────
+async function doRecover() {
+  const email = document.getElementById('rec-email').value.trim();
+  if (!email) return setAuthMsg('Ingresá tu email.', 'err');
+
+  const btn = document.getElementById('btn-recover');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+
+  const { error } = await getSB().auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/#reset-password',
+  });
+  btn.disabled = false; btn.textContent = 'Enviar link de recuperación →';
+
+  if (error) return setAuthMsg(translateAuthError(error.message), 'err');
+  setAuthMsg('¡Listo! Revisá tu email, te mandamos el link para restablecer tu contraseña.', 'ok');
+  document.getElementById('rec-email').value = '';
+}
+
+// ── Sign out ──────────────────────────────────────────────────────────────────
+async function signOut() {
+  await getSB().auth.signOut();
+  showToast('Sesión cerrada.', 'info');
+}
+
+// ── Traducir errores de Supabase ──────────────────────────────────────────────
+function translateAuthError(msg) {
+  if (msg.includes('Invalid login'))        return 'Email o contraseña incorrectos.';
+  if (msg.includes('Email not confirmed'))  return 'Confirmá tu email antes de ingresar.';
+  if (msg.includes('already registered'))   return 'Ya existe una cuenta con ese email. Iniciá sesión.';
+  if (msg.includes('Password should be'))   return 'La contraseña debe tener al menos 6 caracteres.';
+  if (msg.includes('Unable to validate'))   return 'Email inválido.';
+  return 'Ocurrió un error. Reintentá.';
+}
+
 // ── Checkout con Mercado Pago ─────────────────────────────────────────────────
 async function startCheckout(btn) {
+  // Si no hay sesión, mostrar la sección de auth
+  if (!currentSession) {
+    showAuth('register');
+    return;
+  }
+
   const original = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Iniciando pago…';
 
   try {
-    // Obtener sesión de Supabase (usuario logueado)
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-
-    // Estas vars son públicas (anon key) — está bien tenerlas en el frontend
-    const SUPABASE_URL = https://zecwqrwkqwdnrndrvbls.supabase.co; 
-    const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplY3dxcndrcXdkbnJuZHJ2YmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTgzNDUsImV4cCI6MjA5MDY3NDM0NX0.7VH5op7_tLTuvzOYvW6p8oyJeRDkEvWrQk0-x3BUYIU 
-
-    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { session } } = await sb.auth.getSession();
-
-    if (!session) {
-      // Usuario no logueado — redirigir a login/registro
-      btn.disabled = false;
-      btn.textContent = original;
-      showAuthPrompt();
-      return;
-    }
-
-    // Llamar al backend para crear la suscripción
     const res = await fetch('/api/mp/create-subscription', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${currentSession.access_token}`,
       },
     });
 
     const data = await res.json();
+    if (!res.ok || !data.checkout_url) throw new Error(data.error || 'Sin link de pago');
 
-    if (!res.ok || !data.checkout_url) {
-      throw new Error(data.error || 'No se pudo generar el link de pago');
-    }
-
-    // Redirigir a Mercado Pago
     window.location.href = data.checkout_url;
-
   } catch (err) {
     console.error('[CLOSER] checkout error:', err);
     btn.disabled = false;
@@ -1253,23 +1547,7 @@ async function startCheckout(btn) {
   }
 }
 
-function showAuthPrompt() {
-  // Mostrar mensaje inline debajo del botón de upgrade
-  const btn = document.getElementById('btn-upgrade');
-  let msg = document.getElementById('auth-prompt');
-  if (!msg) {
-    msg = document.createElement('p');
-    msg.id = 'auth-prompt';
-    msg.style.cssText = 'font-size:13px;color:var(--p);margin-top:10px;text-align:center;font-weight:500;';
-    btn.parentNode.insertBefore(msg, btn.nextSibling);
-  }
-  msg.textContent = 'Necesitás crear una cuenta primero. ';
-  const link = document.createElement('a');
-  link.href = '/registro'; // ajustá si tu ruta es distinta
-  link.textContent = 'Registrate gratis →';
-  link.style.cssText = 'color:var(--p);text-decoration:underline;';
-  msg.appendChild(link);
-}
+function showAuthPrompt() { showAuth('register'); }
 
 function showToast(msg, type = 'info') {
   let t = document.getElementById('toast-msg');
@@ -1284,9 +1562,9 @@ function showToast(msg, type = 'info') {
     `;
     document.body.appendChild(t);
   }
-  t.style.background = type === 'error' ? 'var(--err-bg)' : 'var(--ok-bg)';
-  t.style.color      = type === 'error' ? 'var(--err)'    : 'var(--ok)';
-  t.style.border     = `1px solid ${type === 'error' ? 'var(--err-br)' : 'var(--ok-br)'}`;
+  t.style.background = type === 'error' ? 'var(--err-bg)' : type === 'info' ? 'var(--info-bg)' : 'var(--ok-bg)';
+  t.style.color      = type === 'error' ? 'var(--err)'    : type === 'info' ? 'var(--info)'    : 'var(--ok)';
+  t.style.border     = `1px solid ${type === 'error' ? 'var(--err-br)' : type === 'info' ? 'var(--info-br)' : 'var(--ok-br)'}`;
   t.textContent = msg;
   t.style.opacity = '1';
   clearTimeout(t._timeout);
