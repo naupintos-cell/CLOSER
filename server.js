@@ -34,7 +34,7 @@ const MP_TOKEN = (NODE_ENV !== 'production' && MP_ACCESS_TOKEN_TEST)
   ? MP_ACCESS_TOKEN_TEST
   : MP_ACCESS_TOKEN;
 
-console.log(`[CLOSER] MP mode: ${NODE_ENV !== 'production' && MP_ACCESS_TOKEN_TEST ? 'TEST' : 'PRODUCTION'}`);
+// MP mode: TEST when NODE_ENV !== 'production' and MP_ACCESS_TOKEN_TEST is set
 
 // ── Supabase (service role — solo en server) ──────────────────────────────────
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
@@ -102,34 +102,19 @@ app.use('/api/', globalLimiter);
 async function getUserFromRequest(req) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
-    console.warn('[CLOSER] auth: no Bearer header');
     return null;
   }
   const token = authHeader.slice(7);
-  console.log('[CLOSER] auth: token prefix =', token.slice(0, 30));
-  console.log('[CLOSER] auth: SUPABASE_URL =', SUPABASE_URL ? 'OK' : 'MISSING');
-  console.log('[CLOSER] auth: SUPABASE_SERVICE_KEY =', SUPABASE_SERVICE_KEY ? SUPABASE_SERVICE_KEY.slice(0, 20) + '...' : 'MISSING');
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error) {
-      console.warn('[CLOSER] auth getUser error:', error.message);
-      return null;
-    }
-    if (!user) {
-      console.warn('[CLOSER] auth: user null');
-      return null;
-    }
-    console.log('[CLOSER] auth: user OK =', user.email);
-    const { data: profile, error: profileError } = await supabase
+    if (error || !user) return null;
+    const { data: profile } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
-    if (profileError) console.warn('[CLOSER] auth profile error:', profileError.message);
-    if (!profile) console.warn('[CLOSER] auth: profile null for', user.email);
     return profile || null;
   } catch (e) {
-    console.error('[CLOSER] auth exception:', e.message);
     return null;
   }
 }
@@ -584,7 +569,6 @@ app.post('/api/mp/create-subscription', async (req, res) => {
   try {
     const backUrl = process.env.APP_URL || 'https://closer-production-9f2d.up.railway.app';
 
-    console.log('[CLOSER] MP token length:', MP_ACCESS_TOKEN?.length, 'first10:', MP_ACCESS_TOKEN?.slice(0,10), 'last10:', MP_ACCESS_TOKEN?.slice(-10));
     const mpRes = await fetch('https://api.mercadopago.com/preapproval_plan', {
       method: 'POST',
       headers: {
@@ -606,7 +590,6 @@ app.post('/api/mp/create-subscription', async (req, res) => {
     });
 
     const plan = await mpRes.json();
-    console.log('[CLOSER] MP plan response:', JSON.stringify(plan));
     if (!plan.id) throw new Error(plan.message || 'Error creando plan MP');
 
     // El init_point del plan ya es suficiente para que el usuario se suscriba
@@ -624,6 +607,8 @@ app.post('/api/generate', genLimiter, async (req, res) => {
   const validationError = validateBody(req.body);
   if (validationError) return res.status(400).json({ error: validationError });
 
+  // Limitar generaciones gratis (max 3 por día por IP)
+  // Los usuarios PRO no tienen límite adicional
   try {
     const { response, data } = await callAnthropic(req.body);
     return res.status(response.status).json(data);
