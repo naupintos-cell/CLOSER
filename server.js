@@ -594,25 +594,10 @@ app.post('/api/mp/create-subscription', async (req, res) => {
     console.log('[CLOSER] MP plan response:', JSON.stringify(plan));
     if (!plan.id) throw new Error(plan.message || 'Error creando plan MP');
 
-    // Crear suscripción en ese plan
-    const subRes = await fetch('https://api.mercadopago.com/preapproval', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`,
-        'Content-Type':  'application/json',
-      },
-      body: JSON.stringify({
-        preapproval_plan_id: plan.id,
-        payer_email:         user.email,
-        external_reference:  user.id,
-        back_url:            `${backUrl}/dashboard`,
-      })
-    });
+    // El init_point del plan ya es suficiente para que el usuario se suscriba
+    if (!plan.init_point) throw new Error('No se obtuvo init_point del plan MP');
 
-    const sub = await subRes.json();
-    if (!sub.init_point) throw new Error(sub.message || 'Error creando suscripción MP');
-
-    res.json({ checkout_url: sub.init_point, subscription_id: sub.id });
+    res.json({ checkout_url: plan.init_point, subscription_id: plan.id });
   } catch (err) {
     console.error('[CLOSER] MP create-subscription error:', err.message);
     res.status(500).json({ error: 'Error al crear suscripción: ' + err.message });
