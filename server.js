@@ -89,19 +89,37 @@ app.use('/api/', globalLimiter);
 // ── Auth helper ───────────────────────────────────────────────────────────────
 async function getUserFromRequest(req) {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) return null;
+  if (!authHeader?.startsWith('Bearer ')) {
+    console.warn('[CLOSER] auth: no Bearer header');
+    return null;
+  }
   const token = authHeader.slice(7);
+  console.log('[CLOSER] auth: token prefix =', token.slice(0, 30));
+  console.log('[CLOSER] auth: SUPABASE_URL =', SUPABASE_URL ? 'OK' : 'MISSING');
+  console.log('[CLOSER] auth: SUPABASE_SERVICE_KEY =', SUPABASE_SERVICE_KEY ? SUPABASE_SERVICE_KEY.slice(0, 20) + '...' : 'MISSING');
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) return null;
-    // Traer perfil con plan
-    const { data: profile } = await supabase
+    if (error) {
+      console.warn('[CLOSER] auth getUser error:', error.message);
+      return null;
+    }
+    if (!user) {
+      console.warn('[CLOSER] auth: user null');
+      return null;
+    }
+    console.log('[CLOSER] auth: user OK =', user.email);
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
+    if (profileError) console.warn('[CLOSER] auth profile error:', profileError.message);
+    if (!profile) console.warn('[CLOSER] auth: profile null for', user.email);
     return profile || null;
-  } catch { return null; }
+  } catch (e) {
+    console.error('[CLOSER] auth exception:', e.message);
+    return null;
+  }
 }
 
 // ── Validación body ───────────────────────────────────────────────────────────
