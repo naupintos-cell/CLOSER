@@ -582,9 +582,11 @@ function renderGeneraciones(containerId, gens) {
 function renderGen(g, i) {
   const date = new Date(g.created_at).toLocaleDateString('es-AR', { day:'numeric', month:'short' });
   const msgs = [
-    { key:'msg_inicio', type:'inicio', label:'Apertura' },
-    { key:'msg_precio', type:'precio', label:'Precio' },
-    { key:'msg_duda',   type:'duda',   label:'Objeción' },
+    { key:'msg_inicio',       type:'inicio',       label:'Apertura' },
+    { key:'msg_precio',       type:'precio',       label:'Precio' },
+    { key:'msg_duda',         type:'duda',         label:'Objeción' },
+    { key:'msg_reactivacion', type:'reactivacion', label:'Reactivación' },
+    { key:'msg_cierre',       type:'cierre',       label:'Cierre' },
   ];
   return `<div class="gen-card">
     <div class="gen-head" onclick="toggleGen('gen-${i}')">
