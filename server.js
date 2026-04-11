@@ -13,6 +13,9 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
+// ── Trust proxy (Railway usa reverse proxy) ───────────────────────────────────
+app.set('trust proxy', 1);
+
 // ── ENV vars ──────────────────────────────────────────────────────────────────
 const {
   ANTHROPIC_API_KEY,
