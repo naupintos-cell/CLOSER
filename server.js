@@ -569,6 +569,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
   try {
     const backUrl = process.env.APP_URL || 'https://closer-production-9f2d.up.railway.app';
 
+    console.log('[CLOSER] MP token length:', MP_ACCESS_TOKEN?.length, 'first10:', MP_ACCESS_TOKEN?.slice(0,10), 'last10:', MP_ACCESS_TOKEN?.slice(-10));
     const mpRes = await fetch('https://api.mercadopago.com/preapproval_plan', {
       method: 'POST',
       headers: {
@@ -590,6 +591,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
     });
 
     const plan = await mpRes.json();
+    console.log('[CLOSER] MP plan response:', JSON.stringify(plan));
     if (!plan.id) throw new Error(plan.message || 'Error creando plan MP');
 
     // Crear suscripción en ese plan
