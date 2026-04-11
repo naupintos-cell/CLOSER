@@ -593,7 +593,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
           transaction_amount: NODE_ENV !== 'production' ? 100 : 54900,
           currency_id:    'ARS',
         },
-        back_url: `${backUrl}/dashboard`,
+        back_url: `${backUrl}/dashboard?payment=success`,
         payer_email: user.email,
         external_reference: user.id,
       })
