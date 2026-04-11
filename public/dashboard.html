@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLOSER. — Tu sistema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --p:        #9d1a52;
+  --p-dark:   #7a1340;
+  --p-light:  #fdf0f5;
+  --p-border: rgba(157,26,82,.14);
+  --p-glow:   rgba(157,26,82,.08);
+  --ig:       linear-gradient(135deg,#9d1a52 0%,#c2185b 50%,#e53935 100%);
+  --ig-h:     linear-gradient(135deg,#7a1340 0%,#9d1a52 50%,#c62828 100%);
+  --ig-glow:  0 4px 20px rgba(157,26,82,.32);
+  --ink:  #0d0d0b; --ink2: #171714;
+  --n70:  #3a3a37; --n55: #5e5e5a; --n40: #8a8a86;
+  --n25:  #c0c0bc; --n15: #e0e0da; --n08: #f2f2ee; --n04: #f8f8f5; --w: #fff;
+  --ok:   #256342; --ok-bg: #ebf5ef; --ok-br: rgba(37,99,66,.14);
+  --err:  #852424; --err-bg: #fdeeed; --err-br: rgba(133,36,36,.14);
+  --info: #1c4d7a; --info-bg: #eaf2fb; --info-br: rgba(28,77,122,.14);
+  --serif:'Fraunces',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --r:10px; --r-lg:16px; --r-xl:22px; --t:.18s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--n04);color:var(--ink);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{cursor:pointer;font-family:var(--sans)}
+a{text-decoration:none;color:inherit}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--n15);height:52px;display:flex;align-items:center;
+}
+.nav-in{max-width:1100px;margin:0 auto;padding:0 20px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:18px;color:var(--ink);letter-spacing:-.01em;display:inline-flex;align-items:baseline}
+.logo .dot{background:var(--ig);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-badge{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--ig);color:#fff;padding:2px 6px;border-radius:4px;margin-left:7px;font-family:var(--sans)}
+.nav-r{display:flex;align-items:center;gap:10px}
+.nav-email{font-size:12px;color:var(--n40)}
+.btn-nav-out{background:none;border:1px solid var(--n15);color:var(--n55);padding:6px 12px;font-size:11.5px;border-radius:7px;cursor:pointer;transition:all var(--t)}
+.btn-nav-out:hover{border-color:var(--n40);color:var(--ink)}
+
+/* ── LAYOUT ── */
+.dash{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.dash-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+@media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-xl);padding:8px;position:sticky;top:72px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13.5px;color:var(--n55);cursor:pointer;transition:all var(--t);border:none;background:none;width:100%;text-align:left;font-family:var(--sans)}
+.nav-item:hover{background:var(--n04);color:var(--ink)}
+.nav-item.active{background:var(--p-light);color:var(--p);font-weight:500}
+.nav-item svg{flex-shrink:0;opacity:.6}
+.nav-item.active svg{opacity:1}
+.nav-sep{height:1px;background:var(--n08);margin:6px 4px}
+.nav-plan{margin:8px 4px 4px;padding:10px 12px;background:var(--ig);border-radius:10px;color:#fff}
+.nav-plan-label{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+.nav-plan-val{font-size:13px;font-weight:500}
+
+/* ── MAIN PANELS ── */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-xl);padding:24px;margin-bottom:16px}
+.card-sm{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-lg);padding:18px}
+
+/* ── METRICS ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:600px){.metrics-grid{grid-template-columns:1fr 1fr}}
+.metric{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-lg);padding:18px 16px}
+.metric-val{font-family:var(--serif);font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1;margin-bottom:5px}
+.metric-val.good{background:var(--ig);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.metric-lbl{font-size:12px;color:var(--n40);line-height:1.4}
+.metric-delta{font-size:11px;color:var(--ok);margin-top:4px;font-weight:500}
+
+/* ── INSIGHT BANNER ── */
+.insight{background:var(--p-light);border:1px solid var(--p-border);border-radius:var(--r-lg);padding:14px 16px;font-size:13px;color:var(--p-dark);line-height:1.6;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.insight-icon{flex-shrink:0;margin-top:1px;font-size:16px}
+
+/* ── GENERACIONES ── */
+.gen-list{display:flex;flex-direction:column;gap:10px}
+.gen-card{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-lg);overflow:hidden;transition:box-shadow var(--t)}
+.gen-card:hover{box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.gen-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.gen-head-l{display:flex;align-items:center;gap:10px;min-width:0}
+.gen-negocio{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gen-meta{font-size:11.5px;color:var(--n40);white-space:nowrap}
+.gen-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:100px;flex-shrink:0}
+.gb-pro{background:var(--p-light);color:var(--p);border:1px solid var(--p-border)}
+.gb-free{background:var(--n08);color:var(--n40);border:1px solid var(--n15)}
+.gen-body{display:none;padding:0 16px 16px;border-top:1px solid var(--n08)}
+.gen-body.open{display:block}
+.msg-row{margin-top:12px}
+.msg-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.msg-type{font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--n40)}
+.msg-txt{font-size:13px;line-height:1.75;color:var(--ink);background:var(--n04);border-radius:8px;padding:10px 12px;white-space:pre-wrap}
+.result-btns{display:flex;gap:6px;margin-top:8px}
+.btn-result{padding:5px 12px;border-radius:100px;font-size:11.5px;font-weight:500;border:1px solid;cursor:pointer;transition:all var(--t);font-family:var(--sans)}
+.btn-result.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-br)}
+.btn-result.ok:hover,.btn-result.ok.sel{background:var(--ok);color:#fff}
+.btn-result.err{background:var(--err-bg);color:var(--err);border-color:var(--err-br)}
+.btn-result.err:hover,.btn-result.err.sel{background:var(--err);color:#fff}
+
+/* ── ANALIZADOR ── */
+.analyzer-area{width:100%;min-height:160px;padding:14px;border:1px solid var(--n15);border-radius:var(--r-lg);font-family:var(--sans);font-size:13.5px;color:var(--ink);background:var(--w);resize:vertical;outline:none;transition:border-color var(--t),box-shadow var(--t);line-height:1.7}
+.analyzer-area:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-glow)}
+.analyzer-area::placeholder{color:var(--n25)}
+.btn-analyze{display:inline-flex;align-items:center;gap:8px;background:var(--ig);color:#fff;padding:12px 24px;border:none;border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;transition:all var(--t);box-shadow:var(--ig-glow);font-family:var(--sans)}
+.btn-analyze:hover{background:var(--ig-h);transform:translateY(-1px)}
+.btn-analyze:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.analysis-result{background:var(--w);border:1px solid var(--n15);border-radius:var(--r-xl);padding:24px;margin-top:16px;display:none}
+.analysis-result.show{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.diag-section{margin-bottom:20px}
+.diag-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--n40);margin-bottom:8px}
+.diag-pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:4px 10px;border-radius:100px;font-size:12px;font-weight:500}
+.pill-err{background:var(--err-bg);color:var(--err);border:1px solid var(--err-br)}
+.pill-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-br)}
+.pill-info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-br)}
+
+/* ── GENERADOR PRO ── */
+.pro-gen-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.pro-gen-form{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.f-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--n40)}
+input[type=text],textarea{width:100%;padding:10px 13px;border:1px solid var(--n15);border-radius:8px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--w);outline:none;transition:border-color var(--t),box-shadow var(--t)}
+input[type=text]:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-glow)}
+input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
+
+/* ── ACTIVATING SCREEN ── */
+#activating{position:fixed;inset:0;background:#fff;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.act-logo{font-family:var(--serif);font-size:28px;color:var(--ink)}
+.act-logo span{background:var(--ig);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.act-spinner{width:40px;height:40px;border:3px solid var(--p-border);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.act-msg{font-size:14px;color:var(--n55)}
+
+/* ── WIZARD ── */
+#wizard{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;display:flex;align-items:center;justify-content:center;padding:20px;display:none}
+#wizard.show{display:flex}
+.wiz-card{background:var(--w);border-radius:var(--r-xl);padding:36px 32px;max-width:480px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.18)}
+.wiz-step{display:none}
+.wiz-step.active{display:block;animation:fadeIn .35s ease}
+.wiz-num{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--p);margin-bottom:12px}
+.wiz-h{font-family:var(--serif);font-size:26px;font-weight:400;letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
+.wiz-h em{font-style:italic;color:var(--p)}
+.wiz-p{font-size:14px;color:var(--n55);line-height:1.75;margin-bottom:24px}
+.wiz-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.wiz-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--n55);line-height:1.6}
+.wiz-list li strong{color:var(--ink);font-weight:500}
+.wiz-icon{width:22px;height:22px;border-radius:50%;background:var(--p-light);border:1px solid var(--p-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:11px;color:var(--p)}
+.wiz-foot{display:flex;align-items:center;justify-content:space-between}
+.wiz-dots{display:flex;gap:6px}
+.wiz-dot{width:6px;height:6px;border-radius:50%;background:var(--n15);transition:background .2s}
+.wiz-dot.active{background:var(--p)}
+.btn-wiz{background:var(--ig);color:#fff;padding:11px 24px;border:none;border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;transition:all var(--t);font-family:var(--sans);box-shadow:var(--ig-glow)}
+.btn-wiz:hover{background:var(--ig-h)}
+.btn-wiz-skip{background:none;border:none;font-size:13px;color:var(--n40);cursor:pointer;font-family:var(--sans);transition:color var(--t)}
+.btn-wiz-skip:hover{color:var(--ink)}
+
+/* ── EMPTY STATES ── */
+.empty{text-align:center;padding:48px 20px}
+.empty-icon{font-size:36px;margin-bottom:14px;opacity:.4}
+.empty-h{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:6px;letter-spacing:-.01em}
+.empty-p{font-size:13.5px;color:var(--n55);line-height:1.7;max-width:300px;margin:0 auto 20px}
+
+/* ── SECTION HEADERS ── */
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-title{font-family:var(--serif);font-size:22px;font-weight:400;letter-spacing:-.02em}
+.sec-sub{font-size:13px;color:var(--n55);margin-top:2px}
+
+/* ── LOADING INLINE ── */
+.loading-row{display:flex;align-items:center;gap:10px;padding:20px;color:var(--n40);font-size:13.5px}
+.spin-sm{width:16px;height:16px;border:2px solid var(--p-border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:500;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.12);transition:opacity .3s;opacity:0;pointer-events:none}
+#toast.show{opacity:1}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .dash{padding:16px 12px 60px}
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .wiz-card{padding:28px 20px}
+  .wiz-h{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ACTIVATING OVERLAY -->
+<div id="activating">
+  <div class="act-logo">CLOSER<span>.</span></div>
+  <div class="act-spinner"></div>
+  <p class="act-msg" id="act-msg">Verificando tu cuenta…</p>
+</div>
+
+<!-- WIZARD OVERLAY -->
+<div id="wizard">
+  <div class="wiz-card">
+    <!-- Step 1 -->
+    <div class="wiz-step active" id="wiz-1">
+      <div class="wiz-num">Bienvenido a CLOSER PRO</div>
+      <h2 class="wiz-h">Tu sistema de ventas<br>está <em>activado.</em></h2>
+      <p class="wiz-p">En los próximos 3 pasos te explico cómo funciona para que empieces a cerrar más desde hoy.</p>
+      <div class="wiz-foot">
+        <div class="wiz-dots">
+          <div class="wiz-dot active"></div>
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot"></div>
+        </div>
+        <button class="btn-wiz" onclick="wizNext(2)">Empezar →</button>
+      </div>
+    </div>
+    <!-- Step 2 -->
+    <div class="wiz-step" id="wiz-2">
+      <div class="wiz-num">Paso 1 de 3</div>
+      <h2 class="wiz-h">Generá tu sistema<br>y <em>usalo hoy.</em></h2>
+      <ul class="wiz-list">
+        <li><div class="wiz-icon">1</div><div>Andá a <strong>Generar sistema</strong> y completá los datos de tu negocio.</div></li>
+        <li><div class="wiz-icon">2</div><div>CLOSER genera <strong>5 mensajes calibrados</strong>: inicio, precio, objeción, reactivación y cierre.</div></li>
+        <li><div class="wiz-icon">3</div><div>Copiá los mensajes y <strong>usalos en tus DMs</strong> hoy mismo.</div></li>
+      </ul>
+      <div class="wiz-foot">
+        <div class="wiz-dots">
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot active"></div>
+          <div class="wiz-dot"></div>
+        </div>
+        <button class="btn-wiz" onclick="wizNext(3)">Siguiente →</button>
+      </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="wiz-step" id="wiz-3">
+      <div class="wiz-num">Paso 2 de 3</div>
+      <h2 class="wiz-h">Marcá resultados.<br>CLOSER <em>aprende.</em></h2>
+      <ul class="wiz-list">
+        <li><div class="wiz-icon">✓</div><div>Después de usar un mensaje, volvé acá y marcá si <strong>cerró la venta o no.</strong></div></li>
+        <li><div class="wiz-icon">↗</div><div>Con cada resultado, CLOSER <strong>calibra las próximas generaciones</strong> a tus patrones reales.</div></li>
+        <li><div class="wiz-icon">📊</div><div>Tu dashboard muestra qué mensajes convierten más en tu negocio específico.</div></li>
+      </ul>
+      <div class="wiz-foot">
+        <div class="wiz-dots">
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot active"></div>
+        </div>
+        <button class="btn-wiz" onclick="wizNext(4)">Siguiente →</button>
+      </div>
+    </div>
+    <!-- Step 4 -->
+    <div class="wiz-step" id="wiz-4">
+      <div class="wiz-num">Paso 3 de 3</div>
+      <h2 class="wiz-h">Analizá tus DMs<br><em>reales.</em></h2>
+      <ul class="wiz-list">
+        <li><div class="wiz-icon">↙</div><div>Pegá el texto de tus conversaciones reales de WhatsApp o Instagram.</div></li>
+        <li><div class="wiz-icon">🔍</div><div>CLOSER detecta <strong>exactamente dónde perdiste ventas</strong> y por qué.</div></li>
+        <li><div class="wiz-icon">→</div><div>Genera un sistema calibrado con tus <strong>patrones reales</strong>, no datos genéricos.</div></li>
+      </ul>
+      <div class="wiz-foot">
+        <div class="wiz-dots">
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot"></div>
+          <div class="wiz-dot active"></div>
+        </div>
+        <button class="btn-wiz" onclick="closeWizard()">Ir a mi panel →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="/" class="logo">CLOSER<span class="dot">.</span><span class="logo-badge">PRO</span></a>
+    <div class="nav-r">
+      <span class="nav-email" id="nav-email"></span>
+      <button class="btn-nav-out" onclick="signOut()">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="dash">
+  <div class="dash-grid">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <button class="nav-item active" id="nav-resumen" onclick="showPanel('resumen')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Resumen
+      </button>
+      <button class="nav-item" id="nav-mensajes" onclick="showPanel('mensajes')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3.5A1.5 1.5 0 013.5 2h9A1.5 1.5 0 0114 3.5v7A1.5 1.5 0 0112.5 12H9l-3 2v-2H3.5A1.5 1.5 0 012 10.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Mis mensajes
+      </button>
+      <button class="nav-item" id="nav-analizar" onclick="showPanel('analizar')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Analizar DMs
+      </button>
+      <button class="nav-item" id="nav-generar" onclick="showPanel('generar')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Generar sistema
+      </button>
+      <div class="nav-sep"></div>
+      <div class="nav-plan">
+        <div class="nav-plan-label">Tu plan</div>
+        <div class="nav-plan-val">CLOSER PRO ✓</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+      <!-- PANEL: RESUMEN -->
+      <div class="panel active" id="panel-resumen">
+        <div class="sec-h">
+          <div>
+            <h1 class="sec-title">Resumen</h1>
+            <p class="sec-sub" id="resumen-sub">Cargando tus métricas…</p>
+          </div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric">
+            <div class="metric-val good" id="m-ratio">—</div>
+            <div class="metric-lbl">Ratio de cierre</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="m-closed" style="color:var(--ok)">—</div>
+            <div class="metric-lbl">Ventas cerradas</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="m-gens">—</div>
+            <div class="metric-lbl">Sistemas generados</div>
+          </div>
+        </div>
+        <div class="insight" id="insight-banner" style="display:none">
+          <span class="insight-icon">↗</span>
+          <span id="insight-text"></span>
+        </div>
+        <div class="card">
+          <div class="sec-h" style="margin-bottom:12px">
+            <div style="font-size:14px;font-weight:500">Últimas generaciones</div>
+            <button onclick="showPanel('mensajes')" style="background:none;border:none;font-size:12px;color:var(--p);cursor:pointer;font-family:var(--sans)">Ver todas →</button>
+          </div>
+          <div id="resumen-gens">
+            <div class="loading-row"><div class="spin-sm"></div>Cargando…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: MIS MENSAJES -->
+      <div class="panel" id="panel-mensajes">
+        <div class="sec-h">
+          <div>
+            <h1 class="sec-title">Mis mensajes</h1>
+            <p class="sec-sub">Marcá qué funcionó para que CLOSER aprenda</p>
+          </div>
+        </div>
+        <div id="mensajes-list">
+          <div class="loading-row"><div class="spin-sm"></div>Cargando…</div>
+        </div>
+      </div>
+
+      <!-- PANEL: ANALIZAR DMs -->
+      <div class="panel" id="panel-analizar">
+        <div class="sec-h">
+          <div>
+            <h1 class="sec-title">Analizar DMs</h1>
+            <p class="sec-sub">Pegá tus conversaciones reales y CLOSER detecta dónde perdés ventas</p>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:13px;color:var(--n55);margin-bottom:14px;line-height:1.7">
+            Exportá una conversación de WhatsApp (Ajustes → Chat → Exportar chat) o copiá el texto de tus DMs de Instagram. Pegalo abajo tal cual.
+          </p>
+          <textarea class="analyzer-area" id="dm-text" placeholder="Pegá acá el texto de tus conversaciones...&#10;&#10;Ejemplo:&#10;[12/03 10:22] Cliente: Hola! Vi tu perfil, ¿cuánto sale?&#10;[12/03 10:45] Vos: Hola! El programa sale $85.000&#10;[12/03 11:00] Cliente: Ok gracias lo pienso&#10;..."></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:10px">
+            <p style="font-size:12px;color:var(--n40)">Mínimo 3 conversaciones para un diagnóstico preciso</p>
+            <button class="btn-analyze" id="btn-analyze" onclick="analyzeDMs()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              Analizar conversaciones
+            </button>
+          </div>
+        </div>
+        <div class="analysis-result" id="analysis-result"></div>
+      </div>
+
+      <!-- PANEL: GENERAR SISTEMA -->
+      <div class="panel" id="panel-generar">
+        <div class="sec-h">
+          <div>
+            <h1 class="sec-title">Generar sistema</h1>
+            <p class="sec-sub">Tu historial calibra automáticamente cada generación</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="pro-gen-form" id="pro-gen-form">
+            <div class="field">
+              <label class="f-label">¿Qué vendés?</label>
+              <input type="text" id="pg-negocio" placeholder="Coaching de ventas, ropa, servicios…">
+            </div>
+            <div class="field">
+              <label class="f-label">¿A quién le vendés?</label>
+              <input type="text" id="pg-cliente" placeholder="Emprendedores, dueños de negocio…">
+            </div>
+            <div class="field">
+              <label class="f-label">¿Qué problema resolvés?</label>
+              <input type="text" id="pg-problema" placeholder="No saben cómo responder objeciones…">
+            </div>
+            <div class="field">
+              <label class="f-label">Objeción más frecuente</label>
+              <input type="text" id="pg-objecion" placeholder="'Es caro', 'lo pienso', 'ya aviso'…">
+            </div>
+            <div class="field">
+              <label class="f-label">Precio</label>
+              <input type="text" id="pg-precio" placeholder="$85.000 / USD 150…">
+            </div>
+            <div class="field" style="display:flex;align-items:flex-end">
+              <button class="btn-analyze" id="btn-pro-gen" onclick="proGenerate()" style="width:100%;justify-content:center">
+                Generar sistema PRO →
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="pro-gen-result" style="display:none"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL      = 'https://zecwqrwkqwdnrndrvbls.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplY3dxcndrcXdkbnJuZHJ2YmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTgzNDUsImV4cCI6MjA5MDY3NDM0NX0.7VH5op7_tLTuvzOYvW6p8oyJeRDkEvWrQk0-x3BUYIU';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+let currentSession = null;
+let dashData = null;
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+
+  if (!session) {
+    window.location.href = '/?auth=login';
+    return;
+  }
+
+  currentSession = session;
+  currentUser = session.user;
+  document.getElementById('nav-email').textContent = currentUser.email;
+
+  // Verificar si viene de un pago (parámetro en URL)
+  const params = new URLSearchParams(window.location.search);
+  const fromPayment = params.get('payment') === 'success' || params.get('status') === 'approved' || document.referrer.includes('mercadopago');
+
+  if (fromPayment) {
+    document.getElementById('act-msg').textContent = 'Activando tu plan PRO…';
+    await pollForPro();
+  } else {
+    await checkAccessAndLoad();
+  }
+})();
+
+async function pollForPro(attempts = 0) {
+  if (attempts > 10) {
+    // Timeout — igual mostramos el dashboard
+    hideActivating();
+    await loadDashboard();
+    return;
+  }
+  try {
+    const res = await fetch('/api/profile', {
+      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+    });
+    const data = await res.json();
+    if (data.user?.plan === 'pro') {
+      hideActivating();
+      await loadDashboard();
+      showWizard();
+      return;
+    }
+  } catch(e) {}
+  document.getElementById('act-msg').textContent = `Activando tu plan PRO${'.'.repeat((attempts % 3) + 1)}`;
+  await sleep(3000);
+  await pollForPro(attempts + 1);
+}
+
+async function checkAccessAndLoad() {
+  try {
+    const res = await fetch('/api/profile', {
+      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+    });
+    const data = await res.json();
+    if (!data.user) { window.location.href = '/'; return; }
+    hideActivating();
+    await loadDashboard();
+    // Mostrar wizard si es la primera vez (no tiene generaciones)
+    if (!localStorage.getItem('closer_wizard_done')) showWizard();
+  } catch(e) {
+    hideActivating();
+  }
+}
+
+function hideActivating() {
+  document.getElementById('activating').style.display = 'none';
+}
+
+async function loadDashboard() {
+  try {
+    const res = await fetch('/api/dashboard', {
+      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+    });
+    if (!res.ok) return;
+    dashData = await res.json();
+    renderMetrics();
+    renderGeneraciones('resumen-gens', dashData.generations?.slice(0, 3));
+    renderGeneraciones('mensajes-list', dashData.generations);
+  } catch(e) { console.error('Dashboard load error:', e); }
+}
+
+function renderMetrics() {
+  if (!dashData) return;
+  const { metrics, generations } = dashData;
+  document.getElementById('m-ratio').textContent = metrics.total > 0 ? metrics.ratio + '%' : '—';
+  document.getElementById('m-closed').textContent = metrics.closed || '0';
+  document.getElementById('m-gens').textContent = generations?.length || '0';
+  document.getElementById('resumen-sub').textContent = `${metrics.total} mensajes registrados`;
+
+  // Insight
+  if (metrics.total > 3) {
+    const banner = document.getElementById('insight-banner');
+    const text = document.getElementById('insight-text');
+    const bestType = getBestType();
+    if (bestType) {
+      text.textContent = `Tu mejor mensaje es el de ${bestType.label} — cerraste ${bestType.ratio}% de las veces que lo usaste.`;
+      banner.style.display = 'flex';
+    }
+  }
+}
+
+function getBestType() {
+  if (!dashData?.byType) return null;
+  const labels = { inicio:'apertura', precio:'precio', duda:'objeción', reactivacion:'reactivación', cierre:'cierre' };
+  let best = null;
+  for (const [type, data] of Object.entries(dashData.byType)) {
+    if (data.total < 2) continue;
+    const ratio = Math.round(data.closed / data.total * 100);
+    if (!best || ratio > best.ratio) best = { label: labels[type] || type, ratio };
+  }
+  return best;
+}
+
+function renderGeneraciones(containerId, gens) {
+  const el = document.getElementById(containerId);
+  if (!gens || gens.length === 0) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon">✦</div>
+      <h3 class="empty-h">Sin generaciones aún</h3>
+      <p class="empty-p">Generá tu primer sistema y empezá a trackear resultados.</p>
+      <button onclick="showPanel('generar')" class="btn-analyze" style="margin:0 auto">Generar sistema →</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="gen-list">${gens.map((g, i) => renderGen(g, i)).join('')}</div>`;
+}
+
+function renderGen(g, i) {
+  const date = new Date(g.created_at).toLocaleDateString('es-AR', { day:'numeric', month:'short' });
+  const msgs = [
+    { key:'msg_inicio', type:'inicio', label:'Apertura' },
+    { key:'msg_precio', type:'precio', label:'Precio' },
+    { key:'msg_duda',   type:'duda',   label:'Objeción' },
+  ];
+  return `<div class="gen-card">
+    <div class="gen-head" onclick="toggleGen('gen-${i}')">
+      <div class="gen-head-l">
+        <span class="gen-negocio">${escHtml(g.negocio || 'Sin nombre')}</span>
+        <span class="gen-meta">${date}</span>
+      </div>
+      <span class="gen-badge ${g.plan_at_gen === 'pro' ? 'gb-pro' : 'gb-free'}">${g.plan_at_gen === 'pro' ? 'PRO' : 'FREE'}</span>
+    </div>
+    <div class="gen-body" id="gen-${i}">
+      ${msgs.map(m => g[m.key] ? `
+        <div class="msg-row">
+          <div class="msg-row-head">
+            <span class="msg-type">${m.label}</span>
+          </div>
+          <div class="msg-txt">${escHtml(g[m.key])}</div>
+          <div class="result-btns">
+            <button class="btn-result ok" onclick="markResult('${g.id}','${m.type}',${escHtml(g[m.key]).length > 0 ? `'${escJs(g[m.key])}'` : "''"}, 'closed', this)">✓ Cerró</button>
+            <button class="btn-result err" onclick="markResult('${g.id}','${m.type}',${escHtml(g[m.key]).length > 0 ? `'${escJs(g[m.key])}'` : "''"}, 'lost', this)">✗ No cerró</button>
+          </div>
+        </div>
+      ` : '').join('')}
+    </div>
+  </div>`;
+}
+
+function toggleGen(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+async function markResult(genId, msgType, msgText, result, btn) {
+  const row = btn.closest('.result-btns');
+  row.querySelectorAll('.btn-result').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  try {
+    await fetch('/api/result', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${currentSession.access_token}` },
+      body: JSON.stringify({ generation_id: genId, msg_type: msgType, msg_text: msgText, result })
+    });
+    toast('Resultado guardado ✓', 'ok');
+    // Reload metrics silently
+    setTimeout(loadDashboard, 500);
+  } catch(e) { toast('Error al guardar', 'err'); }
+}
+
+// ── ANALIZADOR ───────────────────────────────────────────────────────────────
+async function analyzeDMs() {
+  const text = document.getElementById('dm-text').value.trim();
+  if (text.length < 100) return toast('Pegá más conversaciones para un análisis preciso', 'err');
+
+  const btn = document.getElementById('btn-analyze');
+  btn.disabled = true; btn.textContent = 'Analizando…';
+
+  const sys = `Sos un experto en ventas conversacionales. Analizá estas conversaciones de DMs y detectá patrones de pérdida de ventas.
+Respondé SOLO en JSON sin markdown:
+{
+  "resumen": "1-2 oraciones sobre lo que encontraste",
+  "conversaciones_analizadas": número,
+  "ventas_perdidas": número estimado,
+  "momento_perdida": "cuándo se pierden (ej: al dar el precio, en el silencio post-interés)",
+  "frases_problema": ["frase 1", "frase 2", "frase 3"],
+  "objeciones_detectadas": ["objeción 1", "objeción 2"],
+  "patron_principal": "el patrón más importante que encontraste",
+  "recomendacion": "qué cambiar primero y por qué"
+}`;
+
+  try {
+    const r = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${currentSession.access_token}` },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 900, temperature: 0.2,
+        system: sys,
+        messages: [{ role: 'user', content: `Analizá estas conversaciones:\n\n${text.slice(0, 4000)}` }]
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.[0]?.text;
+    if (!txt) throw new Error('Sin respuesta');
+    const analysis = JSON.parse(txt.trim().replace(/```json|```/g,'').trim());
+    renderAnalysis(analysis);
+  } catch(e) {
+    toast('Error al analizar. Reintentá.', 'err');
+  }
+  btn.disabled = false; btn.textContent = 'Analizar conversaciones';
+}
+
+function renderAnalysis(a) {
+  const el = document.getElementById('analysis-result');
+  el.innerHTML = `
+    <div style="margin-bottom:20px">
+      <div class="diag-label">Diagnóstico</div>
+      <p style="font-size:14px;color:var(--ink);line-height:1.7">${escHtml(a.resumen)}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="card-sm" style="text-align:center">
+        <div style="font-family:var(--serif);font-size:28px;color:var(--ink)">${a.conversaciones_analizadas}</div>
+        <div style="font-size:12px;color:var(--n40);margin-top:4px">conversaciones</div>
+      </div>
+      <div class="card-sm" style="text-align:center">
+        <div style="font-family:var(--serif);font-size:28px;background:var(--ig);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${a.ventas_perdidas}</div>
+        <div style="font-size:12px;color:var(--n40);margin-top:4px">ventas perdidas</div>
+      </div>
+      <div class="card-sm" style="text-align:center">
+        <div style="font-size:13px;font-weight:500;color:var(--err);line-height:1.3">${escHtml(a.momento_perdida)}</div>
+        <div style="font-size:12px;color:var(--n40);margin-top:4px">cuándo se pierden</div>
+      </div>
+    </div>
+    <div class="diag-section">
+      <div class="diag-label">Frases que cortan la conversación</div>
+      <div class="diag-pills">${(a.frases_problema||[]).map(f=>`<span class="pill pill-err">"${escHtml(f)}"</span>`).join('')}</div>
+    </div>
+    <div class="diag-section">
+      <div class="diag-label">Objeciones detectadas</div>
+      <div class="diag-pills">${(a.objeciones_detectadas||[]).map(o=>`<span class="pill pill-info">${escHtml(o)}</span>`).join('')}</div>
+    </div>
+    <div style="background:var(--p-light);border:1px solid var(--p-border);border-radius:var(--r-lg);padding:16px;margin-bottom:16px">
+      <div class="diag-label" style="color:var(--p)">Patrón principal</div>
+      <p style="font-size:13.5px;color:var(--p-dark);line-height:1.7">${escHtml(a.patron_principal)}</p>
+    </div>
+    <div style="background:var(--ok-bg);border:1px solid var(--ok-br);border-radius:var(--r-lg);padding:16px;margin-bottom:20px">
+      <div class="diag-label" style="color:var(--ok)">Qué cambiar primero</div>
+      <p style="font-size:13.5px;color:var(--ok);line-height:1.7">${escHtml(a.recomendacion)}</p>
+    </div>
+    <button class="btn-analyze" onclick="showPanel('generar')" style="width:100%;justify-content:center">
+      Generar sistema calibrado con este diagnóstico →
+    </button>
+  `;
+  el.classList.add('show');
+}
+
+// ── GENERADOR PRO ─────────────────────────────────────────────────────────────
+async function proGenerate() {
+  const negocio  = document.getElementById('pg-negocio').value.trim();
+  const cliente  = document.getElementById('pg-cliente').value.trim();
+  const problema = document.getElementById('pg-problema').value.trim();
+  const objecion = document.getElementById('pg-objecion').value.trim();
+  const precio   = document.getElementById('pg-precio').value.trim();
+
+  if (!negocio || !cliente) return toast('Completá al menos producto y cliente', 'err');
+
+  const btn = document.getElementById('btn-pro-gen');
+  btn.disabled = true; btn.textContent = 'Generando…';
+
+  const resEl = document.getElementById('pro-gen-result');
+  resEl.style.display = 'block';
+  resEl.innerHTML = `<div class="loading-row"><div class="spin-sm"></div>Generando tu sistema PRO con tu historial…</div>`;
+
+  const sys = `Experto en ventas conversacionales por WhatsApp/Instagram para negocios latinoamericanos.
+IDENTIDAD: Aliado del vendedor humano. No lo reemplazás — lo potenciás.
+TONO: Humano argentino con "vos". Frases cortas. Sin emojis. Sin asteriscos. Persona real.
+REGLAS: Máx 3-4 oraciones por mensaje. Una sola pregunta al final. Precio: valor primero, número después. Objeción: nombrar, empatizar, reencuadrar al costo de no resolver. Nunca "avisame".
+JSON sin markdown: {"inicio":"...","precio":"...","duda":"...","reactivacion":"...","cierre":"..."}`;
+
+  const usr = `Producto: ${negocio}\nCliente: ${cliente}\nProblema: ${problema||'no especificado'}\nObjeción: ${objecion||'es caro / lo pienso'}\nPrecio: ${precio||'no especificado'}\n\n5 mensajes completos del sistema de ventas.`;
+
+  try {
+    const r = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${currentSession.access_token}` },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000, temperature:0.5,
+        system:sys, messages:[{role:'user',content:usr}],
+        _form:{ negocio, cliente, problema, objecion, precio }
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.[0]?.text;
+    if (!txt) throw new Error('Sin respuesta');
+    const msgs = JSON.parse(txt.trim().replace(/```json|```/g,'').trim());
+    renderProResult(msgs, negocio);
+  } catch(e) {
+    resEl.innerHTML = `<div class="card" style="color:var(--err)">Error al generar. Reintentá.</div>`;
+  }
+  btn.disabled = false; btn.textContent = 'Generar sistema PRO →';
+}
+
+function renderProResult(msgs, negocio) {
+  const el = document.getElementById('pro-gen-result');
+  const types = [
+    { key:'inicio',      label:'Apertura',     intent:'Abrir + calificar + generar interés',   color:'#4a9b6f' },
+    { key:'precio',      label:'Precio',        intent:'Anclar en valor antes del número',       color:'#7a6f3a' },
+    { key:'duda',        label:'Objeción',      intent:'Tu objeción específica — reencuadrada',  color:'#5a7ab5' },
+    { key:'reactivacion',label:'Reactivación',  intent:'Recuperar conversaciones frías',         color:'#9d1a52' },
+    { key:'cierre',      label:'Cierre',        intent:'Llevar a decisión sin presionar',        color:'#3a7a6f' },
+  ];
+  el.innerHTML = `
+    <div class="card" style="margin-top:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:14px;font-weight:500">Sistema generado para: ${escHtml(negocio)}</div>
+          <div style="font-size:12px;color:var(--n40);margin-top:2px">Calibrado con tu historial de resultados</div>
+        </div>
+      </div>
+      ${types.map(t => msgs[t.key] ? `
+        <div class="msg-row" style="margin-bottom:14px">
+          <div class="msg-row-head">
+            <div style="display:flex;align-items:center;gap:7px">
+              <div style="width:7px;height:7px;border-radius:50%;background:${t.color};flex-shrink:0"></div>
+              <span style="font-size:12px;font-weight:500;color:var(--ink)">${t.label}</span>
+              <span style="font-size:11px;color:var(--n40)">${t.intent}</span>
+            </div>
+            <button onclick="copyText(this,'${escJs(msgs[t.key])}')" style="background:var(--w);border:1px solid var(--n15);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--n40);cursor:pointer;font-family:var(--sans);transition:all var(--t)">Copiar</button>
+          </div>
+          <div class="msg-txt" id="ptxt-${t.key}">${escHtml(msgs[t.key])}</div>
+        </div>
+      ` : '').join('')}
+    </div>
+  `;
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const o = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    btn.style.color = 'var(--ok)';
+    setTimeout(() => { btn.textContent = o; btn.style.color = ''; }, 2000);
+  });
+}
+
+// ── WIZARD ───────────────────────────────────────────────────────────────────
+function showWizard() {
+  document.getElementById('wizard').classList.add('show');
+}
+function wizNext(step) {
+  document.querySelectorAll('.wiz-step').forEach(s => s.classList.remove('active'));
+  const next = document.getElementById('wiz-' + step);
+  if (next) next.classList.add('active');
+  else closeWizard();
+}
+function closeWizard() {
+  document.getElementById('wizard').classList.remove('show');
+  localStorage.setItem('closer_wizard_done', '1');
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  window.location.href = '/';
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escJs(s) {
+  return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type === 'ok' ? 'var(--ok-bg)' : type === 'err' ? 'var(--err-bg)' : 'var(--info-bg)';
+  t.style.color = type === 'ok' ? 'var(--ok)' : type === 'err' ? 'var(--err)' : 'var(--info)';
+  t.style.border = `1px solid ${type === 'ok' ? 'var(--ok-br)' : type === 'err' ? 'var(--err-br)' : 'var(--info-br)'}`;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
