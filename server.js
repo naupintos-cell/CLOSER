@@ -401,7 +401,7 @@ async function saveGeneration(userId, form, anthropicData, isPro) {
 
   if (!messages?.inicio || !messages?.precio || !messages?.duda) return;
 
-  await supabase.from('generations').insert({
+  const insertData = {
     user_id:        userId,
     negocio:        (form.negocio || '').slice(0, 500),
     cliente:        (form.cliente || '').slice(0, 500),
@@ -413,7 +413,13 @@ async function saveGeneration(userId, form, anthropicData, isPro) {
     msg_precio:     messages.precio.slice(0, 2000),
     msg_duda:       messages.duda.slice(0, 2000),
     plan_at_gen:    isPro ? 'pro' : 'free',
-  });
+  };
+
+  // Soporte para mensajes PRO (reactivacion + cierre)
+  if (messages.reactivacion) insertData.msg_reactivacion = messages.reactivacion.slice(0, 2000);
+  if (messages.cierre)       insertData.msg_cierre       = messages.cierre.slice(0, 2000);
+
+  await supabase.from('generations').insert(insertData);
 
   // Actualizar contador en profile
   await supabase.from('profiles')
