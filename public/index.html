@@ -273,18 +273,22 @@ h1 em { font-style: italic; color: var(--p); }
 
 /* ── testimonios ── */
 #testimonios { padding: 64px 0; background: var(--n04); border-top: 1px solid var(--n15); }
-.testi-scroll {
-  display: flex; gap: 14px; overflow-x: auto; padding: 4px 20px 16px;
-  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+.testi-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+  max-width: 680px; margin: 0 auto; padding: 0 20px;
 }
-.testi-scroll::-webkit-scrollbar { display: none; }
+@media(max-width:600px){ .testi-grid { grid-template-columns: 1fr; } }
 .testi-card {
-  min-width: 280px; max-width: 300px; scroll-snap-align: start;
   background: var(--w); border: 1px solid var(--n15); border-radius: var(--r-lg);
-  padding: 20px; flex-shrink: 0; display: flex; flex-direction: column;
+  padding: 22px 20px; display: flex; flex-direction: column; min-height: 220px;
 }
-.testi-q { font-family: var(--serif); font-size: 36px; color: var(--p-border); line-height: 1; margin-bottom: 6px; }
+.testi-q {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--p-light); border: 1px solid var(--p-border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 16px; color: var(--p);
+  margin-bottom: 12px; flex-shrink: 0;
+}
 .testi-text { font-size: 13px; color: var(--n70); line-height: 1.7; flex: 1; margin-bottom: 14px; }
 .testi-div { height: 1px; background: var(--n08); margin-bottom: 12px; }
 .testi-author { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
@@ -299,7 +303,7 @@ h1 em { font-style: italic; color: var(--p); }
   background: var(--ok-bg); border: 1px solid var(--ok-br);
   padding: 5px 10px; border-radius: 6px; align-self: flex-start;
 }
-.scroll-hint { text-align: center; font-size: 11.5px; color: var(--n40); margin-top: 4px; }
+
 
 /* ── vs bots ── */
 #vs { padding: 64px 0; background: var(--ink); }
@@ -402,8 +406,8 @@ input[type=text]:focus { border-color: var(--p); box-shadow: 0 0 0 3px rgba(157,
 }
 .load-h { font-family: var(--serif); font-size: 20px; font-weight: 400; letter-spacing: -.02em; margin-bottom: 5px; }
 .load-sub { font-size: 12.5px; color: var(--n40); margin-bottom: 3px; }
-.load-timer { font-size: 11.5px; color: var(--n25); margin-bottom: 24px; }
-.load-list { list-style: none; max-width: 280px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+.load-timer { font-size: 13px; color: var(--n40); margin-bottom: 24px; font-weight: 500; }
+.load-list { list-style: none; max-width: 320px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
 .l-item {
   display: flex; align-items: center; gap: 10px; font-size: 13px;
   color: var(--n40); padding: 10px 14px; border-radius: 10px;
@@ -728,7 +732,6 @@ footer {
       <div class="btn-nav-user" id="nav-user-state">
         <span class="user-dot"></span>
         <span id="nav-user-email"></span>
-        <a href="/dashboard" class="btn-nav" style="display:none" id="nav-dashboard-btn">Mi panel</a>
         <button class="btn-nav-signout" onclick="signOut()">Salir</button>
       </div>
     </div>
@@ -868,12 +871,12 @@ footer {
 <!-- TESTIMONIOS -->
 <section id="testimonios">
   <div>
-    <div class="w" style="margin-bottom:24px">
+    <div style="text-align:center;margin-bottom:28px">
       <div class="sec-eyebrow">Lo que dicen quienes ya lo usan</div>
     </div>
-    <div class="testi-scroll">
+    <div class="testi-grid">
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Empecé a usar los mensajes el mismo día y cerré dos ventas que tenía abandonadas hace una semana. Lo de "avisame si querés" era mi frase más usada — ahora la eliminé.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -883,7 +886,7 @@ footer {
         <div class="testi-result">↑ 2 ventas recuperadas en 48hs</div>
       </div>
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Lo que más me sorprendió fue el diagnóstico. Me mostró que el 71% de mis conversaciones se cortaban cuando preguntaban el precio. Nunca lo había medido.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -893,7 +896,7 @@ footer {
         <div class="testi-result">↑ Ratio de cierre: 18% → 34%</div>
       </div>
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Probé ManyChat y otros bots. Todos suenan igual. CLOSER es lo primero que siente que lo escribí yo. Mis clientes no notan diferencia — pero sí notan que respondo mejor.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -903,7 +906,6 @@ footer {
         <div class="testi-result">↑ 4 operaciones en 3 semanas</div>
       </div>
     </div>
-    <p class="scroll-hint">deslizá →</p>
   </div>
 </section>
 
@@ -977,7 +979,7 @@ footer {
           </div>
           <div class="field field-opt" id="fo5">
             <div class="f-label"><span class="f-n">5</span>¿Cuánto cuesta?</div>
-            <input type="text" id="f5" placeholder="Ej: USD 150/mes, $300.000 sesión única…" oninput="updProg()">
+            <input type="text" id="f5" placeholder="Ej: $85.000/mes, $300.000 sesión única…" oninput="updProg()">
           </div>
           <div class="form-foot">
             <button class="expand-btn" id="exp-btn" onclick="expandFields()">
@@ -1083,9 +1085,9 @@ footer {
               <div class="pw-roi">
                 <div class="pw-roi-label">¿Cuánto te cuesta no tenerlo?</div>
                 <div class="pw-roi-row">
-                  <div class="pw-roi-item"><div class="pw-roi-val">$1.250.000</div><div class="pw-roi-desc">3 ventas perdidas en objeción, $420k c/u</div></div>
+                  <div class="pw-roi-item"><div class="pw-roi-val">$1.260.000</div><div class="pw-roi-desc">3 ventas perdidas en objeción, $420k c/u</div></div>
                   <div class="pw-roi-arrow">→</div>
-                  <div class="pw-roi-item hl"><div class="pw-roi-val">$54.900</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
+                  <div class="pw-roi-item hl"><div class="pw-roi-val">$89.900</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
                 </div>
                 <p class="pw-roi-note">Con recuperar <strong>una sola venta perdida</strong>, el ROI es 20x.</p>
               </div>
@@ -1094,11 +1096,11 @@ footer {
               <div class="pw-compare">
                 <div class="pw-compare-item"><div class="pw-compare-lbl">Coach 1:1</div><div class="pw-compare-price">$1.100.000<span>/mes</span></div><div class="pw-compare-sub">Promedio Arg.</div></div>
                 <div class="pw-vs">vs</div>
-                <div class="pw-compare-item feat"><div class="pw-compare-lbl">CLOSER. PRO</div><div class="pw-compare-price">$54.900<span>/mes</span></div><div class="pw-compare-sub">Lanzamiento</div></div>
+                <div class="pw-compare-item feat"><div class="pw-compare-lbl">CLOSER. PRO</div><div class="pw-compare-price">$89.900<span>/mes</span></div><div class="pw-compare-sub">Lanzamiento</div></div>
               </div>
               <div class="pw-urgency-banner">
                 <div class="urg-dot"></div>
-                <div><strong>Precio de lanzamiento — sube a $69.900 el 30 de abril.</strong><br><span>Quedan <strong id="spots-left">23</strong> lugares.</span></div>
+                <div><strong>Precio de lanzamiento — sube a $109.900 el 30 de abril.</strong><br><span>Quedan <strong id="spots-left">—</strong> lugares.</span></div>
               </div>
               <p style="font-size:12px;color:var(--n55);margin-bottom:14px">Cancelás cuando querés. Sin contrato.</p>
               <button class="btn-upgrade"  id="btn-upgrade" onclick="startCheckout(this)">Empezar a recuperar ventas perdidas →</button>
@@ -1377,6 +1379,16 @@ function cp(btn, id) {
   });
 }
 
+// Counter dinámico — decrece 1 por día desde fecha base
+(function() {
+  const base = new Date('2026-04-11');
+  const today = new Date();
+  const days = Math.floor((today - base) / (1000 * 60 * 60 * 24));
+  const spots = Math.max(3, 23 - days);
+  const el = document.getElementById('spots-left');
+  if (el) el.textContent = spots;
+})();
+
 function restart() {
   clearInterval(timerInt);
   ['f1','f2','f3','f4','f5'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
@@ -1423,34 +1435,16 @@ function updateNavAuth(session) {
   const navUser   = document.getElementById('nav-user-state');
   const navLogin  = document.getElementById('nav-login-btn');
   const navEmail  = document.getElementById('nav-user-email');
-  const navDash   = document.getElementById('nav-dashboard-btn');
 
   if (session?.user) {
     navUser.style.display  = 'flex';
     navLogin.style.display = 'none';
     navEmail.textContent   = session.user.email;
-    if (navDash) navDash.style.display = 'inline-block';
   } else {
     navUser.style.display  = 'none';
     navLogin.style.display = 'inline-block';
-    if (navDash) navDash.style.display = 'none';
   }
 }
-
-// Handle ?auth=login param (redirect from dashboard when not logged in)
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('auth') === 'login') {
-    // Wait for DOM + Supabase init, then show auth
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        showAuth('login');
-        // After login, redirect to dashboard
-        window._postLoginRedirect = '/dashboard';
-      }, 300);
-    });
-  }
-})();
 
 // ── Mostrar sección auth ──────────────────────────────────────────────────────
 function showAuth(tab = 'register') {
@@ -1540,15 +1534,11 @@ async function doLogin() {
 
   if (error) return setAuthMsg(translateAuthError(error.message), 'err');
 
-  setAuthMsg('¡Bienvenido!', 'ok');
+  setAuthMsg('¡Bienvenido! Redirigiendo al checkout…', 'ok');
   setTimeout(() => {
     document.getElementById('auth').classList.remove('visible');
-    if (window._postLoginRedirect) {
-      window.location.href = window._postLoginRedirect;
-    } else {
-      startCheckout(document.getElementById('btn-upgrade'));
-    }
-  }, 800);
+    startCheckout(document.getElementById('btn-upgrade'));
+  }, 1200);
 }
 
 // ── Recuperar contraseña ──────────────────────────────────────────────────────
