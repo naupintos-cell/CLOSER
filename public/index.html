@@ -728,6 +728,7 @@ footer {
       <div class="btn-nav-user" id="nav-user-state">
         <span class="user-dot"></span>
         <span id="nav-user-email"></span>
+        <a href="/dashboard" class="btn-nav" style="display:none" id="nav-dashboard-btn">Mi panel</a>
         <button class="btn-nav-signout" onclick="signOut()">Salir</button>
       </div>
     </div>
@@ -1422,16 +1423,34 @@ function updateNavAuth(session) {
   const navUser   = document.getElementById('nav-user-state');
   const navLogin  = document.getElementById('nav-login-btn');
   const navEmail  = document.getElementById('nav-user-email');
+  const navDash   = document.getElementById('nav-dashboard-btn');
 
   if (session?.user) {
     navUser.style.display  = 'flex';
     navLogin.style.display = 'none';
     navEmail.textContent   = session.user.email;
+    if (navDash) navDash.style.display = 'inline-block';
   } else {
     navUser.style.display  = 'none';
     navLogin.style.display = 'inline-block';
+    if (navDash) navDash.style.display = 'none';
   }
 }
+
+// Handle ?auth=login param (redirect from dashboard when not logged in)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('auth') === 'login') {
+    // Wait for DOM + Supabase init, then show auth
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        showAuth('login');
+        // After login, redirect to dashboard
+        window._postLoginRedirect = '/dashboard';
+      }, 300);
+    });
+  }
+})();
 
 // ── Mostrar sección auth ──────────────────────────────────────────────────────
 function showAuth(tab = 'register') {
@@ -1521,11 +1540,15 @@ async function doLogin() {
 
   if (error) return setAuthMsg(translateAuthError(error.message), 'err');
 
-  setAuthMsg('¡Bienvenido! Redirigiendo al checkout…', 'ok');
+  setAuthMsg('¡Bienvenido!', 'ok');
   setTimeout(() => {
     document.getElementById('auth').classList.remove('visible');
-    startCheckout(document.getElementById('btn-upgrade'));
-  }, 1200);
+    if (window._postLoginRedirect) {
+      window.location.href = window._postLoginRedirect;
+    } else {
+      startCheckout(document.getElementById('btn-upgrade'));
+    }
+  }, 800);
 }
 
 // ── Recuperar contraseña ──────────────────────────────────────────────────────
