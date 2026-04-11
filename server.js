@@ -22,10 +22,19 @@ const {
   SUPABASE_URL,
   SUPABASE_SERVICE_KEY,
   MP_ACCESS_TOKEN,
+  MP_ACCESS_TOKEN_TEST,
   MP_WEBHOOK_SECRET,
+  NODE_ENV,
   ALLOWED_ORIGINS,
   PORT = 3000,
 } = process.env;
+
+// Usar token de test si NODE_ENV !== 'production'
+const MP_TOKEN = (NODE_ENV !== 'production' && MP_ACCESS_TOKEN_TEST)
+  ? MP_ACCESS_TOKEN_TEST
+  : MP_ACCESS_TOKEN;
+
+console.log(`[CLOSER] MP mode: ${NODE_ENV !== 'production' && MP_ACCESS_TOKEN_TEST ? 'TEST' : 'PRODUCTION'}`);
 
 // ── Supabase (service role — solo en server) ──────────────────────────────────
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
@@ -474,7 +483,7 @@ async function processMPSubscription(payload) {
 
   // Consultar estado real de la suscripción en MP
   const mpRes = await fetch(`https://api.mercadopago.com/preapproval/${subId}`, {
-    headers: { 'Authorization': `Bearer ${MP_ACCESS_TOKEN}` }
+    headers: { 'Authorization': `Bearer ${MP_TOKEN}` }
   });
   const sub = await mpRes.json();
 
@@ -530,7 +539,7 @@ async function processMPPayment(payload) {
   if (!paymentId) return;
 
   const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-    headers: { 'Authorization': `Bearer ${MP_ACCESS_TOKEN}` }
+    headers: { 'Authorization': `Bearer ${MP_TOKEN}` }
   });
   const payment = await mpRes.json();
 
@@ -573,7 +582,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
     const mpRes = await fetch('https://api.mercadopago.com/preapproval_plan', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`,
+        'Authorization': `Bearer ${MP_TOKEN}`,
         'Content-Type':  'application/json',
       },
       body: JSON.stringify({
@@ -581,7 +590,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
         auto_recurring: {
           frequency:       1,
           frequency_type: 'months',
-          transaction_amount: 54900,
+          transaction_amount: NODE_ENV !== 'production' ? 100 : 54900,
           currency_id:    'ARS',
         },
         back_url: `${backUrl}/dashboard`,
