@@ -635,6 +635,9 @@ app.get('/health', (req, res) => {
 
 // ── Static + SPA fallback ─────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
