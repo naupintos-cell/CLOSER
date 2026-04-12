@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%239d1a52'/%3E%3Cstop offset='50%25' stop-color='%23c2185b'/%3E%3Cstop offset='100%25' stop-color='%23e53935'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='16' fill='url(%23g)'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-style='italic' fill='white'%3EC%3C/text%3E%3C/svg%3E">
 <style>
 :root {
   --p:         #9d1a52;
@@ -631,6 +632,21 @@ footer {
   .step-num { width: 28px; height: 28px; font-size: 13px; }
 }
 
+/* ── pro banner (landing) ── */
+#pro-banner{
+  display:none;background:var(--ink);border-radius:var(--r-xl);
+  padding:32px 28px;text-align:center;max-width:520px;margin:40px auto 0;
+}
+.pro-banner-eyebrow{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:12px}
+.pro-banner-title{font-family:var(--serif);font-size:28px;font-weight:400;color:#fff;letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
+.pro-banner-title em{font-style:italic;background:var(--ig);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pro-banner-sub{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:24px;line-height:1.6}
+.pro-banner-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ig);color:#fff;padding:14px 28px;border-radius:var(--r);font-size:15px;font-weight:500;text-decoration:none;box-shadow:var(--ig-glow);transition:all var(--t)}
+.pro-banner-btn:hover{background:var(--ig-h);transform:translateY(-1px)}
+.pro-banner-stats{display:flex;justify-content:center;gap:24px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}
+.pro-stat-val{font-family:var(--serif);font-size:22px;color:#fff;letter-spacing:-.02em}
+.pro-stat-lbl{font-size:11px;color:rgba(255,255,255,.35);margin-top:3px}
+
 /* ── privacy modal ── */
 #privacy-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
 #privacy-modal.open{display:flex}
@@ -960,8 +976,22 @@ footer {
 <section id="app">
   <div class="w">
     <div class="sec-eyebrow" style="text-align:center;margin-bottom:10px">Tu aliado en acción</div>
-    <h2 class="sec-h2">Probalo ahora.<br><em>Gratis. En 30 segundos.</em></h2>
-    <p class="sec-sub">Dos datos y CLOSER genera tu sistema personalizado con contexto real de tu rubro.</p>
+    <h2 class="sec-h2" id="app-title">Probalo ahora.<br><em>Gratis. En 30 segundos.</em></h2>
+    <p class="sec-sub" id="app-sub">Dos datos y CLOSER genera tu sistema personalizado con contexto real de tu rubro.</p>
+
+    <!-- Banner PRO — visible solo si el usuario tiene plan PRO -->
+    <div id="pro-banner">
+      <div class="pro-banner-eyebrow">Tu plan PRO está activo</div>
+      <h3 class="pro-banner-title">Tu sistema de ventas<br><em>ya está funcionando.</em></h3>
+      <p class="pro-banner-sub">Generá nuevos sistemas, analizá tus DMs y seguí el tracking de resultados desde tu panel.</p>
+      <a href="/dashboard" class="pro-banner-btn">Ir a mi panel →</a>
+      <div class="pro-banner-stats" id="pro-stats" style="display:none">
+        <div><div class="pro-stat-val" id="ps-gens">0</div><div class="pro-stat-lbl">sistemas generados</div></div>
+        <div><div class="pro-stat-val" id="ps-ratio">—</div><div class="pro-stat-lbl">ratio de cierre</div></div>
+        <div><div class="pro-stat-val" id="ps-closed">0</div><div class="pro-stat-lbl">ventas cerradas</div></div>
+      </div>
+    </div>
+
     <div class="app-card" id="app-card">
       <div class="chrome">
         <div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div>
@@ -1206,7 +1236,7 @@ footer {
     <span style="font-size:12px;color:var(--n40)">Built by <a href="https://kairoinc.lat/" target="_blank" rel="noopener" style="color:var(--n40);font-weight:500;transition:color var(--t)" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--n40)'">KAIRO</a> · Make it simple — 2026</span>
     <div class="foot-links">
       <a href="#" onclick="event.preventDefault();openPrivacy()">Privacidad</a>
-      <a href="mailto:hola@kairoinc.lat">Contacto</a>
+      <a href="/cdn-cgi/l/email-protection#99f1f6f5f8d9f2f8f0ebf6f0f7fab7f5f8ed">Contacto</a>
     </div>
   </div>
 </footer>
@@ -1267,13 +1297,13 @@ footer {
 
     <div class="priv-section">
       <h3>Contacto</h3>
-      <p>Para cualquier consulta sobre tus datos escribinos a <a href="mailto:hola@kairoinc.lat">hola@kairoinc.lat</a></p>
+      <p>Para cualquier consulta sobre tus datos escribinos a <a href="/cdn-cgi/l/email-protection#a6cec9cac7e6cdc7cfd4c9cfc8c588cac7d2"><span class="__cf_email__" data-cfemail="dab2b5b6bb9ab1bbb3a8b5b3b4b9f4b6bbae">[email&#160;protected]</span></a></p>
     </div>
 
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 let fd = {}, marketCtx = '', fieldsExpanded = false, timerInt = null;
 
 function goApp() {
@@ -1499,7 +1529,7 @@ function getSB() {
   });
 })();
 
-function updateNavAuth(session) {
+async function updateNavAuth(session) {
   currentSession = session;
   const navUser  = document.getElementById('nav-user-state');
   const navLogin = document.getElementById('nav-login-btn');
@@ -1509,11 +1539,60 @@ function updateNavAuth(session) {
     navUser.style.display  = 'flex';
     navLogin.style.display = 'none';
     if (navTry) navTry.style.display = 'none';
+    // Check if PRO
+    checkProStatus(session);
   } else {
     navUser.style.display  = 'none';
     navLogin.style.display = 'inline-block';
     if (navTry) navTry.style.display = 'inline-block';
+    hideProBanner();
   }
+}
+
+async function checkProStatus(session) {
+  try {
+    const res = await fetch('/api/profile', {
+      headers: { 'Authorization': `Bearer ${session.access_token}` }
+    });
+    const data = await res.json();
+    if (data.user?.plan === 'pro') {
+      showProBanner(session);
+    }
+  } catch(e) {}
+}
+
+async function showProBanner(session) {
+  const banner   = document.getElementById('pro-banner');
+  const appCard  = document.getElementById('app-card');
+  const appTitle = document.getElementById('app-title');
+  const appSub   = document.getElementById('app-sub');
+
+  // Swap app section content
+  appTitle.innerHTML = 'Tu panel PRO<br><em>te espera.</em>';
+  appSub.textContent = 'Tenés acceso completo al sistema — mensajes, análisis de DMs y tracking de resultados.';
+  appCard.style.display = 'none';
+  banner.style.display  = 'block';
+
+  // Load stats
+  try {
+    const res = await fetch('/api/dashboard', {
+      headers: { 'Authorization': `Bearer ${session.access_token}` }
+    });
+    const data = await res.json();
+    if (data.metrics) {
+      document.getElementById('ps-gens').textContent    = data.generations?.length || 0;
+      document.getElementById('ps-ratio').textContent   = data.metrics.total > 0 ? data.metrics.ratio + '%' : '—';
+      document.getElementById('ps-closed').textContent  = data.metrics.closed || 0;
+      document.getElementById('pro-stats').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+function hideProBanner() {
+  const banner  = document.getElementById('pro-banner');
+  const appCard = document.getElementById('app-card');
+  if (banner)  banner.style.display  = 'none';
+  if (appCard) appCard.style.display = 'block';
 }
 
 // ── Mostrar sección auth ──────────────────────────────────────────────────────
@@ -1736,12 +1815,4 @@ function showToast(msg, type = 'info') {
   }
   t.style.background = type === 'error' ? 'var(--err-bg)' : type === 'info' ? 'var(--info-bg)' : 'var(--ok-bg)';
   t.style.color      = type === 'error' ? 'var(--err)'    : type === 'info' ? 'var(--info)'    : 'var(--ok)';
-  t.style.border     = `1px solid ${type === 'error' ? 'var(--err-br)' : type === 'info' ? 'var(--info-br)' : 'var(--ok-br)'}`;
-  t.textContent = msg;
-  t.style.opacity = '1';
-  clearTimeout(t._timeout);
-  t._timeout = setTimeout(() => { t.style.opacity = '0'; }, 4000);
-}
-</script>
-</body>
-</html>
+  t.style.border
