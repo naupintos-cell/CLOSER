@@ -631,6 +631,24 @@ footer {
   .step-num { width: 28px; height: 28px; font-size: 13px; }
 }
 
+/* ── privacy modal ── */
+#privacy-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+#privacy-modal.open{display:flex}
+.priv-card{background:var(--w);border-radius:var(--r-xl);padding:32px 28px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.priv-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:var(--n40);cursor:pointer;line-height:1;padding:4px;transition:color var(--t)}
+.priv-close:hover{color:var(--ink)}
+.priv-eyebrow{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--p);margin-bottom:10px}
+.priv-title{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.02em;margin-bottom:6px;line-height:1.2}
+.priv-date{font-size:11.5px;color:var(--n40);margin-bottom:24px}
+.priv-section{margin-bottom:20px}
+.priv-section h3{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:7px;letter-spacing:-.01em}
+.priv-section p,.priv-section li{font-size:13px;color:var(--n55);line-height:1.75}
+.priv-section ul{padding-left:16px;display:flex;flex-direction:column;gap:4px}
+.priv-section a{color:var(--p);text-decoration:none}
+.priv-section a:hover{text-decoration:underline}
+.priv-divider{height:1px;background:var(--n08);margin:20px 0}
+@media(max-width:480px){.priv-card{padding:24px 18px;border-radius:var(--r-lg)}}
+
 /* ── auth section ── */
 #auth {
   padding: 72px 0; background: var(--n04);
@@ -1187,11 +1205,73 @@ footer {
   <div class="foot-in">
     <span style="font-size:12px;color:var(--n40)">Built by <a href="https://kairoinc.lat/" target="_blank" rel="noopener" style="color:var(--n40);font-weight:500;transition:color var(--t)" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--n40)'">KAIRO</a> · Make it simple — 2026</span>
     <div class="foot-links">
-      <a href="#">Privacidad</a>
-      <a href="#">Contacto</a>
+      <a href="#" onclick="event.preventDefault();openPrivacy()">Privacidad</a>
+      <a href="mailto:hola@kairoinc.lat">Contacto</a>
     </div>
   </div>
 </footer>
+
+<!-- PRIVACY MODAL -->
+<div id="privacy-modal" onclick="if(event.target===this)closePrivacy()">
+  <div class="priv-card">
+    <button class="priv-close" onclick="closePrivacy()">✕</button>
+    <div class="priv-eyebrow">CLOSER. — Política de privacidad</div>
+    <h2 class="priv-title">Tus datos están seguros.</h2>
+    <p class="priv-date">Última actualización: abril 2026</p>
+
+    <div class="priv-section">
+      <h3>Qué información recopilamos</h3>
+      <ul>
+        <li>Email y contraseña para crear tu cuenta (encriptada)</li>
+        <li>Los datos que ingresás en el formulario (negocio, cliente, precio, objeción)</li>
+        <li>Los resultados que marcás en tus mensajes (cerró / no cerró)</li>
+        <li>Información de pago procesada exclusivamente por Mercado Pago — nosotros nunca vemos tus datos de tarjeta</li>
+      </ul>
+    </div>
+
+    <div class="priv-divider"></div>
+
+    <div class="priv-section">
+      <h3>Cómo usamos tu información</h3>
+      <ul>
+        <li>Para generar mensajes calibrados a tu negocio usando la API de Anthropic (Claude)</li>
+        <li>Para aprender de tus resultados y mejorar las próximas generaciones</li>
+        <li>Para gestionar tu suscripción y enviarte comunicaciones del servicio</li>
+      </ul>
+    </div>
+
+    <div class="priv-divider"></div>
+
+    <div class="priv-section">
+      <h3>Con quién compartimos tus datos</h3>
+      <p>Tus datos <strong style="font-weight:500;color:var(--ink)">nunca se venden</strong> a terceros. Solo los compartimos con:</p>
+      <ul style="margin-top:8px">
+        <li><strong style="font-weight:500;color:var(--ink)">Anthropic</strong> — para procesar las generaciones de mensajes (sin identificación personal)</li>
+        <li><strong style="font-weight:500;color:var(--ink)">Mercado Pago</strong> — para procesar pagos de forma segura</li>
+        <li><strong style="font-weight:500;color:var(--ink)">Supabase</strong> — para almacenamiento seguro de tu cuenta y datos</li>
+      </ul>
+    </div>
+
+    <div class="priv-divider"></div>
+
+    <div class="priv-section">
+      <h3>Tus derechos</h3>
+      <ul>
+        <li>Podés eliminar tu cuenta y todos tus datos en cualquier momento</li>
+        <li>Podés exportar tu historial de generaciones cuando quieras</li>
+        <li>Podés cancelar tu suscripción sin cargo adicional</li>
+      </ul>
+    </div>
+
+    <div class="priv-divider"></div>
+
+    <div class="priv-section">
+      <h3>Contacto</h3>
+      <p>Para cualquier consulta sobre tus datos escribinos a <a href="mailto:hola@kairoinc.lat">hola@kairoinc.lat</a></p>
+    </div>
+
+  </div>
+</div>
 
 <script>
 let fd = {}, marketCtx = '', fieldsExpanded = false, timerInt = null;
@@ -1630,6 +1710,16 @@ async function startCheckout(btn) {
 }
 
 function showAuthPrompt() { showAuth('register'); }
+
+function openPrivacy() {
+  document.getElementById('privacy-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePrivacy() {
+  document.getElementById('privacy-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrivacy(); });
 
 function showToast(msg, type = 'info') {
   let t = document.getElementById('toast-msg');
