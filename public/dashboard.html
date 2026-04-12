@@ -667,17 +667,25 @@ function renderSmartState() {
       </div>`;
     container.style.display = 'block';
   } else if (totalResults >= 5) {
-    // ── Estado 3: Historial rico → insight poderoso ──
+    // ── Estado 3: Historial rico → insight narrativo poderoso ──
     const bestType = getBestType();
+    const worstType = getWorstType();
+    const trend = getTrend();
     if (bestType) {
+      let insightHtml = `<div class="sb-title">CLOSER aprendió algo de vos</div>`;
+      insightHtml += `<div class="sb-sub">Tu mensaje de <strong style="font-weight:500;color:var(--ok)">${bestType.label}</strong> cerró el <strong style="font-weight:500;color:var(--ok)">${bestType.ratio}%</strong> de las veces que lo usaste.`;
+      if (worstType && worstType.label !== bestType.label) {
+        insightHtml += ` El de <strong style="font-weight:500">${worstType.label}</strong> solo el ${worstType.ratio}% — el próximo sistema ya incorpora esa diferencia.`;
+      }
+      if (trend === 'up') insightHtml += ` Tu ratio de cierre mejoró en las últimas generaciones.`;
+      insightHtml += `</div>`;
       container.innerHTML = `
         <div class="state-banner sb-insight">
           <span class="sb-icon">↑</span>
           <div>
-            <div class="sb-title">Tu mejor mensaje: ${bestType.label}</div>
-            <div class="sb-sub">Cerraste el ${bestType.ratio}% de las veces que lo usaste. Generá un nuevo sistema para seguir mejorando.</div>
+            ${insightHtml}
             <button class="sb-action" onclick="showPanel('generar')" style="background:var(--ok);color:#fff">
-              Generar nuevo sistema →
+              Generar con este aprendizaje →
             </button>
           </div>
         </div>`;
@@ -694,21 +702,50 @@ function renderSmartState() {
   document.getElementById('m-gens').textContent   = totalGens;
   document.getElementById('resumen-sub').textContent = `${totalResults} mensajes registrados`;
 
-  // Insight banner (solo con datos suficientes)
+  // Insight banner narrativo
   if (metrics.total > 3) {
     const insightEl = document.getElementById('insight-banner');
     const insightTx = document.getElementById('insight-text');
     const bestType  = getBestType();
+    const trend     = getTrend();
     if (bestType && insightEl) {
-      insightTx.textContent = `Tu mensaje de ${bestType.label} cerró el ${bestType.ratio}% de las veces — es tu arma más efectiva.`;
+      let msg = `Tu mensaje de ${bestType.label} cerró el ${bestType.ratio}% de las veces.`;
+      if (trend === 'up') msg += ' Tu ratio mejoró — el sistema está aprendiendo.';
+      else if (trend === 'stable') msg += ' Consistente. Cada nueva generación incorpora ese patrón.';
+      insightTx.textContent = msg;
       insightEl.style.display = 'flex';
     }
   }
 }
 
 function hasResults(gen) {
-  // Chequea si una generación tiene resultados marcados (aproximado por fecha)
   return dashData?.results?.some(r => r.generation_id === gen.id);
+}
+
+function getWorstType() {
+  if (!dashData?.byType) return null;
+  const labels = { inicio:'apertura', precio:'precio', duda:'objeción', reactivacion:'reactivación', cierre:'cierre' };
+  let worst = null;
+  for (const [type, data] of Object.entries(dashData.byType)) {
+    if (data.total < 2) continue;
+    const ratio = Math.round(data.closed / data.total * 100);
+    if (!worst || ratio < worst.ratio) worst = { label: labels[type] || type, ratio };
+  }
+  return worst;
+}
+
+function getTrend() {
+  const results = dashData?.results;
+  if (!results || results.length < 6) return null;
+  const sorted = [...results].sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+  const half = Math.floor(sorted.length / 2);
+  const first = sorted.slice(0, half);
+  const last  = sorted.slice(half);
+  const ratioFirst = first.filter(r => r.result === 'closed').length / first.length;
+  const ratioLast  = last.filter(r => r.result === 'closed').length / last.length;
+  if (ratioLast > ratioFirst + 0.1) return 'up';
+  if (ratioLast < ratioFirst - 0.1) return 'down';
+  return 'stable';
 }
 
 function renderMetrics() { renderSmartState(); }
@@ -723,6 +760,20 @@ function getBestType() {
     if (!best || ratio > best.ratio) best = { label: labels[type] || type, ratio };
   }
   return best;
+}
+
+function getCalibrationLabel() {
+  const total = dashData?.metrics?.total || 0;
+  const wins  = dashData?.results?.filter(r => r.result === 'closed').length || 0;
+  const best  = getBestType();
+  if (total >= 10 && best) {
+    return `Calibrado con ${total} resultados reales · Tu mejor mensaje: ${best.label} (${best.ratio}% cierre)`;
+  } else if (total >= 5) {
+    return `Calibrado con ${total} resultados de tu negocio · ${wins} ventas cerradas como referencia`;
+  } else if (total >= 1) {
+    return `Incorporando ${total} resultado${total > 1 ? 's' : ''} de tu historial`;
+  }
+  return 'Primera generación — cada resultado que marcés lo mejora';
 }
 
 function renderGeneraciones(containerId, gens) {
@@ -895,7 +946,20 @@ async function proGenerate() {
 
   const resEl = document.getElementById('pro-gen-result');
   resEl.style.display = 'block';
-  resEl.innerHTML = `<div class="loading-row"><div class="spin-sm"></div>Generando tu sistema PRO con tu historial…</div>`;
+
+  // Mensaje de loading inteligente según historial
+  const totalResults = dashData?.metrics?.total || 0;
+  const wins = dashData?.results?.filter(r => r.result === 'closed').length || 0;
+  const bestType = dashData ? getBestType() : null;
+  let loadingMsg = 'Generando tu sistema PRO…';
+  if (totalResults >= 10 && bestType) {
+    loadingMsg = `Analizando tus ${totalResults} resultados — tu mensaje de ${bestType.label} cerró el ${bestType.ratio}%. Calibrando con ese patrón…`;
+  } else if (totalResults >= 5) {
+    loadingMsg = `Calibrando con ${totalResults} resultados de tu negocio real — ${wins} ventas cerradas como referencia…`;
+  } else if (totalResults >= 1) {
+    loadingMsg = `Incorporando tu historial de ${totalResults} resultado${totalResults > 1 ? 's' : ''} al sistema…`;
+  }
+  resEl.innerHTML = `<div class="loading-row"><div class="spin-sm"></div>${loadingMsg}</div>`;
 
   const sys = `Experto en ventas conversacionales por WhatsApp/Instagram para negocios latinoamericanos.
 IDENTIDAD: Aliado del vendedor humano. No lo reemplazás — lo potenciás.
@@ -937,10 +1001,10 @@ function renderProResult(msgs, negocio) {
   ];
   el.innerHTML = `
     <div class="card" style="margin-top:0">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div>
           <div style="font-size:14px;font-weight:500">Sistema generado para: ${escHtml(negocio)}</div>
-          <div style="font-size:12px;color:var(--n40);margin-top:2px">Calibrado con tu historial de resultados</div>
+          <div style="font-size:12px;color:var(--n40);margin-top:2px">${getCalibrationLabel()}</div>
         </div>
       </div>
       ${types.map(t => msgs[t.key] ? `
