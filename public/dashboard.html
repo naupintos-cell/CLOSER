@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%239d1a52'/%3E%3Cstop offset='50%25' stop-color='%23c2185b'/%3E%3Cstop offset='100%25' stop-color='%23e53935'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='16' fill='url(%23g)'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-style='italic' fill='white'%3EC%3C/text%3E%3C/svg%3E">
 <style>
 :root {
   --p:        #9d1a52;
@@ -51,6 +52,24 @@ nav{
 /* ── LAYOUT ── */
 .dash{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
 .dash-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+/* ── state banners ── */
+.state-banner{border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;animation:fadeIn .4s ease}
+.sb-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.sb-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.sb-sub{font-size:13px;line-height:1.6}
+.sb-action{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);transition:all var(--t)}
+.sb-welcome{background:var(--p-light);border:1px solid var(--p-border)}
+.sb-welcome .sb-title{color:var(--p-dark)}
+.sb-welcome .sb-sub{color:var(--p-dark);opacity:.8}
+.sb-welcome .sb-action{background:var(--ig);color:#fff;box-shadow:var(--ig-glow)}
+.sb-pending{background:var(--info-bg);border:1px solid var(--info-br)}
+.sb-pending .sb-title{color:var(--info)}
+.sb-pending .sb-sub{color:var(--info);opacity:.8}
+.sb-pending .sb-action{background:var(--info);color:#fff}
+.sb-insight{background:var(--ok-bg);border:1px solid var(--ok-br)}
+.sb-insight .sb-title{color:var(--ok)}
+.sb-insight .sb-sub{color:var(--ok);opacity:.9}
+
 @media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
 
 /* ── SIDEBAR ── */
@@ -194,6 +213,24 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
 }
 
 /* Mobile first */
+/* ── state banners ── */
+.state-banner{border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;animation:fadeIn .4s ease}
+.sb-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.sb-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.sb-sub{font-size:13px;line-height:1.6}
+.sb-action{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);transition:all var(--t)}
+.sb-welcome{background:var(--p-light);border:1px solid var(--p-border)}
+.sb-welcome .sb-title{color:var(--p-dark)}
+.sb-welcome .sb-sub{color:var(--p-dark);opacity:.8}
+.sb-welcome .sb-action{background:var(--ig);color:#fff;box-shadow:var(--ig-glow)}
+.sb-pending{background:var(--info-bg);border:1px solid var(--info-br)}
+.sb-pending .sb-title{color:var(--info)}
+.sb-pending .sb-sub{color:var(--info);opacity:.8}
+.sb-pending .sb-action{background:var(--info);color:#fff}
+.sb-insight{background:var(--ok-bg);border:1px solid var(--ok-br)}
+.sb-insight .sb-title{color:var(--ok)}
+.sb-insight .sb-sub{color:var(--ok);opacity:.9}
+
 @media(max-width:768px){
   .dash{padding:12px 12px 80px}
   .dash-grid{grid-template-columns:1fr;gap:0}
@@ -376,7 +413,9 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
 
       <!-- PANEL: RESUMEN -->
       <div class="panel active" id="panel-resumen">
-        <div class="sec-h">
+        <!-- Estado dinámico -->
+        <div id="state-banner-container"></div>
+        <div class="sec-h" id="resumen-header" style="display:none">
           <div>
             <h1 class="sec-title">Resumen</h1>
             <p class="sec-sub" id="resumen-sub">Cargando tus métricas…</p>
@@ -579,31 +618,100 @@ async function loadDashboard() {
     });
     if (!res.ok) return;
     dashData = await res.json();
-    renderMetrics();
+    renderSmartState();
     renderGeneraciones('resumen-gens', dashData.generations?.slice(0, 3));
     renderGeneraciones('mensajes-list', dashData.generations);
   } catch(e) { console.error('Dashboard load error:', e); }
 }
 
-function renderMetrics() {
+function renderSmartState() {
   if (!dashData) return;
   const { metrics, generations } = dashData;
-  document.getElementById('m-ratio').textContent = metrics.total > 0 ? metrics.ratio + '%' : '—';
-  document.getElementById('m-closed').textContent = metrics.closed || '0';
-  document.getElementById('m-gens').textContent = generations?.length || '0';
-  document.getElementById('resumen-sub').textContent = `${metrics.total} mensajes registrados`;
+  const container = document.getElementById('state-banner-container');
+  const header    = document.getElementById('resumen-header');
 
-  // Insight
-  if (metrics.total > 3) {
-    const banner = document.getElementById('insight-banner');
-    const text = document.getElementById('insight-text');
+  const totalGens    = generations?.length || 0;
+  const totalResults = metrics?.total || 0;
+  const pendingMark  = generations?.filter(g => !hasResults(g)).length || 0;
+
+  // ── Estado 0: Sin generaciones → redirigir a generar ──
+  if (totalGens === 0) {
+    container.innerHTML = `
+      <div class="state-banner sb-welcome">
+        <span class="sb-icon">✦</span>
+        <div>
+          <div class="sb-title">Bienvenido a CLOSER PRO</div>
+          <div class="sb-sub">Empezá generando tu primer sistema. En 30 segundos tenés mensajes calibrados para tu negocio.</div>
+          <button class="sb-action sb-welcome" onclick="showPanel('generar');document.getElementById('pg-negocio').focus()">
+            Generar mi primer sistema →
+          </button>
+        </div>
+      </div>`;
+    container.style.display = 'block';
+    header.style.display = 'none';
+    return;
+  }
+
+  // ── Estado 1: Tiene generaciones pero sin resultados marcados ──
+  if (totalResults === 0 && totalGens > 0) {
+    container.innerHTML = `
+      <div class="state-banner sb-pending">
+        <span class="sb-icon">↗</span>
+        <div>
+          <div class="sb-title">¿Usaste los mensajes?</div>
+          <div class="sb-sub">Marcá qué pasó con cada uno para que CLOSER aprenda y calibre los próximos a tu negocio real.</div>
+          <button class="sb-action" onclick="showPanel('mensajes')" style="background:var(--info);color:#fff">
+            Marcar resultados →
+          </button>
+        </div>
+      </div>`;
+    container.style.display = 'block';
+  } else if (totalResults >= 5) {
+    // ── Estado 3: Historial rico → insight poderoso ──
     const bestType = getBestType();
     if (bestType) {
-      text.textContent = `Tu mejor mensaje es el de ${bestType.label} — cerraste ${bestType.ratio}% de las veces que lo usaste.`;
-      banner.style.display = 'flex';
+      container.innerHTML = `
+        <div class="state-banner sb-insight">
+          <span class="sb-icon">↑</span>
+          <div>
+            <div class="sb-title">Tu mejor mensaje: ${bestType.label}</div>
+            <div class="sb-sub">Cerraste el ${bestType.ratio}% de las veces que lo usaste. Generá un nuevo sistema para seguir mejorando.</div>
+            <button class="sb-action" onclick="showPanel('generar')" style="background:var(--ok);color:#fff">
+              Generar nuevo sistema →
+            </button>
+          </div>
+        </div>`;
+      container.style.display = 'block';
+    }
+  } else {
+    container.style.display = 'none';
+  }
+
+  // Siempre mostrar métricas si hay generaciones
+  header.style.display = 'flex';
+  document.getElementById('m-ratio').textContent  = metrics.total > 0 ? metrics.ratio + '%' : '—';
+  document.getElementById('m-closed').textContent = metrics.closed || '0';
+  document.getElementById('m-gens').textContent   = totalGens;
+  document.getElementById('resumen-sub').textContent = `${totalResults} mensajes registrados`;
+
+  // Insight banner (solo con datos suficientes)
+  if (metrics.total > 3) {
+    const insightEl = document.getElementById('insight-banner');
+    const insightTx = document.getElementById('insight-text');
+    const bestType  = getBestType();
+    if (bestType && insightEl) {
+      insightTx.textContent = `Tu mensaje de ${bestType.label} cerró el ${bestType.ratio}% de las veces — es tu arma más efectiva.`;
+      insightEl.style.display = 'flex';
     }
   }
 }
+
+function hasResults(gen) {
+  // Chequea si una generación tiene resultados marcados (aproximado por fecha)
+  return dashData?.results?.some(r => r.generation_id === gen.id);
+}
+
+function renderMetrics() { renderSmartState(); }
 
 function getBestType() {
   if (!dashData?.byType) return null;
@@ -915,7 +1023,7 @@ function toast(msg, type='ok') {
     <span style="font-size:12px;color:var(--n40)">Built by <a href="https://kairoinc.lat/" target="_blank" rel="noopener" style="color:var(--n40);font-weight:500">KAIRO</a> · Make it simple — 2026</span>
     <div style="display:flex;gap:16px">
       <a href="#" onclick="event.preventDefault();openPrivacy()" style="font-size:11.5px;color:var(--n40);transition:color var(--t)">Privacidad</a>
-      <a href="mailto:hola@kairoinc.lat" style="font-size:11.5px;color:var(--n40);transition:color var(--t)">Contacto</a>
+      <a href="/cdn-cgi/l/email-protection#2840474449684349415a4741464b0644495c" style="font-size:11.5px;color:var(--n40);transition:color var(--t)">Contacto</a>
     </div>
   </div>
 </footer>
@@ -951,13 +1059,8 @@ function toast(msg, type='ok') {
     <div class="priv-divider"></div>
     <div class="priv-section"><h3>Tus derechos</h3><ul><li>Eliminá tu cuenta y datos cuando quieras</li><li>Cancelá tu suscripción sin cargo adicional</li><li>Exportá tu historial de generaciones</li></ul></div>
     <div class="priv-divider"></div>
-    <div class="priv-section"><h3>Contacto</h3><p>Escribinos a <a href="mailto:hola@kairoinc.lat">hola@kairoinc.lat</a></p></div>
+    <div class="priv-section"><h3>Contacto</h3><p>Escribinos a <a href="/cdn-cgi/l/email-protection#650d0a0904250e040c170a0c0b064b090411"><span class="__cf_email__" data-cfemail="1b7374777a5b707a72697472757835777a6f">[email&#160;protected]</span></a></p></div>
   </div>
 </div>
-<script>
-function openPrivacy(){document.getElementById('privacy-modal').classList.add('open');document.body.style.overflow='hidden'}
-function closePrivacy(){document.getElementById('privacy-modal').classList.remove('open');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePrivacy()});
-</script>
-</body>
-</html>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function openPrivacy(){document.getElementById('privacy-modal').classList
