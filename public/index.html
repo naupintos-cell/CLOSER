@@ -273,18 +273,22 @@ h1 em { font-style: italic; color: var(--p); }
 
 /* ── testimonios ── */
 #testimonios { padding: 64px 0; background: var(--n04); border-top: 1px solid var(--n15); }
-.testi-scroll {
-  display: flex; gap: 14px; overflow-x: auto; padding: 4px 20px 16px;
-  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+.testi-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+  max-width: 680px; margin: 0 auto; padding: 0 20px;
 }
-.testi-scroll::-webkit-scrollbar { display: none; }
+@media(max-width:600px){ .testi-grid { grid-template-columns: 1fr; } }
 .testi-card {
-  min-width: 280px; max-width: 300px; scroll-snap-align: start;
   background: var(--w); border: 1px solid var(--n15); border-radius: var(--r-lg);
-  padding: 20px; flex-shrink: 0; display: flex; flex-direction: column;
+  padding: 22px 20px; display: flex; flex-direction: column; min-height: 220px;
 }
-.testi-q { font-family: var(--serif); font-size: 36px; color: var(--p-border); line-height: 1; margin-bottom: 6px; }
+.testi-q {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--p-light); border: 1px solid var(--p-border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 14px; color: var(--p);
+  margin-bottom: 12px; flex-shrink: 0;
+}
 .testi-text { font-size: 13px; color: var(--n70); line-height: 1.7; flex: 1; margin-bottom: 14px; }
 .testi-div { height: 1px; background: var(--n08); margin-bottom: 12px; }
 .testi-author { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
@@ -299,7 +303,7 @@ h1 em { font-style: italic; color: var(--p); }
   background: var(--ok-bg); border: 1px solid var(--ok-br);
   padding: 5px 10px; border-radius: 6px; align-self: flex-start;
 }
-.scroll-hint { text-align: center; font-size: 11.5px; color: var(--n40); margin-top: 4px; }
+
 
 /* ── vs bots ── */
 #vs { padding: 64px 0; background: var(--ink); }
@@ -622,7 +626,7 @@ footer {
   .num-val { font-size: 28px; }
   .num-lbl { font-size: 11px; }
   .sec-h2 { font-size: 24px; }
-  .testi-card { min-width: 260px; }
+
   .steps::before { left: 14px; }
   .step-num { width: 28px; height: 28px; font-size: 13px; }
 }
@@ -866,12 +870,12 @@ footer {
 <!-- TESTIMONIOS -->
 <section id="testimonios">
   <div>
-    <div class="w" style="margin-bottom:24px">
+    <div style="text-align:center;margin-bottom:28px">
       <div class="sec-eyebrow">Lo que dicen quienes ya lo usan</div>
     </div>
-    <div class="testi-scroll">
+    <div class="testi-grid">
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Empecé a usar los mensajes el mismo día y cerré dos ventas que tenía abandonadas hace una semana. Lo de "avisame si querés" era mi frase más usada — ahora la eliminé.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -881,7 +885,7 @@ footer {
         <div class="testi-result">↑ 2 ventas recuperadas en 48hs</div>
       </div>
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Lo que más me sorprendió fue el diagnóstico. Me mostró que el 71% de mis conversaciones se cortaban cuando preguntaban el precio. Nunca lo había medido.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -891,7 +895,7 @@ footer {
         <div class="testi-result">↑ Ratio de cierre: 18% → 34%</div>
       </div>
       <div class="testi-card">
-        <span class="testi-q">"</span>
+        <div class="testi-q">"</div>
         <p class="testi-text">Probé ManyChat y otros bots. Todos suenan igual. CLOSER es lo primero que siente que lo escribí yo. Mis clientes no notan diferencia — pero sí notan que respondo mejor.</p>
         <div class="testi-div"></div>
         <div class="testi-author">
@@ -901,7 +905,6 @@ footer {
         <div class="testi-result">↑ 4 operaciones en 3 semanas</div>
       </div>
     </div>
-    <p class="scroll-hint">deslizá →</p>
   </div>
 </section>
 
