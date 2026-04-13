@@ -301,14 +301,14 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
     <div class="wiz-step active" id="wiz-1">
       <div class="wiz-num">Bienvenido a CLOSER PRO</div>
       <h2 class="wiz-h">Tu sistema de ventas<br>está <em>activado.</em></h2>
-      <p class="wiz-p">En los próximos 3 pasos te explico cómo funciona para que empieces a cerrar más desde hoy.</p>
+      <p class="wiz-p">Una promesa concreta: <strong style="font-weight:500;color:var(--ink)">en 7 días vas a saber exactamente qué mensaje funciona en tu negocio.</strong> No en el de Martina. No en el de otro rubro. En el tuyo.</p>
       <div class="wiz-foot">
         <div class="wiz-dots">
           <div class="wiz-dot active"></div>
           <div class="wiz-dot"></div>
           <div class="wiz-dot"></div>
         </div>
-        <button class="btn-wiz" onclick="wizNext(2)">Empezar →</button>
+        <button class="btn-wiz" onclick="wizNext(2)">Quiero saber →</button>
       </div>
     </div>
     <!-- Step 2 -->
@@ -984,18 +984,14 @@ async function activarPro() {
   } catch(e) { toast('Error al iniciar el pago. Reintentá.', 'err'); }
 }
 
-// placeholder to fix split
-
-}
-
 function renderProResult(msgs, negocio) {
   const el = document.getElementById('pro-gen-result');
   const types = [
-    { key:'inicio',      label:'Apertura',     intent:'Abrir + calificar + generar interés',   color:'#4a9b6f' },
-    { key:'precio',      label:'Precio',        intent:'Anclar en valor antes del número',       color:'#7a6f3a' },
-    { key:'duda',        label:'Objeción',      intent:'Tu objeción específica — reencuadrada',  color:'#5a7ab5' },
-    { key:'reactivacion',label:'Reactivación',  intent:'Recuperar conversaciones frías',         color:'#9d1a52' },
-    { key:'cierre',      label:'Cierre',        intent:'Llevar a decisión sin presionar',        color:'#3a7a6f' },
+    { key:'inicio',       label:'Apertura',      intent:'Abrir + calificar + generar interés',  color:'#4a9b6f', reason:'Abre sin comprometerte con el precio — primero entiende qué quiere el cliente.' },
+    { key:'precio',       label:'Precio',        intent:'Anclar en valor antes del número',      color:'#7a6f3a', reason:'Ancla el valor antes del número para que el precio no sea lo primero que procese.' },
+    { key:'duda',         label:'Objeción',      intent:'Tu objeción específica — reencuadrada', color:'#5a7ab5', reason:'Nombra la objeción directo, empatiza brevemente y reencuadra al costo de no decidir.' },
+    { key:'reactivacion', label:'Reactivación',  intent:'Recuperar conversaciones frías',        color:'#9d1a52', reason:'Para los que dijeron "lo pienso" — el 40% de las ventas perdidas se recuperan acá.' },
+    { key:'cierre',       label:'Cierre',        intent:'Llevar a decisión sin presionar',       color:'#3a7a6f', reason:'Urgencia real sin desesperación — una pregunta que lleva a decisión concreta.' },
   ];
   el.innerHTML = `
     <div class="card" style="margin-top:0">
@@ -1006,7 +1002,7 @@ function renderProResult(msgs, negocio) {
         </div>
       </div>
       ${types.map(t => msgs[t.key] ? `
-        <div class="msg-row" style="margin-bottom:14px">
+        <div class="msg-row" style="margin-bottom:16px">
           <div class="msg-row-head">
             <div style="display:flex;align-items:center;gap:7px">
               <div style="width:7px;height:7px;border-radius:50%;background:${t.color};flex-shrink:0"></div>
@@ -1016,6 +1012,7 @@ function renderProResult(msgs, negocio) {
             <button onclick="copyText(this,'${escJs(msgs[t.key])}')" style="background:var(--w);border:1px solid var(--n15);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--n40);cursor:pointer;font-family:var(--sans);transition:all var(--t)">Copiar</button>
           </div>
           <div class="msg-txt" id="ptxt-${t.key}">${escHtml(msgs[t.key])}</div>
+          <div style="padding:7px 0 2px;font-size:11.5px;color:var(--n40);font-style:italic;line-height:1.5">↳ ${t.reason}</div>
         </div>
       ` : '').join('')}
     </div>
