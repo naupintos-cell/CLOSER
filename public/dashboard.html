@@ -655,17 +655,34 @@ function renderSmartState() {
 
   // ── Estado 1: Tiene generaciones pero sin resultados marcados ──
   if (totalResults === 0 && totalGens > 0) {
-    container.innerHTML = `
-      <div class="state-banner sb-pending">
-        <span class="sb-icon">↗</span>
-        <div>
-          <div class="sb-title">¿Usaste los mensajes?</div>
-          <div class="sb-sub">Marcá qué pasó con cada uno para que CLOSER aprenda y calibre los próximos a tu negocio real.</div>
-          <button class="sb-action" onclick="showPanel('mensajes')" style="background:var(--info);color:#fff">
-            Marcar resultados →
-          </button>
-        </div>
-      </div>`;
+    const isPro = totalGens > 1; // Si tiene más de 1 gen, es PRO
+    if (!isPro) {
+      // Free con 1 gen — mostrar CTA upgrade contextual
+      container.innerHTML = `
+        <div class="state-banner sb-pending">
+          <span class="sb-icon">↗</span>
+          <div>
+            <div class="sb-title">¿Usaste los mensajes?</div>
+            <div class="sb-sub">Marcá si funcionó — y cuando estés listo para el sistema completo con reactivación y cierre, activá PRO.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              <button class="sb-action" onclick="showPanel('mensajes')" style="background:var(--info);color:#fff">Marcar resultados →</button>
+              <button class="sb-action" onclick="activarPro()" style="background:var(--ig);color:#fff">Activar PRO →</button>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      container.innerHTML = `
+        <div class="state-banner sb-pending">
+          <span class="sb-icon">↗</span>
+          <div>
+            <div class="sb-title">¿Usaste los mensajes?</div>
+            <div class="sb-sub">Marcá qué pasó con cada uno para que CLOSER aprenda y calibre los próximos a tu negocio real.</div>
+            <button class="sb-action" onclick="showPanel('mensajes')" style="background:var(--info);color:#fff">
+              Marcar resultados →
+            </button>
+          </div>
+        </div>`;
+    }
     container.style.display = 'block';
   } else if (totalResults >= 5) {
     // ── Estado 3: Historial rico → insight poderoso ──
@@ -917,6 +934,15 @@ JSON sin markdown: {"inicio":"...","precio":"...","duda":"...","reactivacion":".
       })
     });
     const d = await r.json();
+
+    // Detectar límite free
+    if (r.status === 403 && d.error === 'free_limit_reached') {
+      resEl.style.display = 'none';
+      btn.disabled = false; btn.textContent = 'Generar sistema PRO →';
+      handleFreeLimitReached(negocio);
+      return;
+    }
+
     const txt = d.content?.[0]?.text;
     if (!txt) throw new Error('Sin respuesta');
     const msgs = JSON.parse(txt.trim().replace(/```json|```/g,'').trim());
@@ -925,6 +951,41 @@ JSON sin markdown: {"inicio":"...","precio":"...","duda":"...","reactivacion":".
     resEl.innerHTML = `<div class="card" style="color:var(--err)">Error al generar. Reintentá.</div>`;
   }
   btn.disabled = false; btn.textContent = 'Generar sistema PRO →';
+}
+
+// ── Detectar límite free y mostrar upgrade ──────────────────────────────────
+function handleFreeLimitReached(negocio) {
+  const resEl = document.getElementById('pro-gen-result');
+  resEl.style.display = 'block';
+  const label = negocio ? ` para <strong style="font-weight:500">${negocio}</strong>` : '';
+  resEl.innerHTML = `
+    <div style="background:var(--ink);border-radius:var(--r-xl);padding:28px 24px;text-align:center">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(157,26,82,.2);border:1px solid rgba(157,26,82,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:var(--serif);font-size:20px;color:#e57397">✦</div>
+      <div style="font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:10px">Ya viste cómo funciona</div>
+      <h3 style="font-family:var(--serif);font-size:22px;font-weight:400;color:#fff;letter-spacing:-.02em;margin-bottom:8px;line-height:1.3">Tu primer sistema funcionó.<br><em style="font-style:italic;color:#e57397">Ahora hacelo crecer.</em></h3>
+      <p style="font-size:13.5px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Con PRO generás sistemas ilimitados, el sistema aprende de tus resultados y cada generación es más precisa que la anterior.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto">
+        <button onclick="activarPro()" style="background:var(--ig);color:#fff;padding:14px 24px;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;font-family:var(--sans);box-shadow:var(--ig-glow)">Activar CLOSER PRO →</button>
+        <a href="/" style="font-size:13px;color:rgba(255,255,255,.3);text-align:center">Ver planes</a>
+      </div>
+    </div>
+  `;
+}
+
+async function activarPro() {
+  try {
+    const res = await fetch('/api/mp/create-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${currentSession.access_token}` }
+    });
+    const data = await res.json();
+    if (data.checkout_url) window.location.href = data.checkout_url;
+    else toast('Error al iniciar el pago. Reintentá.', 'err');
+  } catch(e) { toast('Error al iniciar el pago. Reintentá.', 'err'); }
+}
+
+// placeholder to fix split
+
 }
 
 function renderProResult(msgs, negocio) {
