@@ -289,9 +289,27 @@ app.post('/api/messages', genLimiter, async (req, res) => {
     return res.status(500).json({ error: 'Configuración incompleta en el servidor' });
   }
 
-  // Verificar usuario (puede ser anon o autenticado)
+  // Verificar usuario — requerido para /api/messages
   const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'No autenticado' });
+
   const isPro = user?.plan === 'pro';
+
+  // ── Límite free: 1 generación completa ──────────────────────────────────────
+  if (!isPro) {
+    const { count } = await supabase
+      .from('generations')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (count >= 1) {
+      return res.status(403).json({
+        error: 'free_limit_reached',
+        message: 'Ya usaste tu generación gratuita.',
+        gens_used: count,
+      });
+    }
+  }
 
   // Validar body
   const validationError = validateBody(req.body);
