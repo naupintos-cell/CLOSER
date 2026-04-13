@@ -349,12 +349,13 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
     </div>
     <!-- Step 4 -->
     <div class="wiz-step" id="wiz-4">
-      <div class="wiz-num">Paso 3 de 3</div>
-      <h2 class="wiz-h">Analizá tus DMs<br><em>reales.</em></h2>
+      <div class="wiz-num">Listo para empezar</div>
+      <h2 class="wiz-h">Tu primer sistema<br><em>en 30 segundos.</em></h2>
+      <p class="wiz-p">Todo listo. El mejor primer paso es generar tu sistema ahora — en 30 segundos tenés 5 mensajes calibrados para tu negocio.</p>
       <ul class="wiz-list">
-        <li><div class="wiz-icon">↙</div><div>Pegá el texto de tus conversaciones reales de WhatsApp o Instagram.</div></li>
-        <li><div class="wiz-icon">🔍</div><div>CLOSER detecta <strong>exactamente dónde perdiste ventas</strong> y por qué.</div></li>
-        <li><div class="wiz-icon">→</div><div>Genera un sistema calibrado con tus <strong>patrones reales</strong>, no datos genéricos.</div></li>
+        <li><div class="wiz-icon">1</div><div>Completás 2 datos básicos de tu negocio</div></li>
+        <li><div class="wiz-icon">2</div><div>CLOSER analiza tu mercado en tiempo real</div></li>
+        <li><div class="wiz-icon">→</div><div>Recibís 5 mensajes listos para usar hoy</div></li>
       </ul>
       <div class="wiz-foot">
         <div class="wiz-dots">
@@ -362,7 +363,7 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
           <div class="wiz-dot"></div>
           <div class="wiz-dot active"></div>
         </div>
-        <button class="btn-wiz" onclick="closeWizard()">Ir a mi panel →</button>
+        <button class="btn-wiz" onclick="closeWizard();showPanel('generar');setTimeout(()=>document.getElementById('pg-negocio').focus(),100)">Generar mi sistema →</button>
       </div>
     </div>
   </div>
@@ -515,11 +516,10 @@ input[type=text]::placeholder,textarea::placeholder{color:var(--n25)}
             </div>
             <div class="field">
               <label class="f-label">Precio</label>
-              <input type="text" id="pg-precio" placeholder="$85.000 pesos / mes…">
+              <input type="text" id="pg-precio" placeholder="$85.000 / USD 150…">
             </div>
-            <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
-              <label class="f-label" style="opacity:0;user-select:none">.</label>
-              <button class="btn-analyze" id="btn-pro-gen" onclick="proGenerate()" style="width:100%;justify-content:center;margin-top:auto">
+            <div class="field" style="display:flex;align-items:flex-end">
+              <button class="btn-analyze" id="btn-pro-gen" onclick="proGenerate()" style="width:100%;justify-content:center">
                 Generar sistema PRO →
               </button>
             </div>
