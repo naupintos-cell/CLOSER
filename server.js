@@ -598,7 +598,7 @@ app.post('/api/mp/create-subscription', async (req, res) => {
         auto_recurring: {
           frequency:       1,
           frequency_type: 'months',
-          transaction_amount: NODE_ENV !== 'production' ? 100 : 54900,
+          transaction_amount: NODE_ENV !== 'production' ? 100 : 41200, // USD 29/mes al tipo oficial
           currency_id:    'ARS',
         },
         back_url: `${backUrl}/dashboard?payment=success`,
