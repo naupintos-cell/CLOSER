@@ -1242,24 +1242,56 @@ footer {
                 <div class="pw-roi-row">
                   <div class="pw-roi-item"><div class="pw-roi-val">$1.250.000</div><div class="pw-roi-desc">3 ventas perdidas en objeción, $420k c/u</div></div>
                   <div class="pw-roi-arrow">→</div>
-                  <div class="pw-roi-item hl"><div class="pw-roi-val">$89.900</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
+                  <div class="pw-roi-item hl"><div class="pw-roi-val">$41.200</div><div class="pw-roi-desc">Lo que cuesta CLOSER este mes</div></div>
                 </div>
-                <p class="pw-roi-note">Con recuperar <strong>una sola venta perdida</strong>, el ROI es 20x.</p>
+                <p class="pw-roi-note">Con recuperar <strong>una sola venta perdida</strong>, el ROI es 30x.</p>
               </div>
               <div class="pw-div"></div>
-              <!-- Precio -->
-              <div class="pw-compare">
-                <div class="pw-compare-item"><div class="pw-compare-lbl">Coach 1:1</div><div class="pw-compare-price">$1.100.000<span>/mes</span></div><div class="pw-compare-sub">Promedio Arg.</div></div>
-                <div class="pw-vs">vs</div>
-                <div class="pw-compare-item feat"><div class="pw-compare-lbl">CLOSER. PRO</div><div class="pw-compare-price">$89.900<span>/mes</span></div><div class="pw-compare-sub">Lanzamiento</div></div>
+              <!-- Dos opciones de plan -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+
+                <!-- PLAN PRO MENSUAL -->
+                <div style="background:var(--p-light);border:2px solid var(--p-border);border-radius:12px;padding:16px;position:relative;overflow:hidden">
+                  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--ig)"></div>
+                  <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--p);margin-bottom:8px">⭐ Más elegido</div>
+                  <div style="font-size:11px;font-weight:600;color:var(--n55);margin-bottom:4px">CLOSER. PRO</div>
+                  <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em">$41.200<span style="font-size:12px;font-weight:400;color:var(--n55)">/mes</span></div>
+                  <div style="font-size:10px;color:var(--n40);margin:4px 0 10px">≈ USD 29 · al tipo oficial</div>
+                  <div style="font-size:11px;color:var(--n55);margin-bottom:12px;line-height:1.5">Suscripción mensual. Cancelás cuando querés.</div>
+                  <button class="btn-upgrade" onclick="startCheckout(this,'pro')" style="width:100%;font-size:13px;padding:11px 14px">
+                    Activar PRO →
+                  </button>
+                  <div style="font-size:10px;color:var(--n40);margin-top:8px;text-align:center">🇦🇷 Mercado Pago</div>
+                </div>
+
+                <!-- PLAN ONE-TIME -->
+                <div style="background:var(--n04);border:1px solid var(--n15);border-radius:12px;padding:16px">
+                  <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--n40);margin-bottom:8px">Pago único</div>
+                  <div style="font-size:11px;font-weight:600;color:var(--n55);margin-bottom:4px">One-time</div>
+                  <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em">$137.700<span style="font-size:12px;font-weight:400;color:var(--n55)"> ARS</span></div>
+                  <div style="font-size:10px;color:var(--n40);margin:4px 0 10px">≈ USD 97 · pago único</div>
+                  <div style="font-size:11px;color:var(--n55);margin-bottom:12px;line-height:1.5">Acceso completo para siempre. Sin renovación.</div>
+                  <button onclick="startCheckout(this,'onetime')" style="width:100%;font-size:13px;padding:11px 14px;background:var(--n08);border:1px solid var(--n15);border-radius:8px;color:var(--ink);font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--sans)" onmouseover="this.style.background='var(--n15)'" onmouseout="this.style.background='var(--n08)'">
+                    Pagar una vez →
+                  </button>
+                  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px">
+                    <span style="font-size:10px;color:var(--n40)">🇦🇷 Mercado Pago</span>
+                    <span style="font-size:10px;color:var(--n25)">·</span>
+                    <button onclick="handleUSDTCloser('onetime')" style="font-size:10px;color:var(--n40);background:none;border:none;cursor:pointer;padding:0;font-family:var(--sans)">🌎 USDT</button>
+                  </div>
+                </div>
               </div>
-              <div class="pw-urgency-banner">
-                <div class="urg-dot"></div>
-                <div><strong>Precio de lanzamiento — sube a $109.900 el 30 de abril.</strong><br><span>Quedan <strong id="spots-left">23</strong> lugares.</span></div>
+
+              <!-- USDT inline card (aparece al hacer clic) -->
+              <div id="usdt-card-closer" style="display:none;padding:14px;background:var(--n04);border:1px solid var(--n15);border-radius:10px;margin-bottom:12px;animation:fadeUp .2s ease">
+                <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--p);margin-bottom:10px">Pago USDT — One-time · USD 97</div>
+                <div style="font-size:11px;color:var(--n55);margin-bottom:6px">Red: <strong style="color:var(--ink)">TRC-20 únicamente</strong></div>
+                <div id="usdt-addr-closer" style="font-family:monospace;font-size:11px;color:var(--ink);background:var(--w);border:1px solid var(--n15);border-radius:6px;padding:9px 11px;word-break:break-all;letter-spacing:.02em;margin-bottom:8px">TAKobVisVDmrNRhEmvETXRGG9Uq98MXbsM</div>
+                <button id="usdt-copy-closer" onclick="copyUSDTCloser()" style="display:inline-flex;align-items:center;gap:5px;background:var(--p);color:var(--w);border:none;border-radius:6px;padding:6px 12px;font-size:10px;font-weight:600;cursor:pointer;margin-bottom:10px;font-family:var(--sans)">📋 Copiar dirección</button>
+                <div style="font-size:11px;color:var(--n55);line-height:1.6">Una vez enviado, mandanos el comprobante a <a href="mailto:hola@kairoinc.lat?subject=CLOSER%20One-time%20%E2%80%94%20Comprobante%20USDT%20TRC-20" style="color:var(--p)">hola@kairoinc.lat</a> y activamos tu acceso en menos de 1 hora.</div>
               </div>
-              <p style="font-size:12px;color:var(--n55);margin-bottom:14px">Cancelás cuando querés. Sin contrato.</p>
-              <button class="btn-upgrade" id="btn-upgrade" onclick="startCheckout(this)">Activar mi sistema PRO →</button>
-              <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Cancelación en 1 clic</span><span>✓ Sin bot — vos cerrás</span></div>
+
+              <div class="pw-gtee"><span>✓ Acceso inmediato</span><span>✓ Mismo contenido</span><span>✓ Sin bot — vos cerrás</span></div>
               <p class="pw-filter">Para los que ya están vendiendo por DM — no para los que recién empiezan.</p>
             </div>
           </div>
@@ -1411,7 +1443,29 @@ footer {
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+function handleUSDTCloser(plan) {
+  const card = document.getElementById('usdt-card-closer');
+  if (card.style.display === 'none' || !card.style.display) {
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+function copyUSDTCloser() {
+  const addr = 'TAKobVisVDmrNRhEmvETXRGG9Uq98MXbsM';
+  const btn = document.getElementById('usdt-copy-closer');
+  if (navigator.clipboard) navigator.clipboard.writeText(addr).catch(() => {});
+  btn.textContent = '✓ Copiada';
+  btn.style.background = 'var(--ok)';
+  setTimeout(() => {
+    btn.textContent = '📋 Copiar dirección';
+    btn.style.background = 'var(--p)';
+  }, 2500);
+}
+</script><script>
 let fd = {}, marketCtx = '', fieldsExpanded = false, timerInt = null;
 
 function goApp() {
@@ -1917,7 +1971,7 @@ function translateAuthError(msg) {
 }
 
 // ── Checkout con Mercado Pago ─────────────────────────────────────────────────
-async function startCheckout(btn) {
+async async function startCheckout(btn, plan = 'pro') {
   // Siempre refrescar la sesión desde Supabase (evita token stale o null)
   const { data: { session: freshSession } } = await getSB().auth.getSession();
   if (freshSession) currentSession = freshSession;
@@ -1932,6 +1986,7 @@ async function startCheckout(btn) {
   btn.textContent = 'Iniciando pago…';
 
   try {
+    if (plan === 'onetime') { handleUSDTCloser('onetime'); btn.disabled = false; btn.textContent = original; return; }
     const res = await fetch('/api/mp/create-subscription', {
       method: 'POST',
       headers: {
