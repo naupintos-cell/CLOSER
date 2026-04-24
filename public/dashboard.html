@@ -608,7 +608,7 @@ async function checkAccessAndLoad() {
   }
 }
 
-function hideActivating() {
+async function hideActivating() {
   document.getElementById('activating').style.display = 'none';
 }
 
@@ -791,7 +791,7 @@ function renderGen(g, i) {
   </div>`;
 }
 
-function toggleGen(id) {
+async function toggleGen(id) {
   const el = document.getElementById(id);
   el.classList.toggle('open');
 }
@@ -1044,7 +1044,7 @@ function closeWizard() {
 }
 
 // ── NAV ──────────────────────────────────────────────────────────────────────
-function showPanel(name) {
+async function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
