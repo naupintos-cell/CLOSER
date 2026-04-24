@@ -1443,29 +1443,7 @@ footer {
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-function handleUSDTCloser(plan) {
-  const card = document.getElementById('usdt-card-closer');
-  if (card.style.display === 'none' || !card.style.display) {
-    card.style.display = 'block';
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else {
-    card.style.display = 'none';
-  }
-}
-
-function copyUSDTCloser() {
-  const addr = 'TAKobVisVDmrNRhEmvETXRGG9Uq98MXbsM';
-  const btn = document.getElementById('usdt-copy-closer');
-  if (navigator.clipboard) navigator.clipboard.writeText(addr).catch(() => {});
-  btn.textContent = '✓ Copiada';
-  btn.style.background = 'var(--ok)';
-  setTimeout(() => {
-    btn.textContent = '📋 Copiar dirección';
-    btn.style.background = 'var(--p)';
-  }, 2500);
-}
-</script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 let fd = {}, marketCtx = '', fieldsExpanded = false, timerInt = null;
 
 function goApp() {
@@ -1971,7 +1949,7 @@ function translateAuthError(msg) {
 }
 
 // ── Checkout con Mercado Pago ─────────────────────────────────────────────────
-async async function startCheckout(btn, plan = 'pro') {
+async function startCheckout(btn, plan = 'pro') {
   // Siempre refrescar la sesión desde Supabase (evita token stale o null)
   const { data: { session: freshSession } } = await getSB().auth.getSession();
   if (freshSession) currentSession = freshSession;
@@ -2062,4 +2040,34 @@ function showToast(msg, type = 'info') {
   }
   t.style.background = type === 'error' ? 'var(--err-bg)' : type === 'info' ? 'var(--info-bg)' : 'var(--ok-bg)';
   t.style.color      = type === 'error' ? 'var(--err)'    : type === 'info' ? 'var(--info)'    : 'var(--ok)';
-  t.style.border
+  t.style.border     = type === 'error' ? '1px solid var(--err-br)' : type === 'info' ? '1px solid var(--info-br)' : '1px solid var(--ok-br)';
+  t.style.opacity = '1';
+  t.textContent = msg;
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(() => { t.style.opacity = '0'; }, 4000);
+}
+
+function handleUSDTCloser(plan) {
+  const card = document.getElementById('usdt-card-closer');
+  if (card.style.display === 'none' || !card.style.display) {
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+function copyUSDTCloser() {
+  const addr = 'TAKobVisVDmrNRhEmvETXRGG9Uq98MXbsM';
+  const btn = document.getElementById('usdt-copy-closer');
+  if (navigator.clipboard) navigator.clipboard.writeText(addr).catch(() => {});
+  btn.textContent = '✓ Copiada';
+  btn.style.background = 'var(--ok)';
+  setTimeout(() => {
+    btn.textContent = '📋 Copiar dirección';
+    btn.style.background = 'var(--p)';
+  }, 2500);
+}
+</script>
+</body>
+</html>
